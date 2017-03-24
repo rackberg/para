@@ -62,6 +62,7 @@ services:
             - [add, ['@para.command.delete_project']]
 #            - [add, ['@para.command.list_projects']]
             - [add, ['@para.command.show_log']]
+            - [add, ['@para.command.show_config']]
 
     para.command.execute:
         class: lrackwitz\Para\Command\ExecuteCommand
@@ -118,5 +119,14 @@ services:
             - '@para.process_factory'
             - '@para.yaml.configuration_manager'
             - '%para.log_path%'
+        tags:
+            - { name: console.command }
+
+    para.command.show_config:
+        class: lrackwitz\Para\Command\ShowConfigCommand
+        arguments:
+            - '@logger'
+            - '@para.process_factory'
+            - '%para.config%'
         tags:
             - { name: console.command }

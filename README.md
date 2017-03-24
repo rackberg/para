@@ -103,6 +103,11 @@ The configuration file is called `para.yml` and is stored in the `lrackwitz/para
 The file is human readable and it's okay to edit it by hand if you like.
 But take care to use the correct Yaml Syntax.
 
+## Show which groups and projects are configured
+To see the configuration just type in the following command
+
+    $ para show:config
+
 Author
 ------
 Lars Rackwitz-Rosenberg - <rackwitz.lars@gmail.com>
