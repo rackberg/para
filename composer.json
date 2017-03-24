@@ -19,5 +19,8 @@
             "lrackwitz\\Para\\": "src/",
             "lrackwitz\\Para\\tests\\": "tests/"
         }
-    }
+    },
+    "bin": [
+        "bin/para"
+    ]
 }
