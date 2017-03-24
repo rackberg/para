@@ -61,7 +61,7 @@ services:
 #            - [add, ['@para.command.edit_project']]
             - [add, ['@para.command.delete_project']]
 #            - [add, ['@para.command.list_projects']]
-#            - [add, ['@para.command.show_log']]
+            - [add, ['@para.command.show_log']]
 
     para.command.execute:
         class: lrackwitz\Para\Command\ExecuteCommand
@@ -111,9 +111,12 @@ services:
 #        tags:
 #            - { name: console.command }
 #
-#    para.command.show_log:
-#        class: lrackwitz\Para\Command\ShowLogCommand
-#        arguments:
-#            - '@logger'
-#        tags:
-#            - { name: console.command }
+    para.command.show_log:
+        class: lrackwitz\Para\Command\ShowLogCommand
+        arguments:
+            - '@logger'
+            - '@para.process_factory'
+            - '@para.yaml.configuration_manager'
+            - '%para.log_path%'
+        tags:
+            - { name: console.command }

@@ -107,4 +107,13 @@ interface ConfigurationManagerInterface
      * @return string[] An array with information of the project.
      */
     public function readProject($projectName);
+
+    /**
+     * Checks if a project exists in the configuration.
+     *
+     * @param string $projectName The name of the project.
+     *
+     * @return bool Returns true if existing, otherwise false.
+     */
+    public function hasProject($projectName);
 }

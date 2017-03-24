@@ -406,4 +406,16 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     {
         return $this->existsGroup($groupName);
     }
+
+    /**
+     * Checks if a project exists in the configuration.
+     *
+     * @param string $projectName The name of the project.
+     *
+     * @return bool Returns true if existing, otherwise false.
+     */
+    public function hasProject($projectName)
+    {
+        return $this->existsProject($projectName);
+    }
 }
