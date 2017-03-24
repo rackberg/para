@@ -1,0 +1,23 @@
+{
+    "name": "lrackwitz/para",
+    "description": "Commandline Application to execute shell commands in multiple folders parallel at the same time.",
+    "require": {
+        "symfony/console": "^3.2",
+        "symfony/process": "^3.2",
+        "symfony/monolog-bundle": "^3.0",
+        "symfony/yaml": "^3.2",
+        "monolog/monolog": "^1.22"
+    },
+    "authors": [
+        {
+            "name": "Lars Rackwitz-Rosenberg",
+            "email": "rackwitz.lars@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "lrackwitz\\Para\\": "src/",
+            "lrackwitz\\Para\\tests\\": "tests/"
+        }
+    }
+}

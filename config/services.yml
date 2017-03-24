@@ -1,0 +1,119 @@
+parameters:
+    para.config: '%root_dir%config/para.yml'
+    para.log_path: '%root_dir%logs/'
+
+services:
+    logger.streamhandler:
+        class: Monolog\Handler\RotatingFileHandler
+        arguments: ['%root_dir%logs/para.log', 8]
+        calls:
+            - [setFormatter, ['@monolog.formatter.application_formatter']]
+
+    logger:
+        class: Symfony\Bridge\Monolog\Logger
+        arguments:
+            - 'application'
+        calls:
+            - [pushHandler, ['@logger.streamhandler']]
+            - [pushProcessor, ['@monolog.processor.introspection_processor']]
+
+    monolog.formatter.application_formatter:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] [%%level_name%%] [%%extra.class%%] [%%extra.function%%] %%message%% %%context%%\n"
+
+    monolog.processor.introspection_processor:
+        class: Monolog\Processor\IntrospectionProcessor
+
+    monolog.processor.application_processor:
+        class: lrackwitz\Para\Processor\ApplicationProcessor
+
+    yaml.dumper:
+        class: Symfony\Component\Yaml\Dumper
+
+    yaml.parser:
+        class: Symfony\Component\Yaml\Parser
+
+    para.yaml.configuration_manager:
+        class: lrackwitz\Para\Service\YamlConfigurationManager
+        arguments:
+            - '@logger'
+            - '@yaml.dumper'
+            - '@yaml.parser'
+            - '%para.config%'
+
+    para.process_factory:
+        class: lrackwitz\Para\Service\ProcessFactory
+
+    para.async_shell_command_executor:
+        class: lrackwitz\Para\Service\AsyncShellCommandExecutor
+        arguments:
+            - '@logger'
+            - '@para.process_factory'
+            - '%para.log_path%'
+
+    para.application:
+        class: lrackwitz\Para\ParaApplication
+        calls:
+            - [add, ['@para.command.execute']]
+            - [add, ['@para.command.add_project']]
+            - [add, ['@para.command.delete_group']]
+#            - [add, ['@para.command.edit_project']]
+            - [add, ['@para.command.delete_project']]
+#            - [add, ['@para.command.list_projects']]
+#            - [add, ['@para.command.show_log']]
+
+    para.command.execute:
+        class: lrackwitz\Para\Command\ExecuteCommand
+        arguments:
+            - '@logger'
+            - '@para.async_shell_command_executor'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+
+    para.command.add_project:
+        class: lrackwitz\Para\Command\AddProjectCommand
+        arguments:
+            - '@logger'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+    para.command.delete_group:
+        class: lrackwitz\Para\Command\DeleteGroupCommand
+        arguments:
+            - '@logger'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+#    para.command.edit_project:
+#        class: lrackwitz\Para\Command\EditProjectCommand
+#        arguments:
+#            - '@logger'
+#        tags:
+#            - { name: console.command }
+#
+    para.command.delete_project:
+        class: lrackwitz\Para\Command\DeleteProjectCommand
+        arguments:
+            - '@logger'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+#
+#    para.command.list_projects:
+#        class: lrackwitz\Para\Command\ListProjectsCommand
+#        arguments:
+#            - '@logger'
+#        tags:
+#            - { name: console.command }
+#
+#    para.command.show_log:
+#        class: lrackwitz\Para\Command\ShowLogCommand
+#        arguments:
+#            - '@logger'
+#        tags:
+#            - { name: console.command }
