@@ -7,7 +7,7 @@ can change anytime you do a `composer update`.
 
 # Installation
 - Download [Composer](https://getcomposer.org/download/): `curl -sS https://getcomposer.org/composer.phar -o composer.phar`
-- Install: `php composer.phar global require lrackwitz/para dev-master`
+- Install: `php composer.phar global require lrackwitz/para 1.0-alpha`
 
 # How to execute a shell command
 If you configured your projects like in the `Configuration` section below just type in..
