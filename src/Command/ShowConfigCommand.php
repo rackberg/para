@@ -85,7 +85,7 @@ class ShowConfigCommand extends Command
             $this->logger->error('The config file to show does not exist.', [
                 'configFile' => $configFile,
             ]);
-            $output->writeln('<error>The config file for could not be found.</error>', 1);
+            $output->writeln('<error>The config file could not be found.</error>', 1);
             return false;
         }
 
