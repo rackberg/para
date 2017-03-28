@@ -7,10 +7,7 @@ can change anytime you do a `composer update`.
 
 # Installation
 
-* Using curl: `curl -L https://github.com/Rackberg/para/tools/install.sh | sh`
-* Using composer
-    - Download [Composer](https://getcomposer.org/download/): `curl -sS https://getcomposer.org/composer.phar -o composer.phar`
-    - Install: `php composer.phar global require lrackwitz/para 1.1-alpha`
+* Using curl: `curl -L https://raw.githubusercontent.com/Rackberg/para/master/tools/install.sh | sh`
 
 # How to use para as shell
 To use `para` as shell just do the following:
