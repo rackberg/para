@@ -3,10 +3,10 @@
     "description": "Commandline Application to execute shell commands in multiple folders parallel at the same time.",
     "license": "GPLv3",
     "require": {
-        "symfony/console": "^3.2",
-        "symfony/process": "^3.2",
-        "symfony/monolog-bundle": "^3.0",
-        "symfony/yaml": "^3.2",
+        "symfony/console": ">=2.9 ^3.2",
+        "symfony/process": ">=2.9 ^3.2",
+        "symfony/monolog-bundle": ">=2.9 ^3.0",
+        "symfony/yaml": ">=2.9 ^3.2",
         "monolog/monolog": "^1.22"
     },
     "authors": [

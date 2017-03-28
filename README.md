@@ -6,10 +6,22 @@ This tool will make your life much easier if you have to do things again and aga
 can change anytime you do a `composer update`.
 
 # Installation
-- Download [Composer](https://getcomposer.org/download/): `curl -sS https://getcomposer.org/composer.phar -o composer.phar`
-- Install: `php composer.phar global require lrackwitz/para 1.0-alpha`
 
-# How to execute a shell command
+* Using curl: `curl -L https://github.com/Rackberg/para/tools/install.sh | sh`
+* Using composer
+    - Download [Composer](https://getcomposer.org/download/): `curl -sS https://getcomposer.org/composer.phar -o composer.phar`
+    - Install: `php composer.phar global require lrackwitz/para 1.1-alpha`
+
+# How to use para as shell
+To use `para` as shell just do the following:
+
+    $ para shell group_name [-x <project1> -x <project2>]
+    
+Para opens itself as an interactive shell and asks for user input.
+All commands you enter will be executed in every project configured in the group `group_name` except for the projects `project1` and `project2`.
+The `-x <project>` parameters are optional.
+
+# How to execute a single shell command
 If you configured your projects like in the `Configuration` section below just type in..
     
     $ para execute group_name "pwd"

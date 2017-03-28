@@ -45,6 +45,13 @@ services:
     para.process_factory:
         class: lrackwitz\Para\Service\ProcessFactory
 
+    para.shell_factory:
+        class: lrackwitz\Para\Service\ShellFactory
+        arguments:
+            - '@logger'
+            - '@para.application'
+            - '@para.process_factory'
+
     para.async_shell_command_executor:
         class: lrackwitz\Para\Service\AsyncShellCommandExecutor
         arguments:
@@ -63,6 +70,7 @@ services:
 #            - [add, ['@para.command.list_projects']]
             - [add, ['@para.command.show_log']]
             - [add, ['@para.command.show_config']]
+            - [add, ['@para.command.open_shell']]
 
     para.command.execute:
         class: lrackwitz\Para\Command\ExecuteCommand
@@ -128,5 +136,14 @@ services:
             - '@logger'
             - '@para.process_factory'
             - '%para.config%'
+        tags:
+            - { name: console.command }
+
+    para.command.open_shell:
+        class: lrackwitz\Para\Command\OpenShellCommand
+        arguments:
+            - '@logger'
+            - '@para.shell_factory'
+            - '@para.yaml.configuration_manager'
         tags:
             - { name: console.command }
