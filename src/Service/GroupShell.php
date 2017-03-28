@@ -100,6 +100,11 @@ class GroupShell implements InteractiveShellInterface
                 break;
             }
 
+            if ($cmd == 'exit') {
+                $this->application->setAutoExit(true);
+                return;
+            }
+
             if ($exludedProjects != []) {
                 foreach ($exludedProjects as &$exludedProject) {
                     $exludedProject = '-x '.$exludedProject;
@@ -156,7 +161,7 @@ Welcome to the <info>Para</info> shell (<comment>{$this->application->getVersion
 
 All commands you type in will be executed for each project configured in the group <comment>{$groupName}</comment>{$ignoredProjects}
 
-To exit the shell, type <comment>(ctrl + D)</comment>.
+To exit the shell, type <comment>exit</comment> or use the shortcut <comment>(ctrl + D)</comment>.
 
 EOF;
     }

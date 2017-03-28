@@ -112,7 +112,11 @@ class ExecuteCommand extends Command
                         'group' => $group,
                         'cmd' => $cmd,
                     ]);
-                    $output->writeln('Ignoring configured project "' . $project . '" for command execution."');
+                    if ($output->isDebug()) {
+                        $output->writeln(
+                            'Ignoring configured project "'.$project.'" for command execution.'
+                        );
+                    }
                     unset($projects[$project]);
                 }
             }
