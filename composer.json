@@ -1,6 +1,7 @@
 {
     "name": "lrackwitz/para",
     "description": "Commandline Application to execute shell commands in multiple folders parallel at the same time.",
+    "license": "GPLv3",
     "require": {
         "symfony/console": "^3.2",
         "symfony/process": "^3.2",
