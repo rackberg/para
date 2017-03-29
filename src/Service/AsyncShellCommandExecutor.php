@@ -138,14 +138,24 @@ class AsyncShellCommandExecutor
                             )
                         );
                     } elseif ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
-                        $output->write(
-                            sprintf(
-                                '<fg=%s>%s:</>' . "\t" . '%s',
-                                $processData['color'],
-                                $processData['project'],
-                                $incrementalOutput
-                            )
-                        );
+                        if (!$processData['color']) {
+                            $output->write(
+                                sprintf(
+                                    '%s:' . "\t" . '%s',
+                                    $processData['project'],
+                                    $incrementalOutput
+                                )
+                            );
+                        } else {
+                            $output->write(
+                                sprintf(
+                                    '<fg=%s>%s:</>'."\t".'%s',
+                                    $processData['color'],
+                                    $processData['project'],
+                                    $incrementalOutput
+                                )
+                            );
+                        }
                     }
                 }
 

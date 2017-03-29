@@ -55,6 +55,4 @@ class ParaApplication extends Application
     {
         return parent::getVersion();
     }
-
-
 }
