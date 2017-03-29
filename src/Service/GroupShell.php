@@ -65,6 +65,13 @@ class GroupShell implements InteractiveShellInterface
     private $output;
 
     /**
+     * The command history.
+     *
+     * @var array
+     */
+    private $history = [];
+
+    /**
      * GroupShell constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
@@ -111,6 +118,11 @@ class GroupShell implements InteractiveShellInterface
                 $this->output->writeln("\n");
 
                 break;
+            }
+
+            // Add the command to the history.
+            if (!empty($cmd)) {
+                $this->history[] = $cmd;
             }
 
             // Create an event.
@@ -195,10 +207,119 @@ EOF;
     private function readline($groupName)
     {
         $this->output->write($this->getPrompt($groupName));
-        $line = fgets(STDIN, 1024);
-        $line = (false === $line || '' === $line) ? false : rtrim($line);
+//        $line = fgets(STDIN, 1024);
+//        $line = (false === $line || '' === $line) ? false : rtrim($line);
+
+        $line = $this->handleInput($groupName);
 
         return $line;
+    }
+
+    private function handleInput($groupName)
+    {
+        $inputStream = STDIN;
+
+        $sttyMode = shell_exec('stty -g');
+
+        // Disable icanon (so we can fread each keypress) and echo (we'll do echoing here instead)
+        shell_exec('stty -icanon -echo');
+
+        $userInput = '';
+        $prompt = $this->getPrompt($groupName);
+        $cursorPos = strlen($prompt);
+
+        // Set the cursor to the end of the history.
+        if ($this->history != []) {
+            end($this->history);
+        }
+
+        // Read a keypress
+        while (!feof($inputStream)) {
+            $c = fread($inputStream, 1);
+
+            // Backspace Character
+            if ("\177" === $c) {
+                // Move cursor backwards if it does not erase the prompt.
+                if ($cursorPos > strlen($prompt)) {
+                    $this->output->write("\033[1D");
+
+                    // Remove one character from the user input variable.
+                    if (strlen($userInput) > 0) {
+                        $userInput = substr($userInput, 0, strlen($userInput) - 1);
+                    }
+
+                    $cursorPos--;
+                }
+
+            } elseif ("\033" === $c) {
+                // Did we read an escape sequence?
+                $c .= fread($inputStream, 2);
+
+                // A = Up Arrow. B = Down Arrow
+                if (isset($c[2]) && ('A' === $c[2] || 'B' === $c[2])) {
+                    // Clear the current line.
+                    if ($cursorPos > strlen($prompt)) {
+                        for ($i = strlen($prompt) - $cursorPos; $cursorPos > 0; $i--) {
+                            $this->output->write("\033[1D");
+                            $cursorPos--;
+                        }
+                        $this->output->write($prompt);
+                        $cursorPos = strlen($prompt);
+                    }
+
+                    if ('A' === $c[2]) {
+                        if ($this->history[0] != current($this->history) && false !== prev($this->history)) {
+                            // Clear the current line.
+                            $historyCommand = current($this->history);
+                            $this->output->write($historyCommand);
+                            $cursorPos += strlen($historyCommand);
+                            $userInput = $historyCommand;
+                        } else {
+                            $userInput = '';
+                        }
+                    } elseif ('B' === $c[2]) {
+                        if (array_values(array_slice($this->history, -1))[0] != current($this->history) && false !== next($this->history)) {
+                            $historyCommand = current($this->history);
+                            $this->output->write($historyCommand);
+                            $cursorPos += strlen($historyCommand);
+                            $userInput = $historyCommand;
+                        } else {
+                            $userInput = '';
+                        }
+                    }
+
+                }
+            // Enter key pressed.
+            } elseif (ord($c) < 32) {
+                if ("\t" === $c || "\n" === $c) {
+                    if ("\n" === $c) {
+                        $this->output->write($c);
+                        break;
+                    }
+                }
+
+                continue;
+            } else {
+                // Normal character.
+                $this->output->write($c);
+
+                // Add the character to the user input variable.
+                $userInput .= $c;
+
+                // Increment the cursor position.
+                $cursorPos++;
+            }
+
+            // Erase characters from cursor to end of line
+            $this->output->write("\033[K");
+        }
+
+        // Reset stty so it behaves normally again
+        shell_exec(sprintf('stty %s', $sttyMode));
+
+        $userInput = trim($userInput);
+
+        return $userInput;
     }
 
     /**
