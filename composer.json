@@ -23,5 +23,8 @@
     },
     "bin": [
         "bin/para"
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    }
 }

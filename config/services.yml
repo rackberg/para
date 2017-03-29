@@ -33,6 +33,7 @@ services:
         class: Symfony\Component\EventDispatcher\EventDispatcher
         calls:
             - [addSubscriber, ['@para.shell_command_event_subscriber']]
+            - [addSubscriber, ['@para.shell_key_press_event_subscriber']]
 
     yaml.dumper:
         class: Symfony\Component\Yaml\Dumper
@@ -58,6 +59,7 @@ services:
             - '@para.application'
             - '@para.process_factory'
             - '@event_dispatcher'
+            - '@para.history_shell_manager'
 
     para.async_shell_command_executor:
         class: lrackwitz\Para\Service\AsyncShellCommandExecutor
@@ -69,6 +71,19 @@ services:
     para.shell_command_event_subscriber:
         class: lrackwitz\Para\EventSubscriber\SanitizeShellCommandEventSubscriber
 
+    para.shell_key_press_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\ShellKeyPressEventSubscriber
+        arguments:
+            - '@para.history_shell_manager'
+
+    para.shell_history:
+        class: lrackwitz\Para\Service\ShellHistory
+
+    para.history_shell_manager:
+        class: lrackwitz\Para\Service\HistoryShellManager
+        arguments:
+            - '@logger'
+            - '@para.shell_history'
 
     para.application:
         class: lrackwitz\Para\ParaApplication

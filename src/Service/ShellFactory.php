@@ -48,23 +48,33 @@ class ShellFactory
     private $dispatcher;
 
     /**
+     * The history shell manager.
+     *
+     * @var HistoryShellManagerInterface
+     */
+    private $historyShellManager;
+
+    /**
      * ShellFactory constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
      * @param \lrackwitz\Para\Service\ProcessFactory $processFactory The process factory.
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher The event dispatcher.
+     * @param \lrackwitz\Para\Service\HistoryShellManagerInterface $historyShellManager The history shell manager.
      */
     public function __construct(
         LoggerInterface $logger,
         Application $application,
         ProcessFactory $processFactory,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        HistoryShellManagerInterface $historyShellManager
     ) {
         $this->logger = $logger;
         $this->application = $application;
         $this->processFactory = $processFactory;
         $this->dispatcher = $dispatcher;
+        $this->historyShellManager = $historyShellManager;
     }
 
     /**
@@ -82,6 +92,7 @@ class ShellFactory
             $this->application,
             $this->processFactory,
             $this->dispatcher,
+            $this->historyShellManager,
             $input,
             $output
         );
