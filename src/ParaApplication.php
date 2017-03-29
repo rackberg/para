@@ -47,4 +47,14 @@ class ParaApplication extends Application
     {
         return $this->container;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLongVersion()
+    {
+        return parent::getVersion();
+    }
+
+
 }
