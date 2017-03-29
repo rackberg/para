@@ -6,11 +6,14 @@
 
 namespace lrackwitz\Para\Service;
 
+use lrackwitz\Para\Event\BeforeShellCommandExecutionEvent;
+use lrackwitz\Para\Event\ShellEvents;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class GroupShell.
@@ -41,6 +44,13 @@ class GroupShell implements InteractiveShellInterface
     private $processFactory;
 
     /**
+     * The event dispatcher.
+     *
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * The console input.
      *
      * @var InputInterface
@@ -60,6 +70,7 @@ class GroupShell implements InteractiveShellInterface
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
      * @param \lrackwitz\Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher The event dispatcher.
      * @param \Symfony\Component\Console\Input\InputInterface $input The console input.
      * @param \Symfony\Component\Console\Output\OutputInterface $output The console output.
      */
@@ -67,12 +78,14 @@ class GroupShell implements InteractiveShellInterface
         LoggerInterface $logger,
         Application $application,
         ProcessFactory $processFactory,
+        EventDispatcherInterface $dispatcher,
         InputInterface $input,
         OutputInterface $output
     ) {
         $this->logger = $logger;
         $this->application = $application;
         $this->processFactory = $processFactory;
+        $this->dispatcher = $dispatcher;
         $this->input = $input;
         $this->output = $output;
     }
@@ -100,7 +113,13 @@ class GroupShell implements InteractiveShellInterface
                 break;
             }
 
-            if ($cmd == 'exit') {
+            // Create an event.
+            $event = new BeforeShellCommandExecutionEvent($cmd);
+
+            // Dispatch an event to do something with the command string before running it.
+            $this->dispatcher->dispatch(ShellEvents::BEFORE_SHELL_COMMAND_EXECUTION_EVENT, $event);
+
+            if ($event->getCommand() == 'exit') {
                 $this->application->setAutoExit(true);
                 return;
             }
@@ -118,7 +137,7 @@ class GroupShell implements InteractiveShellInterface
                         $exludedProjects
                     ) : ''),
                     $groupName,
-                    $cmd
+                    $event->getCommand()
                 )
             );
 

@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class ShellFactory.
@@ -40,20 +41,30 @@ class ShellFactory
     private $processFactory;
 
     /**
+     * The event dispatcher.
+     *
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * ShellFactory constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
      * @param \lrackwitz\Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher The event dispatcher.
      */
     public function __construct(
         LoggerInterface $logger,
         Application $application,
-        ProcessFactory $processFactory
+        ProcessFactory $processFactory,
+        EventDispatcherInterface $dispatcher
     ) {
         $this->logger = $logger;
         $this->application = $application;
         $this->processFactory = $processFactory;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -70,6 +81,7 @@ class ShellFactory
             $this->logger,
             $this->application,
             $this->processFactory,
+            $this->dispatcher,
             $input,
             $output
         );
