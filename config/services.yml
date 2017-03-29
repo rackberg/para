@@ -81,6 +81,7 @@ services:
             - [add, ['@para.command.show_log']]
             - [add, ['@para.command.show_config']]
             - [add, ['@para.command.open_shell']]
+            - [add, ['@para.command.self_update']]
 
     para.command.execute:
         class: lrackwitz\Para\Command\ExecuteCommand
@@ -155,5 +156,13 @@ services:
             - '@logger'
             - '@para.shell_factory'
             - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+    para.command.self_update:
+        class: lrackwitz\Para\Command\SelfUpdateCommand
+        arguments:
+            - '@logger'
+            - '@para.application'
         tags:
             - { name: console.command }
