@@ -35,19 +35,29 @@ class SelfUpdateCommand extends Command
     private $application;
 
     /**
+     * The path to the tool scripts.
+     *
+     * @var string
+     */
+    private $toolsPath;
+
+    /**
      * SelfUpdateCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
+     * @param string $toolsPath The path to the tool scripts.
      */
     public function __construct(
         LoggerInterface $logger,
-        Application $application
+        Application $application,
+        $toolsPath
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->application = $application;
+        $this->toolsPath = $toolsPath;
     }
 
     /**
@@ -68,7 +78,7 @@ class SelfUpdateCommand extends Command
     {
         $this->logger->debug('Self-Update executed by user.');
 
-        $process = new Process('sh "tools/update.sh"');
+        $process = new Process('sh "update.sh"', $this->toolsPath);
         $process->run();
 
         $out = $process->getOutput();
