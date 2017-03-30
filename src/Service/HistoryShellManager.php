@@ -51,6 +51,13 @@ class HistoryShellManager implements HistoryShellManagerInterface
      */
     private $cursorPosition = 0;
 
+    /**
+     * The number of times the up arrow has been pressed.
+     *
+     * @var int
+     */
+    private $countUpPressed = 0;
+
     public function __construct(
         LoggerInterface $logger,
         ShellHistoryInterface $history
@@ -83,6 +90,9 @@ class HistoryShellManager implements HistoryShellManagerInterface
             end($commands);
             $this->history->setCommands($commands);
         }
+
+        // Reset the counter for the up arrow.
+        $this->countUpPressed = 0;
 
         // Read a keypress
         while (!feof($inputStream)) {
@@ -178,7 +188,14 @@ class HistoryShellManager implements HistoryShellManagerInterface
     {
         $output = new ConsoleOutput();
 
-        if ($command = $this->history->getPreviousCommand()) {
+        if ($this->countUpPressed == 0) {
+            $command = $this->history->getLastCommand();
+            $this->countUpPressed++;
+        } else {
+            $command = $this->history->getPreviousCommand();
+        }
+
+        if ($command) {
             $output->write($command);
             $this->cursorPosition += strlen($command);
             $this->userInput = $command;
