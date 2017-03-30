@@ -231,7 +231,7 @@ class HistoryShellManager implements HistoryShellManagerInterface
      *
      * @param string $prompt The prompt.
      */
-    public function setPrompt(string $prompt)
+    public function setPrompt($prompt)
     {
         $this->prompt = $prompt;
     }

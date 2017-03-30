@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ParaApplication extends Application
 {
-    const VERSION = '1.2-alpha';
+    const VERSION = '1.0-alpha2';
 
     /**
      * The dependency injection container.
