@@ -72,6 +72,13 @@ class GroupShell implements InteractiveShellInterface
     private $historyShellManager;
 
     /**
+     * The number of prompts shown in the shell.
+     *
+     * @var int
+     */
+    private $promptCounter = 0;
+
+    /**
      * GroupShell constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
@@ -118,8 +125,14 @@ class GroupShell implements InteractiveShellInterface
         $this->output->writeln($this->getHeader($groupName, $exludedProjects));
 
         while (true) {
+            // Add a new line to separate the prompts from each other.
+            if ($this->promptCounter > 0 && !empty($cmd)) {
+                $this->output->write("\n");
+            }
+
             // Read the command the user enters.
             $cmd = $this->readline($groupName);
+            $this->promptCounter++;
 
             if (false === $cmd) {
                 $this->output->writeln("\n");
