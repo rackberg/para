@@ -21,7 +21,7 @@ GIT_IS_AVAILABLE=$?
 
 if [ $GIT_IS_AVAILABLE -eq 0 ]; then
     echo "\033[0;34mCloning Para...\033[0m"
-    hash git >/dev/null && /usr/bin/env git clone --depth=1 https://github.com/Rackberg/para.git ~/.para || {
+    hash git >/dev/null && /usr/bin/env git clone --depth=1 https://github.com/lrackwitz/para.git ~/.para || {
         echo "git is not installed"
         exit
     }
