@@ -58,6 +58,13 @@ class HistoryShellManager implements HistoryShellManagerInterface
      */
     private $countUpPressed = 0;
 
+    /**
+     * Flag to indicate if the history end is reached.
+     *
+     * @var bool
+     */
+    private $historyEndReached = false;
+
     public function __construct(
         LoggerInterface $logger,
         ShellHistoryInterface $history
@@ -83,7 +90,7 @@ class HistoryShellManager implements HistoryShellManagerInterface
         shell_exec('stty -icanon -echo');
 
         $this->userInput = '';
-        $this->cursorPosition = strlen($this->prompt);
+        $this->cursorPosition = 0;
 
         // Make sure the array cursor of the history is at the last element.
         if (($commands = $this->history->getCommands()) != []) {
@@ -119,6 +126,8 @@ class HistoryShellManager implements HistoryShellManagerInterface
 
                 } elseif (isset($c[2]) && ('D' === $c[2])) {
                     $this->onLeftArrowPressed();
+                } elseif (isset($c[2]) && ('C' === $c[2])) {
+                    $this->onRightArrowPressed();
                 }
                 // Enter key pressed.
             } elseif (ord($c) < 32) {
@@ -131,18 +140,14 @@ class HistoryShellManager implements HistoryShellManagerInterface
 
                 continue;
             } else {
-                // Normal character.
-                $output->write($c);
+                $this->userInput =
+                    substr($this->userInput, 0, $this->cursorPosition) . $c .
+                    substr($this->userInput, $this->cursorPosition);
 
-                // Add the character to the user input variable.
-                $this->userInput .= $c;
-
-                // Increment the cursor position.
                 $this->cursorPosition++;
             }
 
-            // Erase characters from cursor to end of line
-            $output->write("\033[K");
+            $this->printCurrentUserInput();
         }
 
         // Reset stty so it behaves normally again
@@ -155,16 +160,10 @@ class HistoryShellManager implements HistoryShellManagerInterface
 
     public function onBackspacePressed()
     {
-        $output = new ConsoleOutput();
-
-        // Move cursor backwards if it does not erase the prompt.
-        if ($this->cursorPosition > strlen($this->prompt)) {
-            $output->write("\033[1D");
-
-            // Remove one character from the user input variable.
-            if (strlen($this->userInput) > 0) {
-                $this->userInput = substr($this->userInput, 0, strlen($this->userInput) - 1);
-            }
+        if ($this->cursorPosition > 0) {
+            $this->userInput =
+                substr($this->userInput, 0, $this->cursorPosition - 1) .
+                substr($this->userInput, $this->cursorPosition);
 
             $this->cursorPosition--;
         }
@@ -175,7 +174,9 @@ class HistoryShellManager implements HistoryShellManagerInterface
         $output = new ConsoleOutput();
 
         if ($this->cursorPosition > strlen($this->prompt)) {
-            for ($i = strlen($this->prompt) - $this->cursorPosition; $this->cursorPosition > 0; $i--) {
+            for ($i = strlen(
+                    $this->prompt
+                ) - $this->cursorPosition; $this->cursorPosition > 0; $i--) {
                 $output->write("\033[1D");
                 $this->cursorPosition--;
             }
@@ -186,19 +187,19 @@ class HistoryShellManager implements HistoryShellManagerInterface
 
     public function onUpArrowPressed()
     {
-        $output = new ConsoleOutput();
-
         if ($this->countUpPressed == 0) {
             $command = $this->history->getLastCommand();
             $this->countUpPressed++;
+        } elseif ($this->historyEndReached) {
+            $command = $this->history->getCurrentCommand();
+            $this->historyEndReached = false;
         } else {
             $command = $this->history->getPreviousCommand();
         }
 
         if ($command) {
-            $output->write($command);
-            $this->cursorPosition += strlen($command);
             $this->userInput = $command;
+            $this->cursorPosition = strlen($command);
         } else {
             // Set the array cursor to the first element.
             $commands = $this->getHistory()->getCommands();
@@ -206,22 +207,30 @@ class HistoryShellManager implements HistoryShellManagerInterface
             $this->getHistory()->setCommands($commands);
 
             $command = $this->getHistory()->getCurrentCommand();
-            $output->write($command);
-            $this->cursorPosition += strlen($command);
             $this->userInput = $command;
+            $this->cursorPosition = strlen($command);
         }
     }
 
     public function onDownArrowPressed()
     {
-        $output = new ConsoleOutput();
-
         if ($command = $this->history->getNextCommand()) {
-            $output->write($command);
-            $this->cursorPosition += strlen($command);
             $this->userInput = $command;
+            $this->cursorPosition = strlen($command);
+
+            // Set flag that the history end has not reached yet.
+            $this->historyEndReached = false;
         } else {
             $this->userInput = '';
+            $this->cursorPosition = 0;
+
+            // Set the array cursor to the last element.
+            $commands = $this->getHistory()->getCommands();
+            end($commands);
+            $this->getHistory()->setCommands($commands);
+
+            // Set flag that the history end is reached.
+            $this->historyEndReached = true;
         }
     }
 
@@ -233,6 +242,52 @@ class HistoryShellManager implements HistoryShellManagerInterface
 
     public function onLeftArrowPressed()
     {
+        if ($this->cursorPosition > 0) {
+            $this->cursorPosition = max(0, $this->cursorPosition - 1);
+        }
+    }
+
+    public function onRightArrowPressed()
+    {
+        $this->cursorPosition = min(strlen($this->userInput), $this->cursorPosition + 1);
+    }
+
+    private function printCurrentUserInput()
+    {
+        $output = new ConsoleOutput();
+
+        // Move all the way left.
+        $output->write("\033[1000D");
+
+        // Clear the line.
+        $output->write("\033[0K");
+
+        // Write the prompt with user input.
+        $output->write($this->prompt . $this->userInput);
+
+        // Move all the way left again.
+        $output->write("\033[1000D");
+
+        if ($this->cursorPosition >= 0) {
+            // Move cursor to index.
+            $output->write("\033[" . (strlen($this->stripUnicodeChars($this->prompt)) + $this->cursorPosition) . "C");
+        }
+    }
+
+    /**
+     * Strips all unicode characters from a string.
+     *
+     * @param string $string The string to strip unicode characters from.
+     *
+     * @return string The stripped string or the original string.
+     */
+    private function stripUnicodeChars($string)
+    {
+        $new_string = preg_replace('#\\x1b[[][^A-Za-z]*[A-Za-z]#', '', $string);
+        if ($new_string) {
+            return $new_string;
+        }
+        return $string;
     }
 
     /**
