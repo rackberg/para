@@ -221,15 +221,7 @@ class HistoryShellManager implements HistoryShellManagerInterface
             $this->cursorPosition += strlen($command);
             $this->userInput = $command;
         } else {
-            // Set the array cursor back to the last element.
-            $commands = $this->getHistory()->getCommands();
-            end($commands);
-            $this->getHistory()->setCommands($commands);
-
-            $command = $this->getHistory()->getCurrentCommand();
-            $output->write($command);
-            $this->cursorPosition += strlen($command);
-            $this->userInput = $command;
+            $this->userInput = '';
         }
     }
 
