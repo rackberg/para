@@ -3,11 +3,11 @@
 This tool will make your life much easier if you have to do things again and again but in different folders.
 
 > Please note that this software is still under heavy development and
-can change anytime you do a `composer update`.
+can change anytime you do a `para self-update`.
 
 # Installation
 
-* Using curl: `curl -L https://raw.githubusercontent.com/Rackberg/para/master/tools/install.sh | sh`
+* Using curl: `curl -L https://raw.githubusercontent.com/lrackwitz/para/master/tools/install.sh | sh`
 
 # How to use para as shell
 To use `para` as shell just do the following:
