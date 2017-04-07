@@ -89,6 +89,9 @@ class AsyncShellCommandExecutor
         /** @var Process[] $processes */
         $processes = [];
 
+        // Determine the current system environment variables.
+        $env = $this->discoverSystemEnvironment();
+
         // For each project start an asynchronous process.
         foreach ($projects as $project => $project_path) {
             // Get a color yet not used.
@@ -101,7 +104,10 @@ class AsyncShellCommandExecutor
                 unlink($logFile);
             }
 
-            $process = $this->processFactory->create($cmd, $project_path);
+            // Add the para_project environment variable.
+            $env['para_project'] = $project;
+
+            $process = $this->processFactory->create('/bin/zsh -c "' . $cmd . '"', $project_path, $env);
             $process->setTimeout(null);
             $process->start();
 
@@ -244,5 +250,27 @@ class AsyncShellCommandExecutor
         if ($this->lastOutput != '' && $this->lastOutput[strlen($this->lastOutput) - 1] != "\n") {
             return "\n";
         }
+    }
+
+    /**
+     * Discovers the current system environment and returns it.
+     *
+     * @return string[] The environment variables.
+     */
+    private function discoverSystemEnvironment()
+    {
+        $env = [];
+        $output = shell_exec('env');
+        if ($output) {
+            $lines = explode("\n", $output);
+            foreach ($lines as $line) {
+                $values = explode('=', $line);
+                if (!empty($values[0]) && !empty($values[1])) {
+                    $env[$values[0]] = $values[1];
+                }
+            }
+        }
+
+        return $env;
     }
 }
