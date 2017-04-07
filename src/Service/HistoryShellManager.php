@@ -175,8 +175,8 @@ class HistoryShellManager implements HistoryShellManagerInterface
 
         if ($this->cursorPosition > strlen($this->prompt)) {
             for ($i = strlen(
-                    $this->prompt
-                ) - $this->cursorPosition; $this->cursorPosition > 0; $i--) {
+                $this->prompt
+            ) - $this->cursorPosition; $this->cursorPosition > 0; $i--) {
                 $output->write("\033[1D");
                 $this->cursorPosition--;
             }

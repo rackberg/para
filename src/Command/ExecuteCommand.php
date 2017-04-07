@@ -8,11 +8,14 @@ namespace lrackwitz\Para\Command;
 
 use lrackwitz\Para\Service\AsyncShellCommandExecutor;
 use lrackwitz\Para\Service\ConfigurationManagerInterface;
+use lrackwitz\Para\Service\Output\BufferedOutputAdapter;
+use lrackwitz\Para\Service\OutputBuffer\OutputBuffer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -81,6 +84,9 @@ class ExecuteCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // Make sure we are dealing with a buffered output.
+        $outputAdapter = new BufferedOutputAdapter($output);
+
         // Get the shell command.
         $cmd = $input->getArgument('cmd');
 
@@ -123,6 +129,6 @@ class ExecuteCommand extends Command
         }
 
         // Execute the shell command.
-        $this->asyncExecutor->execute($cmd, $projects, $output);
+        $this->asyncExecutor->execute($cmd, $projects, $outputAdapter);
     }
 }

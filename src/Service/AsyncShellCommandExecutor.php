@@ -6,6 +6,7 @@
 
 namespace lrackwitz\Para\Service;
 
+use lrackwitz\Para\Service\Output\BufferedOutputInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
@@ -46,6 +47,13 @@ class AsyncShellCommandExecutor
     private $availableColors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan'];
 
     /**
+     * The last output string.
+     *
+     * @var string
+     */
+    private $lastOutput;
+
+    /**
      * AsyncShellCommandExecutor constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
@@ -70,9 +78,9 @@ class AsyncShellCommandExecutor
      *
      * @param string $cmd The shell command.
      * @param array $projects The array of projects.
-     * @param \Symfony\Component\Console\Output\OutputInterface $output The console output object.
+     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output The output buffer.
      */
-    public function execute($cmd, array $projects, OutputInterface $output)
+    public function execute($cmd, array $projects, BufferedOutputInterface $output)
     {
         // Get a copy of all available colors.
         $colors = $this->availableColors;
@@ -122,6 +130,9 @@ class AsyncShellCommandExecutor
                     $incrementalOutput = $incrementalErrorOutput;
                 }
 
+                // Make sure the output does not contain unwanted ansi escape sequences.
+                $incrementalOutput = $this->sanitizeOutput($incrementalOutput);
+
                 // Only if the output contains data we want to show it.
                 if ($incrementalOutput != '') {
                     // Add the log output to the log file.
@@ -149,7 +160,8 @@ class AsyncShellCommandExecutor
                         } else {
                             $output->write(
                                 sprintf(
-                                    '<fg=%s>%s:</>'."\t".'%s',
+                                    '%s<fg=%s>%s:</>'."\t".'%s',
+                                    $this->getNewLineIfRequired() ?: '',
                                     $processData['color'],
                                     $processData['project'],
                                     $incrementalOutput
@@ -157,6 +169,9 @@ class AsyncShellCommandExecutor
                             );
                         }
                     }
+
+                    // Save the last output string.
+                    $this->lastOutput = $incrementalOutput;
                 }
 
                 // When a process terminated...
@@ -175,6 +190,10 @@ class AsyncShellCommandExecutor
                     unset($processes[$processId]);
                 }
             }
+
+            // Flush the output buffer.
+            $output->flush();
+
         } while (!empty($processes));
     }
 
@@ -200,5 +219,30 @@ class AsyncShellCommandExecutor
         $colors = array_values($colors);
 
         return $color;
+    }
+
+    /**
+     * Sanitizes the output string.
+     *
+     * @param string $string The output to sanitize.
+     *
+     * @return string The sanitized output string.
+     */
+    private function sanitizeOutput($string)
+    {
+        return trim($string, "\x08 ");
+    }
+
+    /**
+     * Returns "\n" if the last output string not ended with "\n".
+     *
+     * @return string|null The string "\n" or null.
+     */
+    private function getNewLineIfRequired()
+    {
+        // Check if the last output string ends with new line.
+        if ($this->lastOutput != '' && $this->lastOutput[strlen($this->lastOutput) - 1] != "\n") {
+            return "\n";
+        }
     }
 }
