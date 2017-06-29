@@ -2,6 +2,7 @@ parameters:
     para.config: '%root_dir%config/para.yml'
     para.log_path: '%root_dir%logs/'
     para.tools_path: '%root_dir%tools/'
+    para.history: '%root_dir%config/.para_history'
 
 services:
     logger.streamhandler:
@@ -172,6 +173,7 @@ services:
             - '@logger'
             - '@para.shell_factory'
             - '@para.yaml.configuration_manager'
+            - '%para.history%'
         tags:
             - { name: console.command }
 

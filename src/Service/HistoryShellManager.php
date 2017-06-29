@@ -87,7 +87,7 @@ class HistoryShellManager implements HistoryShellManagerInterface
         $sttyMode = shell_exec('stty -g');
 
         // Disable icanon (so we can fread each keypress) and echo (we'll do echoing here instead)
-        shell_exec('stty -icanon -echo');
+        shell_exec('stty -icanon -echo intr undef');
 
         $this->userInput = '';
         $this->cursorPosition = 0;

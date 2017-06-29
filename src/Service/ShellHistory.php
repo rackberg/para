@@ -103,4 +103,21 @@ class ShellHistory implements ShellHistoryInterface
     {
         $this->commands = $commands;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function loadHistory($file)
+    {
+        $this->commands = file($file, FILE_IGNORE_NEW_LINES);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function saveHistory($file)
+    {
+        // Create the file or overwrite any existing content with the new data.
+        file_put_contents($file, join("\n", $this->commands));
+    }
 }

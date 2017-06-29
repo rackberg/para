@@ -44,22 +44,32 @@ class OpenShellCommand extends Command
     private $configManager;
 
     /**
+     * The path to the history file.
+     *
+     * @var string
+     */
+    private $historyFile;
+
+    /**
      * OpenShellCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \lrackwitz\Para\Service\ShellFactory $shellFactory The shell factory.
      * @param \lrackwitz\Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param string $historyFile The path to the history file.
      */
     public function __construct(
         LoggerInterface $logger,
         ShellFactory $shellFactory,
-        ConfigurationManagerInterface $configManager
+        ConfigurationManagerInterface $configManager,
+        $historyFile
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->shellFactory = $shellFactory;
         $this->configManager = $configManager;
+        $this->historyFile = $historyFile;
     }
 
     /**
@@ -106,7 +116,15 @@ class OpenShellCommand extends Command
 
         $shell = $this->shellFactory->create($input, $output);
 
-        $shell->run($group, $excludedProjects);
+        $shell->run($group, $excludedProjects, $this->historyFile);
+
+        // Persist the shell commands to the history file.
+        if ($this->historyFile) {
+            $shell
+                ->getHistoryShellManager()
+                ->getHistory()
+                ->saveHistory($this->historyFile);
+        }
 
         $output->writeln('<info>Finished para shell.</info>');
     }

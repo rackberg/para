@@ -66,4 +66,18 @@ interface ShellHistoryInterface
      * @param array $commands An array containing commands.
      */
     public function setCommands(array $commands);
+
+    /**
+     * Loads the shell command history stored in a file.
+     *
+     * @param string $file The full path to the file.
+     */
+    public function loadHistory($file);
+
+    /**
+     * Saves the shell command history in a file.
+     *
+     * @param string $file The full path to the file.
+     */
+    public function saveHistory($file);
 }

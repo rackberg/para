@@ -9,6 +9,8 @@ namespace lrackwitz\Para\tests\Service;
 use lrackwitz\Para\Service\ShellHistory;
 use lrackwitz\Para\Service\ShellHistoryInterface;
 use PHPUnit\Framework\TestCase;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 
 /**
  * Class ShellHistoryTest.
@@ -25,11 +27,21 @@ class ShellHistoryTest extends TestCase
     private $subjectUnderTest;
 
     /**
+     * The virtual file system.
+     *
+     * @var vfsStreamDirectory
+     */
+    private $vfsRoot;
+
+    /**
      * @inheritDoc
      */
     protected function setUp()
     {
         $this->subjectUnderTest = new ShellHistory();
+
+        // Initialize the virtual file system.
+        $this->vfsRoot = vfsStream::setup('para');
     }
 
     public function testSetCommands()
@@ -207,6 +219,64 @@ class ShellHistoryTest extends TestCase
             $this->subjectUnderTest->getPreviousCommand(),
             'Expected that the previous command is empty because it does not exist.'
         );
+    }
+
+    /**
+     * Tests that the shell history can be saved to a file.
+     */
+    public function testSaveHistory()
+    {
+        $this->saveTestHistory();
+
+        // Check if the file has been created.
+        $this->assertTrue(
+            file_exists(vfsStream::url('para/.para_history')),
+            'Expected that the .para_history file has been created.'
+        );
+
+        // Check if the file contains the commands.
+        $this->assertEquals(
+            'ls -la' . "\n" . 'pwd' . "\n" . 'echo "This is a test"' . "\n" . 'git status',
+            file_get_contents(vfsStream::url('para/.para_history')),
+            'Expected that the shell commands are in the file.'
+        );
+    }
+
+    /**
+     * Tests that a file containing shell commands can be loaded into the history.
+     */
+    public function testLoadHistory()
+    {
+        // Prepare the history file.
+        $this->saveTestHistory();
+
+        // Reset the history commands.
+        $this->subjectUnderTest->setCommands([]);
+
+        // Read the commands from the history file.
+        $this->subjectUnderTest->loadHistory(vfsStream::url('para/.para_history'));
+
+        // Check if the commands are loaded properly.
+        $this->assertEquals(
+            ['ls -la', 'pwd', 'echo "This is a test"', 'git status'],
+            $this->subjectUnderTest->getCommands(),
+            'Expected that the shell commands have been loaded.'
+        );
+    }
+
+    /**
+     * Helper method that saves test shell commands to a file in the virtual file system.
+     */
+    private function saveTestHistory()
+    {
+        // Add commands to the history.
+        $this->subjectUnderTest->addCommand('ls -la');
+        $this->subjectUnderTest->addCommand('pwd');
+        $this->subjectUnderTest->addCommand('echo "This is a test"');
+        $this->subjectUnderTest->addCommand('git status');
+
+        // Save the command history to a file.
+        $this->subjectUnderTest->saveHistory(vfsStream::url('para/.para_history'));
     }
 
     private function getShellCommands()

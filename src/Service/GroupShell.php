@@ -112,9 +112,15 @@ class GroupShell implements InteractiveShellInterface
      *
      * @param $groupName
      * @param array $exludedProjects
+     * @param string $historyFile
      */
-    public function run($groupName, array $exludedProjects = [])
+    public function run($groupName, array $exludedProjects = [], $historyFile = null)
     {
+        // Load the persisted shell command history.
+        if ($historyFile) {
+            $this->historyShellManager->getHistory()->loadHistory($historyFile);
+        }
+
         // Set the prompt.
         $this->historyShellManager->setPrompt($this->getPrompt($groupName));
 
@@ -141,7 +147,7 @@ class GroupShell implements InteractiveShellInterface
             }
 
             // Add the command to the history.
-            if (!empty($cmd)) {
+            if (!empty($cmd) && $cmd != 'exit') {
                 $this->historyShellManager->getHistory()->addCommand($cmd);
             }
 
@@ -212,7 +218,9 @@ Welcome to the <info>Para</info> shell (<comment>{$this->application->getVersion
 
 All commands you type in will be executed for each project configured in the group <comment>{$groupName}</comment>{$ignoredProjects}
 
-To exit the shell, type <comment>exit</comment> or use the shortcut <comment>(ctrl + D)</comment>.
+THE SHORTCUT <comment>(ctrl + D)</comment> HAS BEEN <comment>DISABLED</comment> !
+
+To exit the shell, type <comment>exit</comment>.
 
 EOF;
     }
@@ -243,5 +251,15 @@ EOF;
     {
         // using the formatter here is required when using readline
         return $this->output->getFormatter()->format('Para <info>' . $groupName . '</info> > ');
+    }
+
+    /**
+     * Returns historyShellManager.
+     *
+     * @return \lrackwitz\Para\Service\HistoryShellManagerInterface
+     */
+    public function getHistoryShellManager()
+    {
+        return $this->historyShellManager;
     }
 }
