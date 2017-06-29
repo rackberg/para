@@ -109,7 +109,9 @@ class ShellHistory implements ShellHistoryInterface
      */
     public function loadHistory($file)
     {
-        $this->commands = file($file, FILE_IGNORE_NEW_LINES);
+        if (file_exists($file)) {
+            $this->commands = file($file, FILE_IGNORE_NEW_LINES);
+        }
     }
 
     /**
