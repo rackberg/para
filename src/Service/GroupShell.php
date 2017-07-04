@@ -218,7 +218,7 @@ Welcome to the <info>Para</info> shell (<comment>{$this->application->getVersion
 
 All commands you type in will be executed for each project configured in the group <comment>{$groupName}</comment>{$ignoredProjects}
 
-THE SHORTCUT <comment>(ctrl + D)</comment> HAS BEEN <comment>DISABLED</comment> !
+THE SHORTCUT <comment>(ctrl + C)</comment> HAS BEEN <comment>DISABLED</comment> !
 
 To exit the shell, type <comment>exit</comment>.
 
