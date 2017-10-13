@@ -1,5 +1,7 @@
 # Commandline Application to execute shell commands in multiple folders parallel at the same time.
 
+[![CircleCI](https://circleci.com/gh/rackberg/para.svg?style=svg)](https://circleci.com/gh/rackberg/para)
+
 This tool will make your life much easier if you have to do things again and again but in different folders.
 
 > Please note that this software is still under heavy development and
