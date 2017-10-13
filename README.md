@@ -121,7 +121,7 @@ To see the configuration just type in the following command
 
 Author
 ------
-Lars Rackwitz-Rosenberg - <rackwitz.lars@gmail.com>
+Lars Rosenberg - <larsrosenberg88@gmail.com>
 
 If you do have any questions or need help using `para` don't hesitate to contact me.
 
