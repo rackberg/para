@@ -108,7 +108,14 @@ class HistoryShellManager implements HistoryShellManagerInterface
             // Backspace Character
             if ("\177" === $c) {
                 $this->onBackspacePressed();
-
+            } elseif (ord($c) == 1) { // ctrl+a has been pressed
+                $this->moveCursorToBeginOfInputLine();
+            } elseif (ord($c) == 3) { // ctrl+c has been pressed
+                // todo: exit the shell.
+            } elseif (ord($c) == 5) { // ctrl+e has been pressed
+                $this->moveCursorToEndOfLine();
+            } elseif (ord($c) == 11) { // ctrl+k has been pressed
+                $this->removeInputRightFromCursor();
             } elseif ("\033" === $c) {
                 // Did we read an escape sequence?
                 $c .= fread($inputStream, 2);
@@ -272,6 +279,47 @@ class HistoryShellManager implements HistoryShellManagerInterface
             // Move cursor to index.
             $output->write("\033[" . (strlen($this->stripUnicodeChars($this->prompt)) + $this->cursorPosition) . "C");
         }
+    }
+
+    /**
+     * Removes all characters right from the cursors position.
+     */
+    private function removeInputRightFromCursor()
+    {
+        $this->userInput = substr($this->userInput, 0, $this->cursorPosition);
+    }
+
+    /**
+     * Moves the cursor to the begin of the input line right after the prompt.
+     */
+    private function moveCursorToBeginOfInputLine()
+    {
+        $this->moveCursorToPosition(0);
+    }
+
+    /**
+     * Moves the cursor to the end of the current line.
+     */
+    private function moveCursorToEndOfLine()
+    {
+        // Check if we have user input.
+        if ($this->userInput == '') {
+            return;
+        }
+
+        $this->moveCursorToPosition(mb_strlen($this->userInput));
+    }
+
+    /**
+     * Moves the cursor to the position specified.
+     *
+     * The position 0 begins after the prompt!
+     *
+     * @param int $position The position.
+     */
+    private function moveCursorToPosition($position)
+    {
+        $this->cursorPosition = $position;
     }
 
     /**
