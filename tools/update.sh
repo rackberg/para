@@ -21,8 +21,21 @@ GIT_IS_AVAILABLE=$?
 
 if [ $GIT_IS_AVAILABLE -eq 0 ]; then
     cd ~/.para 2>&1 > /dev/null
-    echo "\033[0;34mUpdating para to the latest version...\033[0m"
-    hash git >/dev/null && /usr/bin/env git pull origin master 2>&1 > /dev/null
+
+    # Get new tags from the remote
+    git fetch --tags > /dev/null
+
+    # Get the current installed tag
+    currentTag=$(git describe --tags --always | cut -d\- -f1)
+
+    # Get the latest tag name
+    latestTag=$(git describe --tags `git rev-list --tags  --max-count=1`)
+
+    # Inform the user about the new tag.
+    echo "\033[0;34mUpdating para from version $currentTag to the latest version $latestTag ...\033[0m"
+
+    # Checkout the latest tag
+    git checkout $latestTag --quiet
 fi
 
 # Install dependencies.
