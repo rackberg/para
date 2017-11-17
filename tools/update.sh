@@ -23,7 +23,7 @@ if [ $GIT_IS_AVAILABLE -eq 0 ]; then
     cd ~/.para 2>&1 > /dev/null
 
     # Get new tags from the remote
-    git fetch --tags > /dev/null
+    git fetch --tags --quiet
 
     # Get the current installed tag
     currentTag=$(git describe --tags --always | cut -d\- -f1)
