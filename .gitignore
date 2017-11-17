@@ -3,3 +3,4 @@ config/para.yml
 logs/
 vendor/
 /config/.para_history
+/tests/build/
