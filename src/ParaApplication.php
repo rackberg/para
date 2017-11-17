@@ -8,6 +8,8 @@ namespace lrackwitz\Para;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
  * Class ParaApplication.
@@ -16,8 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ParaApplication extends Application
 {
-    const VERSION = '1.0-alpha4';
-
     /**
      * The dependency injection container.
      *
@@ -27,7 +27,7 @@ class ParaApplication extends Application
 
     public function __construct()
     {
-        parent::__construct('Para Console Application', self::VERSION);
+        parent::__construct('Para Console Application', $this->getRelease());
     }
 
     /**
@@ -54,5 +54,19 @@ class ParaApplication extends Application
     public function getLongVersion()
     {
         return parent::getVersion();
+    }
+
+    /**
+     * Returns the current git release.
+     */
+    private function getRelease()
+    {
+        $process = new Process('git describe --tags --always | cut -d\- -f1');
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return trim($process->getOutput());
     }
 }
