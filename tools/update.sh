@@ -31,6 +31,11 @@ if [ $GIT_IS_AVAILABLE -eq 0 ]; then
     # Get the latest tag name
     latestTag=$(git describe --tags `git rev-list --tags  --max-count=1`)
 
+    if [ $currentTag == $latestTag ]; then
+        echo "\033[0;34mNo update needed. You already have the latest stable release version $currentTag\033[0m"
+        exit
+    fi
+
     # Inform the user about the new tag.
     echo "\033[0;34mUpdating para from version $currentTag to the latest version $latestTag ...\033[0m"
 
