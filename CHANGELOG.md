@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.1] - 2017-11-18
+### Fixed
+- Detection and display of the current installed version / release.
+
 ## [1.1.0] - 2017-11-17
 ### Added
 - Integrate the keyboard shortcut `ctrl+a` to jump to the first column of the current line in the shell.
