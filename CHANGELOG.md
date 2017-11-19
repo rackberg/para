@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.2.0] - 2017-11-19
 ### Changed
 - Improved the update script to abort when no update is needed.
+
+### Fixed
+- Para shell accidentally creates new line after printing the first Character (see [#10](https://github.com/rackberg/para/issues/10))
 
 ## [1.1.1] - 2017-11-18
 ### Fixed

@@ -119,30 +119,45 @@ class AsyncShellCommandExecutor
             ];
         }
 
+        $tmpChar = [];
+
         // Loop through the registered processes until every process has terminated.
         do {
+            $incrementalOutput = [];
+
             foreach ($processes as $processId => $processData) {
                 // Get the process.
                 /** @var Process $process */
                 $process = $processData['process'];
 
                 // Get the last output from the process.
-                $incrementalOutput = $process->getIncrementalOutput();
+                $incrementalOutput[$processData['project']] = $process->getIncrementalOutput();
 
                 // Get the last error output from the process.
                 $incrementalErrorOutput = $process->getIncrementalErrorOutput();
 
                 if ($incrementalErrorOutput != '') {
-                    $incrementalOutput = $incrementalErrorOutput;
+                    $incrementalOutput[$processData['project']] = $incrementalErrorOutput;
                 }
 
+                $this->workaroundForSingleChar(
+                    $incrementalOutput,
+                    $tmpChar,
+                    $processData['project']
+                );
+
                 // Make sure the output does not contain unwanted ansi escape sequences.
-                $incrementalOutput = $this->sanitizeOutput($incrementalOutput);
+                $incrementalOutput[$processData['project']] =
+                    $this->sanitizeOutput($incrementalOutput[$processData['project']]);
 
                 // Only if the output contains data we want to show it.
-                if ($incrementalOutput != '') {
+                if ($incrementalOutput[$processData['project']] != '') {
                     // Add the log output to the log file.
-                    if (!file_put_contents($processData['log'], $incrementalOutput, FILE_APPEND)) {
+                    if (!file_put_contents(
+                        $processData['log'],
+                        $incrementalOutput[$processData['project']],
+                        FILE_APPEND
+                    )) {
                         $this->logger->error('Failed to write log file for project.', ['processData' => $processData]);
                     }
 
@@ -151,7 +166,7 @@ class AsyncShellCommandExecutor
                             sprintf(
                                 'PID: %s  ->  %s',
                                 $processId,
-                                $incrementalOutput
+                                $incrementalOutput[$processData['project']]
                             )
                         );
                     } elseif ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
@@ -160,24 +175,24 @@ class AsyncShellCommandExecutor
                                 sprintf(
                                     '%s:' . "\t" . '%s',
                                     $processData['project'],
-                                    $incrementalOutput
+                                    $incrementalOutput[$processData['project']]
                                 )
                             );
                         } else {
                             $output->write(
                                 sprintf(
                                     '%s<fg=%s>%s:</>'."\t".'%s',
-                                    $this->getNewLineIfRequired() ?: '',
+                                    $this->getNewLineIfRequired($processData['project']) ?: '',
                                     $processData['color'],
                                     $processData['project'],
-                                    $incrementalOutput
+                                    $incrementalOutput[$processData['project']]
                                 )
                             );
                         }
                     }
 
                     // Save the last output string.
-                    $this->lastOutput = $incrementalOutput;
+                    $this->lastOutput[$processData['project']] = $incrementalOutput[$processData['project']];
                 }
 
                 // When a process terminated...
@@ -199,7 +214,6 @@ class AsyncShellCommandExecutor
 
             // Flush the output buffer.
             $output->flush();
-
         } while (!empty($processes));
     }
 
@@ -236,7 +250,11 @@ class AsyncShellCommandExecutor
      */
     private function sanitizeOutput($string)
     {
-        return trim($string, "\x08 ");
+        $stringTrimmed = trim($string, "\x08 ");
+        if (strlen($stringTrimmed) <= 2 && $stringTrimmed != '') {
+            $stringTrimmed = "\033[31m" . $stringTrimmed . "\033[0m";
+        }
+        return $stringTrimmed;
     }
 
     /**
@@ -244,10 +262,11 @@ class AsyncShellCommandExecutor
      *
      * @return string|null The string "\n" or null.
      */
-    private function getNewLineIfRequired()
+    private function getNewLineIfRequired($project)
     {
         // Check if the last output string ends with new line.
-        if ($this->lastOutput != '' && $this->lastOutput[strlen($this->lastOutput) - 1] != "\n") {
+        if (!empty($this->lastOutput[$project])
+            && $this->lastOutput[$project][strlen($this->lastOutput[$project]) - 1] != "\n") {
             return "\n";
         }
     }
@@ -272,5 +291,42 @@ class AsyncShellCommandExecutor
         }
 
         return $env;
+    }
+
+    /**
+     * Workaround for single char.
+     *
+     * Sometimes it happens that only one char has been returned by $process->getIncrementalOutput()
+     * even if there are more chars that could also be returned.
+     * In this case we need to create a workaround, that temporarily stores
+     * the single char returned to output it in front of the next
+     * incremental output value.
+     *
+     * @param array $incrementalOutput
+     * @param array $tmpChar
+     * @param string $project
+     */
+    private function workaroundForSingleChar(
+        &$incrementalOutput,
+        array &$tmpChar,
+        $project
+    ) {
+        // Check if there is a temporarily stored char.
+        if (!empty($tmpChar[$project]) && !empty($incrementalOutput[$project])) {
+            // Add the char directly at the beginning of the current
+            // incremental output value.
+            $incrementalOutput[$project] = $tmpChar[$project] . $incrementalOutput[$project];
+
+            // Clear the temporarily stored char.
+            $tmpChar[$project] = '';
+        }
+
+        // If there is a single char store it temporarily.
+        if (strlen($incrementalOutput[$project]) == 1) {
+            $tmpChar[$project] = $incrementalOutput[$project];
+
+            // Clear the current incremental output value so that nothing will be written to the console.
+            $incrementalOutput[$project] = '';
+        }
     }
 }
