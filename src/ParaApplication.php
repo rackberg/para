@@ -61,7 +61,10 @@ class ParaApplication extends Application
      */
     private function getRelease()
     {
-        $process = new Process('git describe --tags --always | cut -d\- -f1');
+        $process = new Process(
+            'git describe --tags --always | cut -d\- -f1',
+            __DIR__ . '/../'
+        );
         $process->run();
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
