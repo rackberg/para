@@ -107,7 +107,7 @@ class AsyncShellCommandExecutor
             // Add the para_project environment variable.
             $env['para_project'] = $project;
 
-            $process = $this->processFactory->create('/bin/zsh -c "' . $cmd . '"', $project_path, $env);
+            $process = $this->processFactory->create($cmd, $project_path, $env);
             $process->setTimeout(null);
             $process->start();
 
