@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
@@ -68,6 +69,12 @@ class SelfUpdateCommand extends Command
         $this
             ->setName('self-update')
             ->setDescription('Checks for a new version of para and updates itself.')
+            ->addOption(
+                'unstable',
+                null,
+                InputOption::VALUE_NONE,
+                'Uses the latest commit for updating, which can be unstable instead of the latest stable release.'
+            )
         ;
     }
 
@@ -78,7 +85,10 @@ class SelfUpdateCommand extends Command
     {
         $this->logger->debug('Self-Update executed by user.');
 
-        $process = new Process('sh "update.sh"', $this->toolsPath);
+        // Get the update method.
+        $updateMethod = $input->getOption('unstable') ? 'unstable' : 'stable';
+
+        $process = new Process('./update.sh ' . $updateMethod, $this->toolsPath);
         $process->run();
 
         $out = $process->getOutput();
@@ -88,6 +98,4 @@ class SelfUpdateCommand extends Command
 
         $output->write($out);
     }
-
-
 }
