@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - `para --version` does not return the installed version.
+- Removed hard dependencies to the [ZSH](https://wiki.ubuntuusers.de/Zsh/)
 
 ## [1.2.0] - 2017-11-19
 ### Changed
