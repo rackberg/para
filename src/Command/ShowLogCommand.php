@@ -108,7 +108,7 @@ class ShowLogCommand extends Command
             return false;
         }
 
-        $logFile = $this->logPath . strtolower($project) . '.log';
+        $logFile = $this->logPath . strtolower($project) . '.project.log';
 
         // Check if the log file exists.
         if (!file_exists($logFile)) {

@@ -27,14 +27,13 @@ services:
     monolog.processor.introspection_processor:
         class: Monolog\Processor\IntrospectionProcessor
 
-    monolog.processor.application_processor:
-        class: lrackwitz\Para\Processor\ApplicationProcessor
-
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
         calls:
             - [addSubscriber, ['@para.shell_command_event_subscriber']]
             - [addSubscriber, ['@para.shell_key_press_event_subscriber']]
+            - [addSubscriber, ['@para.add_environment_variable_event_subscriber']]
+            - [addSubscriber, ['@para.log_process_output_event_subscriber']]
 
     yaml.dumper:
         class: Symfony\Component\Yaml\Dumper
@@ -64,10 +63,7 @@ services:
 
     para.async_shell_command_executor:
         class: lrackwitz\Para\Service\AsyncShellCommandExecutor
-        arguments:
-            - '@logger'
-            - '@para.process_factory'
-            - '%para.log_path%'
+        arguments: ['@para.display_strategy_factory']
 
     para.shell_command_event_subscriber:
         class: lrackwitz\Para\EventSubscriber\SanitizeShellCommandEventSubscriber
@@ -77,6 +73,13 @@ services:
         arguments:
             - '@para.history_shell_manager'
 
+    para.add_environment_variable_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\AddEnvironmentVariableEventSubscriber
+
+    para.log_process_output_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\LogProcessOutputEventSubscriber
+        arguments: ['%para.log_path%']
+
     para.shell_history:
         class: lrackwitz\Para\Service\ShellHistory
 
@@ -85,6 +88,10 @@ services:
         arguments:
             - '@logger'
             - '@para.shell_history'
+
+    para.display_strategy_factory:
+        class: lrackwitz\Para\Service\Strategy\DisplayStrategyFactory
+        arguments: ['@para.process_factory', '@event_dispatcher']
 
     para.application:
         class: lrackwitz\Para\ParaApplication
