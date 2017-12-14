@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improved asynchronous command execution algorithm.
 - Improved project name coloring (supports up to 256 colors now).
 - Changed to additively project logging.   
+### Fixed
+- The last command entered by the user will be now restored after pressing the down key when the history end has been reached. See issue [#16](https://github.com/rackberg/para/issues/16).
 
 ## [1.3.0] - 2017-11-19
 ### Added
