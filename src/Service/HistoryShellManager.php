@@ -45,6 +45,13 @@ class HistoryShellManager implements HistoryShellManagerInterface
     private $userInput;
 
     /**
+     * The last input the user entered.
+     *
+     * @var string
+     */
+    private $lastInput;
+
+    /**
      * The current cursor position.
      *
      * @var int
@@ -192,12 +199,21 @@ class HistoryShellManager implements HistoryShellManagerInterface
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function onUpArrowPressed()
     {
         if ($this->countUpPressed == 0) {
+            // Save the last user input.
+            $this->lastInput = $this->userInput;
+
             $command = $this->history->getLastCommand();
             $this->countUpPressed++;
         } elseif ($this->historyEndReached) {
+            // Save the last user input.
+            $this->lastInput = $this->userInput;
+
             $command = $this->history->getCurrentCommand();
             $this->historyEndReached = false;
         } else {
@@ -219,6 +235,9 @@ class HistoryShellManager implements HistoryShellManagerInterface
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function onDownArrowPressed()
     {
         if ($command = $this->history->getNextCommand()) {
@@ -228,8 +247,8 @@ class HistoryShellManager implements HistoryShellManagerInterface
             // Set flag that the history end has not reached yet.
             $this->historyEndReached = false;
         } else {
-            $this->userInput = '';
-            $this->cursorPosition = 0;
+            // Restore the last user input.
+            $this->restoreLastUserInput();
 
             // Set the array cursor to the last element.
             $commands = $this->getHistory()->getCommands();
@@ -339,6 +358,15 @@ class HistoryShellManager implements HistoryShellManagerInterface
     }
 
     /**
+     * Restores the last user input.
+     */
+    private function restoreLastUserInput()
+    {
+        $this->userInput = $this->lastInput;
+        $this->cursorPosition = mb_strlen($this->userInput);
+    }
+
+    /**
      * The prompt.
      *
      * @param string $prompt The prompt.
@@ -349,12 +377,26 @@ class HistoryShellManager implements HistoryShellManagerInterface
     }
 
     /**
-     * Returns the shell history.
-     *
-     * @return ShellHistoryInterface
+     * {@inheritdoc}
      */
     public function getHistory()
     {
         return $this->history;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUserInput(string $userInput)
+    {
+        $this->userInput = $userInput;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserInput()
+    {
+        return $this->userInput;
     }
 }

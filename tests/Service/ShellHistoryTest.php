@@ -20,11 +20,11 @@ use org\bovigo\vfs\vfsStreamDirectory;
 class ShellHistoryTest extends TestCase
 {
     /**
-     * The shell history.
+     * The shell history to test.
      *
      * @var ShellHistoryInterface
      */
-    private $subjectUnderTest;
+    private $shellHistory;
 
     /**
      * The virtual file system.
@@ -38,7 +38,7 @@ class ShellHistoryTest extends TestCase
      */
     protected function setUp()
     {
-        $this->subjectUnderTest = new ShellHistory();
+        $this->shellHistory = new ShellHistory();
 
         // Initialize the virtual file system.
         $this->vfsRoot = vfsStream::setup('para');
@@ -46,11 +46,11 @@ class ShellHistoryTest extends TestCase
 
     public function testSetCommands()
     {
-        $ret = $this->subjectUnderTest->setCommands($this->getShellCommands());
+        $ret = $this->shellHistory->setCommands($this->getShellCommands());
 
         $this->assertNull($ret, 'Asserting that the setCommands() method returns null.');
 
-        return clone $this->subjectUnderTest;
+        return clone $this->shellHistory;
     }
 
     /**
@@ -84,9 +84,9 @@ class ShellHistoryTest extends TestCase
 
     public function testAddCommand()
     {
-        $this->subjectUnderTest->addCommand('testcommand');
+        $this->shellHistory->addCommand('testcommand');
 
-        $commands = $this->subjectUnderTest->getCommands();
+        $commands = $this->shellHistory->getCommands();
 
         $this->assertTrue(
             in_array('testcommand', $commands),
@@ -98,18 +98,18 @@ class ShellHistoryTest extends TestCase
     {
         $this->assertEquals(
             '',
-            $this->subjectUnderTest->getLastCommand(),
+            $this->shellHistory->getLastCommand(),
             'Expected that the last command is empty.'
         );
 
         $lastCommand = 'The last command';
 
-        $this->subjectUnderTest->addCommand('The first command');
-        $this->subjectUnderTest->addCommand('The second command');
-        $this->subjectUnderTest->addCommand('The third command');
-        $this->subjectUnderTest->addCommand($lastCommand);
+        $this->shellHistory->addCommand('The first command');
+        $this->shellHistory->addCommand('The second command');
+        $this->shellHistory->addCommand('The third command');
+        $this->shellHistory->addCommand($lastCommand);
 
-        $command = $this->subjectUnderTest->getLastCommand();
+        $command = $this->shellHistory->getLastCommand();
 
         $this->assertEquals(
             $lastCommand,
@@ -122,16 +122,16 @@ class ShellHistoryTest extends TestCase
     {
         $this->assertEquals(
             '',
-            $this->subjectUnderTest->getCurrentCommand(),
+            $this->shellHistory->getCurrentCommand(),
             'Expected that the current command is empty.'
         );
 
-        $this->subjectUnderTest->addCommand('The first command');
-        $this->subjectUnderTest->addCommand('The second command');
-        $this->subjectUnderTest->addCommand('The third command');
-        $this->subjectUnderTest->addCommand('The fourth command');
+        $this->shellHistory->addCommand('The first command');
+        $this->shellHistory->addCommand('The second command');
+        $this->shellHistory->addCommand('The third command');
+        $this->shellHistory->addCommand('The fourth command');
 
-        $command = $this->subjectUnderTest->getCurrentCommand();
+        $command = $this->shellHistory->getCurrentCommand();
 
         $this->assertEquals(
             'The first command',
@@ -144,36 +144,36 @@ class ShellHistoryTest extends TestCase
     {
         $this->assertEquals(
             '',
-            $this->subjectUnderTest->getNextCommand(),
+            $this->shellHistory->getNextCommand(),
             'Expected that the next command is empty.'
         );
 
-        $this->subjectUnderTest->addCommand('The first command');
-        $this->subjectUnderTest->addCommand('The second command');
-        $this->subjectUnderTest->addCommand('The third command');
-        $this->subjectUnderTest->addCommand('The fourth command');
+        $this->shellHistory->addCommand('The first command');
+        $this->shellHistory->addCommand('The second command');
+        $this->shellHistory->addCommand('The third command');
+        $this->shellHistory->addCommand('The fourth command');
 
         $this->assertEquals(
             'The second command',
-            $this->subjectUnderTest->getNextCommand(),
+            $this->shellHistory->getNextCommand(),
             'Expected that the next command is the second command.'
         );
 
         $this->assertEquals(
             'The third command',
-            $this->subjectUnderTest->getNextCommand(),
+            $this->shellHistory->getNextCommand(),
             'Expected that the next command is the third command.'
         );
 
         $this->assertEquals(
             'The fourth command',
-            $this->subjectUnderTest->getNextCommand(),
+            $this->shellHistory->getNextCommand(),
             'Expected that the next command is the fourth command.'
         );
 
         $this->assertEquals(
             '',
-            $this->subjectUnderTest->getNextCommand(),
+            $this->shellHistory->getNextCommand(),
             'Expected that the next command is empty because it does not exist.'
         );
     }
@@ -182,41 +182,41 @@ class ShellHistoryTest extends TestCase
     {
         $this->assertEquals(
             '',
-            $this->subjectUnderTest->getPreviousCommand(),
+            $this->shellHistory->getPreviousCommand(),
             'Expected that the previous command is empty.'
         );
 
-        $this->subjectUnderTest->addCommand('The first command');
-        $this->subjectUnderTest->addCommand('The second command');
-        $this->subjectUnderTest->addCommand('The third command');
-        $this->subjectUnderTest->addCommand('The fourth command');
+        $this->shellHistory->addCommand('The first command');
+        $this->shellHistory->addCommand('The second command');
+        $this->shellHistory->addCommand('The third command');
+        $this->shellHistory->addCommand('The fourth command');
 
         // Make sure the cursor is at the last element.
-        $commands = $this->subjectUnderTest->getCommands();
+        $commands = $this->shellHistory->getCommands();
         end($commands);
-        $this->subjectUnderTest->setCommands($commands);
+        $this->shellHistory->setCommands($commands);
 
         $this->assertEquals(
             'The third command',
-            $this->subjectUnderTest->getPreviousCommand(),
+            $this->shellHistory->getPreviousCommand(),
             'Expected that the previous command is the third command.'
         );
 
         $this->assertEquals(
             'The second command',
-            $this->subjectUnderTest->getPreviousCommand(),
+            $this->shellHistory->getPreviousCommand(),
             'Expected that the previous command is the second command.'
         );
 
         $this->assertEquals(
             'The first command',
-            $this->subjectUnderTest->getPreviousCommand(),
+            $this->shellHistory->getPreviousCommand(),
             'Expected that the previous command is the first command.'
         );
 
         $this->assertEquals(
             '',
-            $this->subjectUnderTest->getPreviousCommand(),
+            $this->shellHistory->getPreviousCommand(),
             'Expected that the previous command is empty because it does not exist.'
         );
     }
@@ -251,15 +251,15 @@ class ShellHistoryTest extends TestCase
         $this->saveTestHistory();
 
         // Reset the history commands.
-        $this->subjectUnderTest->setCommands([]);
+        $this->shellHistory->setCommands([]);
 
         // Read the commands from the history file.
-        $this->subjectUnderTest->loadHistory(vfsStream::url('para/.para_history'));
+        $this->shellHistory->loadHistory(vfsStream::url('para/.para_history'));
 
         // Check if the commands are loaded properly.
         $this->assertEquals(
             ['ls -la', 'pwd', 'echo "This is a test"', 'git status'],
-            $this->subjectUnderTest->getCommands(),
+            $this->shellHistory->getCommands(),
             'Expected that the shell commands have been loaded.'
         );
     }
@@ -270,13 +270,13 @@ class ShellHistoryTest extends TestCase
     private function saveTestHistory()
     {
         // Add commands to the history.
-        $this->subjectUnderTest->addCommand('ls -la');
-        $this->subjectUnderTest->addCommand('pwd');
-        $this->subjectUnderTest->addCommand('echo "This is a test"');
-        $this->subjectUnderTest->addCommand('git status');
+        $this->shellHistory->addCommand('ls -la');
+        $this->shellHistory->addCommand('pwd');
+        $this->shellHistory->addCommand('echo "This is a test"');
+        $this->shellHistory->addCommand('git status');
 
         // Save the command history to a file.
-        $this->subjectUnderTest->saveHistory(vfsStream::url('para/.para_history'));
+        $this->shellHistory->saveHistory(vfsStream::url('para/.para_history'));
     }
 
     private function getShellCommands()
