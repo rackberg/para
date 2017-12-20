@@ -86,7 +86,7 @@ class SyncCommand extends Command
             )
             ->addArgument(
                 'target_project',
-                InputArgument::IS_ARRAY,
+                InputArgument::IS_ARRAY | InputArgument::REQUIRED,
                 'One or more project names to sync the file with.'
             )
         ;
