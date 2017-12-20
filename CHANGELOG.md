@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added the command `sync` to sync single files See [PR #17](https://github.com/rackberg/para/pull/17)
 ### Changed
 - Improved asynchronous command execution algorithm.
 - Improved project name coloring (supports up to 256 colors now).
