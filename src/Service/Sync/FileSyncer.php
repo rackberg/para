@@ -6,7 +6,6 @@
 
 namespace lrackwitz\Para\Service\Sync;
 
-use SebastianBergmann\Diff\Differ;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
