@@ -20,7 +20,7 @@ class OutputBuffer extends ConsoleOutput implements BufferedOutputInterface
 
     public function __construct(OutputInterface $output)
     {
-        parent::__construct($output->getVerbosity(), $output->isDecorated(),)
+        parent::__construct($output->getVerbosity(), $output->isDecorated());
     }
 
     /**
