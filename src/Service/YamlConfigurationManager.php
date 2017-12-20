@@ -298,7 +298,13 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      */
     public function readProject($projectName)
     {
-        // TODO: Implement readProject() method.
+        $groupName = $this->existsProject($projectName);
+        if ($groupName) {
+            $group = $this->readGroup($groupName);
+            return $group[$projectName];
+        }
+
+        return null;
     }
 
     /**
