@@ -11,6 +11,9 @@ can change anytime you do a `para self-update`.
 
 * Using curl: `curl -L https://raw.githubusercontent.com/lrackwitz/para/master/tools/install.sh | sh`
 
+# New!
+Syncing single files with `para` using `para sync`.
+
 # How to use para as shell
 To use `para` as shell just do the following:
 
