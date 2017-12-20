@@ -41,6 +41,9 @@ services:
     yaml.parser:
         class: Symfony\Component\Yaml\Parser
 
+    filesystem:
+        class: Symfony\Component\Filesystem\Filesystem
+
     para.yaml.configuration_manager:
         class: lrackwitz\Para\Service\YamlConfigurationManager
         arguments:
@@ -93,6 +96,9 @@ services:
         class: lrackwitz\Para\Service\Strategy\DisplayStrategyFactory
         arguments: ['@para.process_factory', '@event_dispatcher']
 
+    para.sync.file_syncer:
+        class: lrackwitz\Para\Service\Sync\FileSyncer
+
     para.application:
         class: lrackwitz\Para\ParaApplication
         calls:
@@ -106,6 +112,7 @@ services:
             - [add, ['@para.command.show_config']]
             - [add, ['@para.command.open_shell']]
             - [add, ['@para.command.self_update']]
+            - [add, ['@para.command.sync']]
 
     para.command.execute:
         class: lrackwitz\Para\Command\ExecuteCommand
@@ -192,3 +199,10 @@ services:
             - '%para.tools_path%'
         tags:
             - { name: console.command }
+
+    para.command.sync:
+        class: lrackwitz\Para\Command\SyncCommand
+        arguments:
+            - '@para.sync.file_syncer'
+            - '@para.yaml.configuration_manager'
+            - '@filesystem'
