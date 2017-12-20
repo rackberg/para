@@ -165,9 +165,15 @@ class SyncCommand extends Command
     }
 
     /**
+     * Checks if the input is valid.
+     *
      * @param \Symfony\Component\Console\Input\InputInterface $input
+     *   The input by the user.
      * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *   The output.
+     *
      * @return bool
+     *   Returns true if valid, otherwise false.
      */
     private function isInputValid(InputInterface $input, OutputInterface $output)
     {
