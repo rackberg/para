@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\File\File;
 class SyncCommand extends Command
 {
     /**
-     * The service used to sync files.
+     * The git file syncer.
      *
      * @var \lrackwitz\Para\Service\Sync\FileSyncerInterface
      */
@@ -47,7 +47,7 @@ class SyncCommand extends Command
      * SyncCommand constructor.
      *
      * @param \lrackwitz\Para\Service\Sync\FileSyncerInterface $fileSyncer
-     *   The service used to sync files.
+     *   The git file syncer.
      * @param \lrackwitz\Para\Service\ConfigurationManagerInterface $configurationManager
      *   The configuration manager.
      * @param \Symfony\Component\Filesystem\Filesystem $fileSystem
@@ -129,13 +129,19 @@ class SyncCommand extends Command
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *   The output.
      */
-    private function beginSync(string $projectName, string $sourceProjectName, string $file, OutputInterface $output)
-    {
+    private function beginSync(
+        string $projectName,
+        string $sourceProjectName,
+        string $file,
+        OutputInterface $output
+    ) {
         // Get the path configured for the source project.
         $sourceProjectPath = $this->configManager->readProject($sourceProjectName);
+        $this->fileSyncer->setSourceGitRepository($sourceProjectPath);
 
         // Get the path configured for the project to sync.
         $projectPath = $this->configManager->readProject($projectName);
+        $this->fileSyncer->setTargetGitRepository($projectPath);
 
         // Extract the filename from the path.
         $fileName = str_replace($sourceProjectPath, '', $file);
