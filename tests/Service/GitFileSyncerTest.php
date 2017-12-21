@@ -18,7 +18,7 @@ use Symfony\Component\Process\Process;
  *
  * @package lrackwitz\Para\Tests\Service
  */
-class DefaultFileSyncerTest extends TestCase
+class GitFileSyncerTest extends TestCase
 {
     const TESTS_DIRECTORY = '/tmp/para_tests';
 
