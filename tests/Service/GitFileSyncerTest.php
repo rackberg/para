@@ -1,22 +1,24 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Tests\Service\FileSyncerTest.php.
+ * Contains lrackwitz\Para\Tests\Service\GitFileSyncerTest.php.
  */
 
 namespace lrackwitz\Para\Tests\Service;
 
-use lrackwitz\Para\Service\Sync\FileSyncer;
+use lrackwitz\Para\Service\Sync\DefaultFileSyncer;
+use lrackwitz\Para\Service\Sync\GitFileSyncer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Process\Process;
 
 /**
- * Class FileSyncerTest.
+ * Class GitFileSyncerTest.
  *
  * @package lrackwitz\Para\Tests\Service
  */
-class FileSyncerTest extends TestCase
+class DefaultFileSyncerTest extends TestCase
 {
     const TESTS_DIRECTORY = '/tmp/para_tests';
 
@@ -32,7 +34,7 @@ class FileSyncerTest extends TestCase
      */
     protected function setUp()
     {
-        $this->fileSyncer = new FileSyncer();
+        $this->fileSyncer = new GitFileSyncer();
 
         $this->createTestDirectory();
     }
@@ -42,11 +44,15 @@ class FileSyncerTest extends TestCase
      *
      * @dataProvider dataProviderSync
      */
-    public function testSync($sourceFile, $targetFile)
+    public function testSync($sourceFile, $sourceContent, $targetFile)
     {
+        file_put_contents($sourceFile, $sourceContent);
+
         $sourceFile = new File($sourceFile, false);
         $targetFile = new File($targetFile, false);
 
+        $this->fileSyncer->setSourceGitRepository(self::TESTS_DIRECTORY . '/project_1');
+        $this->fileSyncer->setTargetGitRepository(self::TESTS_DIRECTORY . '/project_2');
         $this->fileSyncer->sync($sourceFile, $targetFile);
 
         $this->assertEquals(
@@ -67,11 +73,8 @@ class FileSyncerTest extends TestCase
         return [
             'readme.md' => [
                 'sourceFile' => self::TESTS_DIRECTORY . '/project_1/readme.md',
+                'sourceContent' => 'this is the readme.md file',
                 'targetFile' => self::TESTS_DIRECTORY . '/project_2/readme.md',
-            ],
-            'create config.yml' => [
-                'sourceFile' => self::TESTS_DIRECTORY . '/project_1/app/config/config.yml',
-                'targetFile' => self::TESTS_DIRECTORY . '/project_2/app/config/config.yml',
             ],
         ];
     }
@@ -89,20 +92,25 @@ class FileSyncerTest extends TestCase
             self::TESTS_DIRECTORY,
             self::TESTS_DIRECTORY . '/project_1/app/config',
             self::TESTS_DIRECTORY . '/project_2/app/config',
-            self::TESTS_DIRECTORY . '/project_3'
         ]);
+
+        $process = new Process('git init', self::TESTS_DIRECTORY . '/project_1');
+        $process->run();
+        $process = new Process('git init', self::TESTS_DIRECTORY . '/project_2');
+        $process->run();
 
         // Files for project_1
         $fs->touch(self::TESTS_DIRECTORY . '/project_1/readme.md');
         $fs->appendToFile(self::TESTS_DIRECTORY . '/project_1/readme.md', 'Some text content');
-        $fs->touch(self::TESTS_DIRECTORY . '/project_1/app/config/config.yml');
-        $fs->appendToFile(self::TESTS_DIRECTORY . '/project_1/app/config/config.yml', 'parameters:' . "\n\t" . 'key: "value"');
-        $fs->touch(self::TESTS_DIRECTORY . '/project_1/app/config/config.dev.yml');
-        $fs->appendToFile(self::TESTS_DIRECTORY . '/project_1/app/config/config.dev.yml', 'some text content');
 
         // Files for project_2
         $fs->touch(self::TESTS_DIRECTORY . '/project_2/readme.md');
-        $fs->appendToFile(self::TESTS_DIRECTORY . '/project_2/readme.md', 'Some content');
+        $fs->appendToFile(self::TESTS_DIRECTORY . '/project_2/readme.md', 'Some text content');
+
+        $process = new Process('git add . && git commit -m "test"', self::TESTS_DIRECTORY . '/project_1');
+        $process->run();
+        $process = new Process('git add . && git commit -m "test"', self::TESTS_DIRECTORY . '/project_2');
+        $process->run();
     }
 
     /**

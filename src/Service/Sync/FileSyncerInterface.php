@@ -22,4 +22,18 @@ interface FileSyncerInterface
      *   True if the sync has been processed successfully, otherwise false.
      */
     public function sync(File $sourceFile, File $targetFile): bool;
+
+    /**
+     * Sets the git repository of the source file.
+     *
+     * @param string $gitRepository
+     */
+    public function setSourceGitRepository(string $gitRepository);
+
+    /**
+     * Sets the git repository of the target file.
+     *
+     * @param string $gitRepository
+     */
+    public function setTargetGitRepository(string $gitRepository);
 }

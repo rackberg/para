@@ -96,8 +96,11 @@ services:
         class: lrackwitz\Para\Service\Strategy\DisplayStrategyFactory
         arguments: ['@para.process_factory', '@event_dispatcher']
 
-    para.sync.file_syncer:
-        class: lrackwitz\Para\Service\Sync\FileSyncer
+    para.sync.default_file_syncer:
+        class: lrackwitz\Para\Service\Sync\DefaultFileSyncer
+
+    para.sync.git_file_syncer:
+        class: lrackwitz\Para\Service\Sync\GitFileSyncer
 
     para.application:
         class: lrackwitz\Para\ParaApplication
@@ -203,6 +206,6 @@ services:
     para.command.sync:
         class: lrackwitz\Para\Command\SyncCommand
         arguments:
-            - '@para.sync.file_syncer'
+            - '@para.sync.git_file_syncer'
             - '@para.yaml.configuration_manager'
             - '@filesystem'

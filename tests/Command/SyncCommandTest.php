@@ -7,7 +7,8 @@
 namespace lrackwitz\Para\Tests\Command;
 
 use lrackwitz\Para\Command\SyncCommand;
-use lrackwitz\Para\Service\Sync\FileSyncer;
+use lrackwitz\Para\Service\Sync\DefaultFileSyncer;
+use lrackwitz\Para\Service\Sync\GitFileSyncer;
 use lrackwitz\Para\Service\YamlConfigurationManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -30,11 +31,11 @@ class SyncCommandTest extends TestCase
     private $application;
 
     /**
-     * The file syncer.
+     * The git file syncer.
      *
      * @var \lrackwitz\Para\Service\Sync\FileSyncerInterface
      */
-    private $fileSyncer;
+    private $gitFileSyncer;
 
     /**
      * The config manager.
@@ -55,13 +56,13 @@ class SyncCommandTest extends TestCase
      */
     protected function setUp()
     {
-        $this->fileSyncer = $this->prophesize(FileSyncer::class);
+        $this->gitFileSyncer = $this->prophesize(GitFileSyncer::class);
         $this->configManager = $this->prophesize(YamlConfigurationManager::class);
         $this->fileSystem = $this->prophesize(Filesystem::class);
 
         $this->application = new Application();
         $this->application->add(new SyncCommand(
-            $this->fileSyncer->reveal(),
+            $this->gitFileSyncer->reveal(),
             $this->configManager->reveal(),
             $this->fileSystem->reveal()
         ));
@@ -84,13 +85,31 @@ class SyncCommandTest extends TestCase
             $parameters['source_project'],
             $parameters['target_project']
         );
-        $this->configManager->readProject(Argument::any())->shouldBeCalled();
+        $this->configManager
+            ->readProject($parameters['source_project'])
+            ->willReturn('path/to/source/project');
 
-        $this->fileSyncer
-            ->sync(Argument::any(), Argument::any(), Argument::any())
-            ->willReturn(true);
+        $this->configManager
+            ->readProject($parameters['target_project'][0])
+            ->willReturn('path/to/target/project1');
+
+        $this->configManager
+            ->readProject($parameters['target_project'][1])
+            ->willReturn('path/to/target/project2');
 
         $this->fileSystem->exists(Argument::any())->willReturn(true);
+
+        $this->gitFileSyncer
+            ->setSourceGitRepository(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $this->gitFileSyncer
+            ->setTargetGitRepository(Argument::type('string'))
+            ->shouldBeCalledTimes(2);
+
+        $this->gitFileSyncer
+            ->sync(Argument::any(), Argument::any())
+            ->willReturn(true);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -170,6 +189,9 @@ class SyncCommandTest extends TestCase
         );
     }
 
+    /**
+     * Tests that an error message will be shown when the target project is invalid.
+     */
     public function testExecuteInvalidTargetProject()
     {
         $command = $this->application->find('sync');
