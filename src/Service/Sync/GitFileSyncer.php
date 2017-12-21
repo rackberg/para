@@ -101,7 +101,7 @@ class GitFileSyncer implements FileSyncerInterface
         // 3. Stash the current git working directory (backup).
         $this->runCommand(
             'git stash',
-            true,
+            false,
             $this->targetGitRepository
         );
 
