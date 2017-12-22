@@ -41,6 +41,15 @@ class GitFileSyncer implements FileSyncerInterface
      */
     public function sync(File $sourceFile, File $targetFile): bool
     {
+        // Check if we only need to copy the file to the target directory.
+        if (!file_exists($targetFile)) {
+            // Copy the source file to the target directory.
+            $fs = new Filesystem();
+            $fs->copy($sourceFile, $targetFile, true);
+            return true;
+        }
+
+        // Execute the file sync.
         $patchFile = $this->createPatch($sourceFile);
         if ($this->hasContent($patchFile)) {
             $this->applyPatch($patchFile, $sourceFile, $targetFile);
