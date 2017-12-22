@@ -7,7 +7,6 @@
 namespace lrackwitz\Para\Tests\Command;
 
 use lrackwitz\Para\Command\SyncCommand;
-use lrackwitz\Para\Service\Sync\DefaultFileSyncer;
 use lrackwitz\Para\Service\Sync\GitFileSyncer;
 use lrackwitz\Para\Service\YamlConfigurationManager;
 use PHPUnit\Framework\TestCase;
