@@ -82,7 +82,8 @@ class SyncCommand extends Command
             ->addArgument(
                 'file',
                 InputArgument::REQUIRED,
-                'The path to the file that needs to be synced with other projects.'
+                'The path relative to the source projects path ' .
+                           'for the file that needs to be synced within other projects.'
             )
             ->addArgument(
                 'target_project',
@@ -136,21 +137,26 @@ class SyncCommand extends Command
         OutputInterface $output
     ) {
         // Get the path configured for the source project.
-        $sourceProjectPath = $this->configManager->readProject($sourceProjectName);
+        $sourceProjectPath = $this->getProjectPath($sourceProjectName);
         $this->fileSyncer->setSourceGitRepository($sourceProjectPath);
 
         // Get the path configured for the project to sync.
-        $projectPath = $this->configManager->readProject($projectName);
+        $projectPath = $this->getProjectPath($projectName);
         $this->fileSyncer->setTargetGitRepository($projectPath);
 
-        // Extract the filename from the path.
-        $fileName = str_replace($sourceProjectPath, '', $file);
+        $filePath = $sourceProjectPath{strlen($sourceProjectPath) - 1} != '/'
+            ? $sourceProjectPath . '/' . $file
+            : $sourceProjectPath . $file;
+
+        $targetFilePath = $projectPath{strlen($projectPath) - 1} != '/'
+            ? $projectPath . '/' . $file
+            : $projectPath . $file;
 
         // Start the sync process.
         try {
             if (!$this->fileSyncer->sync(
-                new File($file, false),
-                new File($projectPath.$fileName, false)
+                new File($filePath, false),
+                new File($targetFilePath, false)
             )) {
                 $output->writeln(
                     '<error>Failed to sync the file with project "'.$projectName.'"</error>',
@@ -159,7 +165,7 @@ class SyncCommand extends Command
             } else {
                 $syncNote = sprintf(
                     '<info>Synced file "%s" of project "%s" to project "%s"</info>',
-                    substr($fileName, 1),
+                    substr($file, 1),
                     $sourceProjectName,
                     $projectName
                 );
@@ -189,8 +195,14 @@ class SyncCommand extends Command
             return false;
         }
 
+        // Get the source project path.
+        $path = $this->getProjectPath($input->getArgument('source_project'));
+        if ($path{strlen($path) - 1} != '/') {
+            $path .= '/';
+        }
+
         // Check if the file to sync exists.
-        if (!$this->fileSystem->exists($input->getArgument('file'))) {
+        if (!$this->fileSystem->exists($path . $input->getArgument('file'))) {
             $output->writeln('<error>The file you want to sync does not exist!</error>', 1);
             return false;
         }
@@ -205,4 +217,19 @@ class SyncCommand extends Command
 
         return true;
     }
+
+    /**
+     * Returns the path of the project.
+     *
+     * @param string $projectName
+     *   The name of the project.
+     *
+     * @return string
+     *   The path of the project.
+     */
+    private function getProjectPath(string $projectName): string
+    {
+        return $this->configManager->readProject($projectName);
+    }
+
 }

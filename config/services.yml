@@ -96,9 +96,6 @@ services:
         class: lrackwitz\Para\Service\Strategy\DisplayStrategyFactory
         arguments: ['@para.process_factory', '@event_dispatcher']
 
-    para.sync.default_file_syncer:
-        class: lrackwitz\Para\Service\Sync\DefaultFileSyncer
-
     para.sync.git_file_syncer:
         class: lrackwitz\Para\Service\Sync\GitFileSyncer
 
