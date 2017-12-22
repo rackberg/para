@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-para --version 2>&1 > /dev/null
-if [ $? -eq 0 ]; then
+type para > /dev/null 2>&1
+if [ "$?" == "0" ]; then
     echo "\033[0;34mPara is already installed.\033[0m"
     exit
 fi
@@ -25,6 +25,17 @@ if [ $GIT_IS_AVAILABLE -eq 0 ]; then
         echo "git is not installed"
         exit
     }
+
+    cd ~/.para 2>&1 > /dev/null
+
+    # Get new tags from the remote
+    git fetch --tags --quiet
+
+    # Get the latest tag.
+    latestTag=$(git describe --tags `git rev-list --tags  --max-count=1`)
+
+    # Checkout the latest tag
+    git checkout $latestTag --quiet
 fi
 
 echo "\033[0;34mInstalling dependencies...\033[0m"
