@@ -231,5 +231,4 @@ class SyncCommand extends Command
     {
         return $this->configManager->readProject($projectName);
     }
-
 }
