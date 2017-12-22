@@ -7,6 +7,9 @@
 namespace lrackwitz\Para\Service\Sync;
 
 use Exception;
+use lrackwitz\Para\Event\ApplyPatchEvent;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -37,23 +40,57 @@ class GitFileSyncer implements FileSyncerInterface
     private $targetGitRepository;
 
     /**
+     * The event dispatcher.
+     *
+     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
+     * GitFileSyncer constructor.
+     *
+     * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
+     *   The event dispatcher.
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->dispatcher = $eventDispatcher;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function sync(File $sourceFile, File $targetFile): bool
     {
+        $output = new ConsoleOutput();
+
         // Check if we only need to copy the file to the target directory.
         if (!file_exists($targetFile)) {
             // Copy the source file to the target directory.
             $fs = new Filesystem();
             $fs->copy($sourceFile, $targetFile, true);
+
+            $message = sprintf(
+                '<info>Just needed to copy "%s" to "%s".</info>',
+                $sourceFile,
+                $targetFile
+            );
+            $output->writeln($message);
+
             return true;
         }
 
         // Execute the file sync.
         $patchFile = $this->createPatch($sourceFile);
         if ($this->hasContent($patchFile)) {
-            $this->applyPatch($patchFile, $sourceFile, $targetFile);
-
+            if ($this->applyPatch($patchFile, $sourceFile, $targetFile)) {
+                $syncNote = sprintf(
+                    '<info>Synced file changes from "%s" to file "%s"</info>',
+                    $sourceFile,
+                    $targetFile
+                );
+                $output->writeln($syncNote);
+            }
             return true;
         } else {
             throw new Exception('Nothing to sync. The files are identical.');
@@ -95,6 +132,9 @@ class GitFileSyncer implements FileSyncerInterface
      * @param $targetFile
      *   The path of the target file.
      *
+     * @return bool
+     *   Returns true if the patch could be applied, otherwise false.
+     *
      * @throws \Exception
      */
     private function applyPatch($patchFile, $sourceFile, $targetFile)
@@ -115,7 +155,7 @@ class GitFileSyncer implements FileSyncerInterface
         );
 
         // 4. Apply the hunks.
-        $this->applyHunks($hunks);
+        return $this->applyHunks($hunks);
     }
 
     /**
@@ -251,19 +291,31 @@ class GitFileSyncer implements FileSyncerInterface
      *
      * @param array $hunks
      *   The array of hunks.
+     *
+     * @return bool
+     *   Returns true or false.
      */
-    private function applyHunks(array $hunks)
+    private function applyHunks(array $hunks): bool
     {
         // Create a temporary patch file.
         $patchContent = implode('', $hunks);
-        $patchFileHandle = $this->createTemporaryFile($patchContent);
-        $patchFileMetaData = stream_get_meta_data($patchFileHandle);
 
-        $command = sprintf(
-            'git apply %s',
-            $patchFileMetaData['uri']
-        );
-        $this->runCommand($command, false, $this->targetGitRepository);
+        $event = new ApplyPatchEvent($patchContent);
+        $this->dispatcher->dispatch(ApplyPatchEvent::NAME, $event);
+
+        if ($event->isApproved()) {
+            $patchFileHandle = $this->createTemporaryFile($patchContent);
+            $patchFileMetaData = stream_get_meta_data($patchFileHandle);
+
+            $command = sprintf(
+                'git apply %s',
+                $patchFileMetaData['uri']
+            );
+            $this->runCommand($command, false, $this->targetGitRepository);
+            return true;
+        }
+
+        return false;
     }
 
     /**

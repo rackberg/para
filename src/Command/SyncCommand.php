@@ -162,14 +162,6 @@ class SyncCommand extends Command
                     '<error>Failed to sync the file with project "'.$projectName.'"</error>',
                     1
                 );
-            } else {
-                $syncNote = sprintf(
-                    '<info>Synced file "%s" of project "%s" to project "%s"</info>',
-                    substr($file, 1),
-                    $sourceProjectName,
-                    $projectName
-                );
-                $output->writeln($syncNote);
             }
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');

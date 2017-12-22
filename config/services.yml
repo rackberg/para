@@ -34,6 +34,7 @@ services:
             - [addSubscriber, ['@para.shell_key_press_event_subscriber']]
             - [addSubscriber, ['@para.add_environment_variable_event_subscriber']]
             - [addSubscriber, ['@para.log_process_output_event_subscriber']]
+            - [addSubscriber, ['@para.approve_patch_apply_event_subscriber']]
 
     yaml.dumper:
         class: Symfony\Component\Yaml\Dumper
@@ -83,6 +84,9 @@ services:
         class: lrackwitz\Para\EventSubscriber\LogProcessOutputEventSubscriber
         arguments: ['%para.log_path%']
 
+    para.approve_patch_apply_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\ApprovePatchApplyEventSubscriber
+
     para.shell_history:
         class: lrackwitz\Para\Service\ShellHistory
 
@@ -98,6 +102,8 @@ services:
 
     para.sync.git_file_syncer:
         class: lrackwitz\Para\Service\Sync\GitFileSyncer
+        arguments:
+            - '@event_dispatcher'
 
     para.application:
         class: lrackwitz\Para\ParaApplication
@@ -122,7 +128,6 @@ services:
             - '@para.yaml.configuration_manager'
         tags:
             - { name: console.command }
-
 
     para.command.add_project:
         class: lrackwitz\Para\Command\AddProjectCommand
