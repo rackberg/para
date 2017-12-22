@@ -205,5 +205,4 @@ class SyncCommand extends Command
 
         return true;
     }
-
 }
