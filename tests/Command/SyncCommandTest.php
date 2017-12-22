@@ -206,6 +206,8 @@ class SyncCommandTest extends TestCase
         $this->configManager->hasProject($parameters['source_project'])->willReturn(true);
         $this->configManager->hasProject($parameters['target_project'][0])->willReturn(false);
 
+        $this->configManager->readProject($parameters['source_project'])->willReturn('path/to/source_project');
+
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
 
@@ -230,5 +232,7 @@ class SyncCommandTest extends TestCase
         foreach ($targetProjects as $targetProject) {
             $this->configManager->hasProject($targetProject)->willReturn(true);
         }
+
+        $this->configManager->readProject(Argument::type('string'))->willReturn('path/to/project');
     }
 }

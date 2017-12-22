@@ -263,7 +263,7 @@ class GitFileSyncer implements FileSyncerInterface
             'git apply %s',
             $patchFileMetaData['uri']
         );
-        $this->runCommand($command, true, $this->targetGitRepository);
+        $this->runCommand($command, false, $this->targetGitRepository);
     }
 
     /**
