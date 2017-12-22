@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.5.0] - 2017-12-23
 ### Added
 - The command `sync` to sync single files. See [PR #17](https://github.com/rackberg/para/pull/17)
+- Added [CONTRIBUTING.md](CONTRIBUTING.md)
 ### Changed
 - Improved the install script to install the latest release instead of the last commit.
+- Updated [README.md](README.md)
 
 ## [1.4.0] - 2017-12-22
 ### Changed

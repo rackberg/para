@@ -1,133 +1,153 @@
-# Commandline Application to execute shell commands in multiple folders parallel at the same time.
+# Para
 
-[![CircleCI](https://circleci.com/gh/rackberg/para.svg?style=shield)](https://circleci.com/gh/rackberg/para)
+A command-line tool for parallel execution of shell commands in multiple directories.
 
-This tool will make your life much easier if you have to do things again and again but in different folders.
+[![CircleCI](https://circleci.com/gh/rackberg/para.svg?style=shield)](https://circleci.com/gh/rackberg/para) 
 
-> Please note that this software is still under heavy development and
-can change anytime you do a `para self-update`.
+## How to use it?
 
-# Installation
+These instructions will show you how to install `para` on your local machine and how to work with it.
 
-* Using curl: `curl -L https://raw.githubusercontent.com/lrackwitz/para/master/tools/install.sh | sh`
+### Prerequisites
 
-# New!
-Syncing single files with `para` using `para sync`.
+In order to install `para` the following software is needed:
+```
+git
+composer
+```
 
-# How to use para as shell
-To use `para` as shell just do the following:
+### Installing
 
-    $ para shell group_name [-x <project1> -x <project2>]
-    
-Para opens itself as an interactive shell and asks for user input.
-All commands you enter will be executed in every project configured in the group `group_name` except for the projects `project1` and `project2`.
-The `-x <project>` parameters are optional.
+To install `para` you can choose one of the following methods.
 
-# How to execute a single shell command
-If you configured your projects like in the `Configuration` section below just type in..
-    
-    $ para execute group_name "pwd"
-    
-Para gets all projects you configured for the group `group_name` and executes the shell command `pwd` for each project.
-The output of the command will be something like this:
+#### Standalone (Recommended)
+This is the easiest way to install `para` on your local machine.<br>
+Just copy the following command-line and paste it into your terminal to run the automatic install script.
+```
+curl -L https://raw.githubusercontent.com/lrackwitz/para/master/tools/install.sh | sh
+```
 
-    project2:       /Users/lrackwitz/projects/project2
-    project3:       /Users/lrackwitz/projects/project3
-    project1:       /Users/lrackwitz/projects/project1
-    project4:       /Users/lrackwitz/projects/project4
+#### As composer package
+This will install `para` into your global composer vendor folder.
+```
+composer global require lrackwitz/para
+```
 
-Please note that `para` does a real time output for all projects that belongs to this group.
+#### Manually
+Follow these instructions if you want to install `para` manually:
+```
+# Clone the repository
+git clone https://github.com/rackberg/para --branch <release-tag> <para-install-directory>
 
-If you do not want that your shell command will be executed in every project of your
-group, just `exclude` the projects you do not want to use:
-    
-    $ para execute group_name "ls -la" -x project1 -x project4
-    
-For each project `para` executed your shell command you can show a log.
+# Change to the install directory of para
+cd <para-install-directory>
 
-    $ para show:log project3
-    
-The output will be something like that:
-    
-    /Users/lrackwitz/projects/project3
-    
-I hope you get the idea. You can do this with every shell command you can imagine.
+# Install the composer managed dependencies
+composer install
 
-eg. If you want to do a `composer install` in multiple configured projects just execute
-    
-    $ para execute group_name "composer install"
-     
-This command will get you a massive output on the console, because it executes the `composer install` command 
-in every project at the same time!
+# Create a symlink
+ln -s <para-install-directory>/bin/para /usr/local/bin/para
+```
 
-Let me show you...
-
-    project1:   Gathering patches for root package.
-    project3:   Gathering patches for root package.
-    project3:   Loading composer repositories with package information
-    project2:   Gathering patches for root package.
-    project1:   Loading composer repositories with package information
-    Installing dependencies (including require-dev) from lock file
-    project3:   Installing dependencies (including require-dev) from lock file
-    project2:   Loading composer repositories with package information
-    project2:   Installing dependencies (including require-dev) from lock file
-    project3:   Package operations: 1 install, 56 updates, 1 removal
-    project2:   Package operations: 1 install, 56 updates, 1 removal
-    project2:   Deleting web/modules/contrib/changed_fields - deleted
-    project3:   Deleting web/modules/contrib/changed_fields - deleted
-    project4:   Gathering patches for root package.
-    project4:   Loading composer repositories with package information
-    project4:   Installing dependencies (including require-dev) from lock file
-    project1:   Package operations: 1 install, 55 updates, 1 removal
-    project1:   Deleting web/modules/contrib/changed_fields - deleted
-    project4:   Package operations: 1 install, 54 updates, 0 removals
-
-The project names will be color coded with a unique color for each project executed.
-
-You can't see it here in the README, but you can see it on your console after downloading `para`.
-
-# Configuration
-
-In order to let `para` do what it can do best you have to add one or more `projects` to it's configuration.
-
-So, let's begin...
-
-## How to add a project?
-Simply execute the add:project command like the following example:
-    
-    $ para add:project project_name /Users/lrackwitz/projects/my_project
-     
- This will register the project called `project_name` as child of the group `default`in the configuration file of para.
- The path to the project has to be absolute.
+If `para` has been installed correctly you should get the installed version by entering the following command:
+```
+para --version
+```
  
- But wait, there is more!
- You can add the project to any group you like.
- 
-    $ para add:project project_name /my/project/path my_awesome_group
-    
- This registers the project called `project_name` as child of the group `my_awesome_group`.
+### Configuring
 
-## How do I remove a project?
-If you want to delete a project that you registered before just type
-    
-    $ para delete:project project_name
-    
-## Where is the configuration stored?
-The configuration file is called `para.yml` and is stored in the `lrackwitz/para/config/` folder.
-The file is human readable and it's okay to edit it by hand if you like.
-But take care to use the correct Yaml Syntax.
+Before you can use `para` you need at least to add the directories you want `para` to manage.
+This can be done by executing the following command:
+```
+para add:project <project_name> <project_path> [<group_name>]
+```
+Arguments:
+* The value of the argument `project_name` should be a unique single word to identify the directory you want to add.
+* The value of the argument `project_path` should be the absolute path of the directory you want to manage.
+* The value of the optional argument `group_name` should be a unique single word to identify a group of projects. The default value is `default`.  
 
-## Show which groups and projects are configured
-To see the configuration just type in the following command
+#### Example
+```
+para add:project project1 /opt/my_first_project my_group
+para add:project project2 /Users/user/second_project my_group
+para add:project project3 /Users/user/third_project my_group
+para add:project project4 /tmp/my_fourth_project
+```
 
-    $ para show:config
+This will result in two groups called `my_group` and `default`.<br>
+The group `my_group` will contain `project1`, `project2` and `project3`.<br>
+The group `default` will contain only `project4`.
 
-Author
-------
-Lars Rosenberg - <larsrosenberg88@gmail.com>
+To see the current configuration enter this command:
+```
+para config
+```
 
-If you do have any questions or need help using `para` don't hesitate to contact me.
+### Executing a command in multiple directories (para projects) at the same time
+The following example shows what you need to do to let para execute a shell command in every project configured for
+a specific group.
 
-License
--------
-`para` is licensed under the GPLv3 License - see the LICENSE file for details.
+Open the para shell for a configured project group.
+```
+para open:shell [options] [--] <group>
+``` 
+
+#### Example
+```
+para open:shell my_group
+```
+
+And execute any shell command you like.
+```
+echo "foo"
+```
+
+After pressing enter the shell will output something like this:
+```
+project1:   foo
+project2:   foo
+project3:   foo
+```
+
+You can continue entering more shell commands or type `exit` to leave the `para shell`.
+
+### Syncing the changes of a file from one `para project` to other `para projects`
+This command works only if the `para projects` you use as arguments are local `git` repositories.
+
+#### Example
+Imagine `project1`, `project2` and `project3` have a `composer.json` file.
+We changed something in the `composer.json` of `project2` and want to sync the changes to `project1` and `project3`.
+```
+para sync project2 composer.json project3, project1
+```
+
+### Showing a log by `para` project
+
+Every command you execute in the interactive `para shell` will be logged.
+Enter the following command to see which commands you've executed and what the output was.
+```
+para show:log <project>
+```
+
+#### Example
+Show the log of `para` project `project2`.
+```
+para show:log project2
+```
+
+## Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduct, and the process for creating issues or submitting pull requests.
+
+## Versioning
+This project uses [SemVer](https://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/rackberg/para/tags).
+
+Have a look at the [CHANGELOG.md](CHANGELOG.md).
+
+## Authors
+* **Lars Rosenberg** - *Initial work* - [Para](https://github.com/rackberg/para)
+
+## Credits
+I want to say thank you to [comm-press GmbH](https://comm-press.de/) for supporting me developing `para`. 
+
+## License
+This project is licensed under the GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details.
