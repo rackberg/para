@@ -8,7 +8,6 @@
 A command-line tool for parallel execution of shell commands in multiple directories.
 
 ## How to use it?
-
 These instructions will show you how to install `para` on your local machine and how to work with it.
 
 ### Prerequisites
