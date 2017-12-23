@@ -1,5 +1,6 @@
 # Para
 
+[![Build Status](https://travis-ci.org/rackberg/para.svg?branch=master)](https://travis-ci.org/rackberg/para)
 [![CircleCI](https://circleci.com/gh/rackberg/para.svg?style=shield)](https://circleci.com/gh/rackberg/para) 
 [![Coverage Status](https://coveralls.io/repos/github/rackberg/para/badge.svg?branch=master)](https://coveralls.io/github/rackberg/para?branch=master)
 [![Dependency Status](https://dependencyci.com/github/rackberg/para/badge)](https://dependencyci.com/github/rackberg/para)
