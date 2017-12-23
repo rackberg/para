@@ -1,8 +1,9 @@
 language: php
 php:
+    - '5.6'
     - '7.0'
     - '7.1'
     - '7.2'
     - hhvm
     - nightly
-script: 'vendor/bin/phpunit -c tests/phpunit.xml'
+script: 'composer install && vendor/bin/phpunit -c tests/phpunit.xml'
