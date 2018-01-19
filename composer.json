@@ -1,6 +1,6 @@
 {
     "name": "lrackwitz/para",
-    "description": "Commandline Application to execute shell commands in multiple folders parallel at the same time.",
+    "description": "A command-line tool for parallel execution of shell commands in multiple directories.",
     "license": "GPLv3",
     "require": {
         "symfony/console": ">=2.9 ^3.4",
@@ -11,8 +11,8 @@
     },
     "authors": [
         {
-            "name": "Lars Rackwitz-Rosenberg",
-            "email": "rackwitz.lars@gmail.com"
+            "name": "Lars Rosenberg",
+            "email": "larsrosenberg88@gmail.com"
         }
     ],
     "autoload": {
