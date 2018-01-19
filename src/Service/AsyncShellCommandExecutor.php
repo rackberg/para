@@ -65,7 +65,11 @@ class AsyncShellCommandExecutor
             $project = new Project();
             $project->setName($name);
             $project->setRootDirectory($path);
-            $project->setColorCode($this->getRandomColorCode());
+
+            // Only choose a random color code, when no color code has been configured.
+            if (!$project->getColorCode()) {
+                $project->setColorCode($this->getRandomColorCode());
+            }
 
             $projects[$name] = $project;
         }
@@ -84,6 +88,9 @@ class AsyncShellCommandExecutor
         do {
             $colorCode = rand(0, 255);
         } while (in_array($colorCode, $this->usedColorCodes));
+
+        // Add the color to the used color code.
+        $this->usedColorCodes[] = $colorCode;
 
         return $colorCode;
     }

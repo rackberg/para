@@ -153,7 +153,16 @@ class GitFileSyncer implements FileSyncerInterface
         );
 
         // 4. Apply the hunks.
-        return $this->applyHunks($hunks);
+        $result = $this->applyHunks($hunks);
+
+        // 5. Re-apply the stashed backup.
+        $this->runCommand(
+            'git stash apply',
+            false,
+            $this->targetGitRepository
+        );
+
+        return $result;
     }
 
     /**
