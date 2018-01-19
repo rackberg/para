@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rackberg/para.svg?branch=master)](https://travis-ci.org/rackberg/para)
 [![Dependency Status](https://dependencyci.com/github/rackberg/para/badge)](https://dependencyci.com/github/rackberg/para)
-[![Current Version](https://img.shields.io/badge/release-1.5.0-0e5487.svg)](https://github.com/rackberg/para/releases)
+[![Current Version](https://img.shields.io/badge/release-1.6.0-0e5487.svg)](https://github.com/rackberg/para/releases)
 
 A command-line tool for parallel execution of shell commands in multiple directories.
 
