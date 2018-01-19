@@ -109,9 +109,12 @@ class YamlConfigurationManagerTest extends TestCase
         vfsStream::newFile('para.yml')->at($this->vfsRoot)->setContent(
             <<< EOT
 default:
-    project_a: projects/project_a
-    project_b: projects/project_b
-    project_c: projects/project_c
+    project_a: 
+        path: projects/project_a
+    project_b:
+        path: projects/project_b
+    project_c:
+        path: projects/project_c
 EOT
         );
     }

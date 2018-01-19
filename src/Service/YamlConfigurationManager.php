@@ -429,12 +429,14 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     public function findProjectByFile(File $file)
     {
         foreach ($this->readGroups() as $groupName => $group) {
-            foreach ($group as $projectName => $projectPath) {
-                if (stristr($file->getPathname(), $projectPath)) {
+            foreach ($group as $projectName => $data) {
+                if (stristr($file->getPathname(), $data['path'])) {
                     $project = new Project();
                     $project->setName($projectName);
-                    $project->setRootDirectory($projectPath);
-                    // TODO: Set the color.
+                    $project->setRootDirectory($data['path']);
+                    if (!empty($data['color'])) {
+                        $project->setColorCode($data['color']);
+                    }
 
                     return $project;
                 }

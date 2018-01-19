@@ -86,15 +86,15 @@ class SyncCommandTest extends TestCase
         );
         $this->configManager
             ->readProject($parameters['source_project'])
-            ->willReturn('path/to/source/project');
+            ->willReturn(['path' => 'path/to/source/project']);
 
         $this->configManager
             ->readProject($parameters['target_project'][0])
-            ->willReturn('path/to/target/project1');
+            ->willReturn(['path' => 'path/to/target/project1']);
 
         $this->configManager
             ->readProject($parameters['target_project'][1])
-            ->willReturn('path/to/target/project2');
+            ->willReturn(['path' => 'path/to/target/project2']);
 
         $this->fileSystem->exists(Argument::any())->willReturn(true);
 
@@ -206,7 +206,7 @@ class SyncCommandTest extends TestCase
         $this->configManager->hasProject($parameters['source_project'])->willReturn(true);
         $this->configManager->hasProject($parameters['target_project'][0])->willReturn(false);
 
-        $this->configManager->readProject($parameters['source_project'])->willReturn('path/to/source_project');
+        $this->configManager->readProject($parameters['source_project'])->willReturn(['path' => 'path/to/source_project']);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -233,6 +233,6 @@ class SyncCommandTest extends TestCase
             $this->configManager->hasProject($targetProject)->willReturn(true);
         }
 
-        $this->configManager->readProject(Argument::type('string'))->willReturn('path/to/project');
+        $this->configManager->readProject(Argument::type('string'))->willReturn(['path' => 'path/to/project']);
     }
 }

@@ -221,6 +221,7 @@ class SyncCommand extends Command
      */
     private function getProjectPath(string $projectName): string
     {
-        return $this->configManager->readProject($projectName);
+        $project = $this->configManager->readProject($projectName);
+        return $project['path'];
     }
 }

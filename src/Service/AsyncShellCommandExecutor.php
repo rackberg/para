@@ -61,13 +61,13 @@ class AsyncShellCommandExecutor
      */
     public function execute($cmd, array $projects, BufferedOutputInterface $output)
     {
-        foreach ($projects as $name => $path) {
+        foreach ($projects as $name => $data) {
             $project = new Project();
             $project->setName($name);
-            $project->setRootDirectory($path);
-
-            // Only choose a random color code, when no color code has been configured.
-            if (!$project->getColorCode()) {
+            $project->setRootDirectory($data['path']);
+            if (!empty($data['color'])) {
+                $project->setColorCode($data['color']);
+            } else {
                 $project->setColorCode($this->getRandomColorCode());
             }
 
