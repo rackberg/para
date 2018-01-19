@@ -1,0 +1,81 @@
+parameters:
+    para.config: '%root_dir%config/para.yml'
+    para.log_path: '%root_dir%logs/'
+    para.tools_path: '%root_dir%tools/'
+    para.history: '%root_dir%config/.para_history'
+
+services:
+    logger.streamhandler:
+        class: Monolog\Handler\RotatingFileHandler
+        arguments: ['%root_dir%logs/para.log', 8]
+        calls:
+            - [setFormatter, ['@monolog.formatter.application_formatter']]
+
+    logger:
+        class: Symfony\Bridge\Monolog\Logger
+        arguments:
+            - 'application'
+        calls:
+            - [pushHandler, ['@logger.streamhandler']]
+            - [pushProcessor, ['@monolog.processor.introspection_processor']]
+
+    monolog.formatter.application_formatter:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] [%%level_name%%] [%%extra.class%%] [%%extra.function%%] %%message%% %%context%%\n"
+
+    monolog.processor.introspection_processor:
+        class: Monolog\Processor\IntrospectionProcessor
+
+    yaml.dumper:
+        class: Symfony\Component\Yaml\Dumper
+
+    yaml.parser:
+        class: Symfony\Component\Yaml\Parser
+
+    filesystem:
+        class: Symfony\Component\Filesystem\Filesystem
+
+    para.yaml.configuration_manager:
+        class: lrackwitz\Para\Service\YamlConfigurationManager
+        arguments:
+            - '@logger'
+            - '@yaml.dumper'
+            - '@yaml.parser'
+            - '%para.config%'
+
+    para.process_factory:
+        class: lrackwitz\Para\Service\ProcessFactory
+
+    para.shell_factory:
+        class: lrackwitz\Para\Service\ShellFactory
+        arguments:
+            - '@logger'
+            - '@para.application'
+            - '@para.process_factory'
+            - '@event_dispatcher'
+            - '@para.history_shell_manager'
+
+    para.async_shell_command_executor:
+        class: lrackwitz\Para\Service\AsyncShellCommandExecutor
+        arguments: ['@para.display_strategy_factory']
+
+    para.shell_history:
+        class: lrackwitz\Para\Service\ShellHistory
+
+    para.history_shell_manager:
+        class: lrackwitz\Para\Service\HistoryShellManager
+        arguments:
+            - '@logger'
+            - '@para.shell_history'
+
+    para.display_strategy_factory:
+        class: lrackwitz\Para\Service\Strategy\DisplayStrategyFactory
+        arguments: ['@para.process_factory', '@event_dispatcher']
+
+    para.sync.git_file_syncer:
+        class: lrackwitz\Para\Service\Sync\GitFileSyncer
+        arguments:
+            - '@event_dispatcher'
+
+

@@ -8,6 +8,9 @@ namespace lrackwitz\Para\Service\Sync;
 
 use Exception;
 use lrackwitz\Para\Event\ApplyPatchEvent;
+use lrackwitz\Para\Event\FinishedCopyEvent;
+use lrackwitz\Para\Event\FinishedSyncEvent;
+use lrackwitz\Para\Event\StartSyncEvent;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -23,7 +26,7 @@ use Symfony\Component\Process\Process;
 class GitFileSyncer implements FileSyncerInterface
 {
 
-    const SPLIT_HUNKS_PATTERN = '~(@@ .*? @@\n)~';
+    const SPLIT_HUNKS_PATTERN = '~^(@@ .*? @@).*$~m';
 
     /**
      * The path to the local cloned git repository of the source file.
@@ -62,34 +65,28 @@ class GitFileSyncer implements FileSyncerInterface
      */
     public function sync(File $sourceFile, File $targetFile): bool
     {
-        $output = new ConsoleOutput();
-
         // Check if we only need to copy the file to the target directory.
         if (!file_exists($targetFile)) {
             // Copy the source file to the target directory.
             $fs = new Filesystem();
             $fs->copy($sourceFile, $targetFile, true);
 
-            $message = sprintf(
-                '<info>Just needed to copy "%s" to "%s".</info>',
-                $sourceFile,
-                $targetFile
-            );
-            $output->writeln($message);
+            $finishedCopyEvent = new FinishedCopyEvent($sourceFile, $targetFile);
+            $this->dispatcher->dispatch(FinishedCopyEvent::NAME, $finishedCopyEvent);
 
             return true;
         }
+
+        $startSyncEvent = new StartSyncEvent($sourceFile, $targetFile);
+        $this->dispatcher->dispatch(StartSyncEvent::NAME, $startSyncEvent);
 
         // Execute the file sync.
         $patchFile = $this->createPatch($sourceFile);
         if ($this->hasContent($patchFile)) {
             if ($this->applyPatch($patchFile, $sourceFile, $targetFile)) {
-                $syncNote = sprintf(
-                    '<info>Synced file changes from "%s" to file "%s"</info>',
-                    $sourceFile,
-                    $targetFile
-                );
-                $output->writeln($syncNote);
+                // Dispatch an event.
+                $finishedSyncEvent = new FinishedSyncEvent($patchFile, $sourceFile, $targetFile);
+                $this->dispatcher->dispatch(FinishedSyncEvent::NAME, $finishedSyncEvent);
             }
             return true;
         } else {
@@ -117,6 +114,7 @@ class GitFileSyncer implements FileSyncerInterface
             $file,
             $metaData['uri']
         );
+
         $this->runCommand($command, false, $this->sourceGitRepository);
 
         return $patchFile;
@@ -239,7 +237,7 @@ class GitFileSyncer implements FileSyncerInterface
     private function detectHunks($patchFileHandle, string $targetFilePath): array
     {
         $command = sprintf(
-            'git diff %s',
+            'git diff --ignore-all-space %s',
             $targetFilePath
         );
         $output = $this->runCommand($command, false, $this->targetGitRepository);
@@ -300,7 +298,7 @@ class GitFileSyncer implements FileSyncerInterface
         // Create a temporary patch file.
         $patchContent = implode('', $hunks);
 
-        $event = new ApplyPatchEvent($patchContent);
+        $event = new ApplyPatchEvent($patchContent, $this->targetGitRepository);
         $this->dispatcher->dispatch(ApplyPatchEvent::NAME, $event);
 
         if ($event->isApproved()) {

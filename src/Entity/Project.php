@@ -11,7 +11,7 @@ namespace lrackwitz\Para\Entity;
  *
  * @package lrackwitz\Para\Entity
  */
-class Project
+class Project implements ProjectInterface
 {
     /**
      * The name of the project.
@@ -35,9 +35,7 @@ class Project
     private $path;
 
     /**
-     * Returns the name.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -45,9 +43,7 @@ class Project
     }
 
     /**
-     * Sets the name.
-     *
-     * @param string $name
+     * {@inheritdoc}
      */
     public function setName(string $name)
     {
@@ -55,9 +51,7 @@ class Project
     }
 
     /**
-     * Returns the color code.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getColorCode()
     {
@@ -65,9 +59,7 @@ class Project
     }
 
     /**
-     * Sets the color code.
-     *
-     * @param int $colorCode
+     * {@inheritdoc}
      */
     public function setColorCode(int $colorCode)
     {
@@ -75,9 +67,7 @@ class Project
     }
 
     /**
-     * Returns the path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -85,9 +75,7 @@ class Project
     }
 
     /**
-     * Sets the path.
-     *
-     * @param string $path
+     * {@inheritdoc}
      */
     public function setRootDirectory(string $path)
     {

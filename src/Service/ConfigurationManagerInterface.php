@@ -6,6 +6,8 @@
 
 namespace lrackwitz\Para\Service;
 
+use Symfony\Component\HttpFoundation\File\File;
+
 interface ConfigurationManagerInterface
 {
     /**
@@ -84,7 +86,7 @@ interface ConfigurationManagerInterface
     /**
      * Reads all groups from the configuration.
      *
-     * @return string[] An array with groups.
+     * @return array An array with groups.
      */
     public function readGroups();
 
@@ -116,4 +118,15 @@ interface ConfigurationManagerInterface
      * @return bool Returns true if existing, otherwise false.
      */
     public function hasProject($projectName);
+
+    /**
+     * Returns the project the file is located at.
+     *
+     * @param \Symfony\Component\HttpFoundation\File\File $file
+     *   The file that is in a project.
+     *
+     * @return \lrackwitz\Para\Entity\ProjectInterface|null
+     *   The found project or null.
+     */
+    public function findProjectByFile(File $file);
 }

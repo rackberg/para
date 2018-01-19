@@ -6,10 +6,12 @@
 
 namespace lrackwitz\Para\Service;
 
+use lrackwitz\Para\Entity\Project;
 use lrackwitz\Para\Exception\GroupNotFoundException;
 use lrackwitz\Para\Exception\ProjectNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser;
@@ -256,11 +258,11 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     /**
      * Reads all groups from the configuration.
      *
-     * @return string[] An array with groups.
+     * @return array An array with groups.
      */
     public function readGroups()
     {
-        // TODO: Implement readGroups() method.
+        return $this->readFile($this->yamlFile);
     }
 
     /**
@@ -336,12 +338,8 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      */
     private function existsGroup($groupName)
     {
-        $yaml = $this->readFile($this->yamlFile);
-
-        return array_key_exists($groupName, $yaml);
+        return array_key_exists($groupName, $this->readGroups());
     }
-
-
 
     /**
      * Reads the yaml file.
@@ -423,5 +421,26 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     public function hasProject($projectName)
     {
         return $this->existsProject($projectName);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findProjectByFile(File $file)
+    {
+        foreach ($this->readGroups() as $groupName => $group) {
+            foreach ($group as $projectName => $projectPath) {
+                if (stristr($file->getPathname(), $projectPath)) {
+                    $project = new Project();
+                    $project->setName($projectName);
+                    $project->setRootDirectory($projectPath);
+                    // TODO: Set the color.
+
+                    return $project;
+                }
+            }
+        }
+
+        return null;
     }
 }

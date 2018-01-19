@@ -25,6 +25,20 @@ class ApplyPatchEvent extends Event
     private $patchContent;
 
     /**
+     * The path to the target file.
+     *
+     * @var string
+     */
+    private $targetPath;
+
+    /**
+     * The project.
+     *
+     * @var \lrackwitz\Para\Entity\ProjectInterface
+     */
+    private $project;
+
+    /**
      * The flag indicating if the patch apply has been approved.
      *
      * @var bool
@@ -36,10 +50,13 @@ class ApplyPatchEvent extends Event
      *
      * @param string $patchContent
      *   The patch content.
+     * @param string $targetPath
+     *   The path to the target file.
      */
-    public function __construct(string $patchContent)
+    public function __construct(string $patchContent, string $targetPath)
     {
         $this->patchContent = $patchContent;
+        $this->targetPath = $targetPath;
     }
 
     /**
@@ -50,6 +67,24 @@ class ApplyPatchEvent extends Event
     public function getPatchContent()
     {
         return $this->patchContent;
+    }
+
+    /**
+     * Returns project.
+     *
+     * @return \lrackwitz\Para\Entity\ProjectInterface
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * @param \lrackwitz\Para\Entity\ProjectInterface $project
+     */
+    public function setProject(\lrackwitz\Para\Entity\ProjectInterface $project)
+    {
+        $this->project = $project;
     }
 
     /**
@@ -68,5 +103,23 @@ class ApplyPatchEvent extends Event
     public function setApproved(bool $approved)
     {
         $this->approved = $approved;
+    }
+
+    /**
+     * Returns targetPath.
+     *
+     * @return string
+     */
+    public function getTargetPath()
+    {
+        return $this->targetPath;
+    }
+
+    /**
+     * @param string $targetPath
+     */
+    public function setTargetPath(string $targetPath)
+    {
+        $this->targetPath = $targetPath;
     }
 }

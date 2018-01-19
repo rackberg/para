@@ -51,7 +51,7 @@ class ApprovePatchApplyEventSubscriber implements EventSubscriberInterface
         if ($helper->ask(new ArgvInput(), $output, $question)) {
             $event->setApproved(true);
         } else {
-            $output->writeln('<info>The user aborted to apply the changes.</info>');
+            $output->writeln('<info>The user <fg=red>aborted to apply</> the changes.</info>' . "\n");
         }
     }
 }

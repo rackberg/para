@@ -1,0 +1,91 @@
+services:
+    para.application:
+        class: lrackwitz\Para\ParaApplication
+        calls:
+            - [add, ['@para.command.execute']]
+            - [add, ['@para.command.add_project']]
+            - [add, ['@para.command.delete_group']]
+            - [add, ['@para.command.delete_project']]
+            - [add, ['@para.command.show_log']]
+            - [add, ['@para.command.show_config']]
+            - [add, ['@para.command.open_shell']]
+            - [add, ['@para.command.self_update']]
+            - [add, ['@para.command.sync']]
+
+    para.command.execute:
+        class: lrackwitz\Para\Command\ExecuteCommand
+        arguments:
+            - '@logger'
+            - '@para.async_shell_command_executor'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+    para.command.add_project:
+        class: lrackwitz\Para\Command\AddProjectCommand
+        arguments:
+            - '@logger'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+    para.command.delete_group:
+        class: lrackwitz\Para\Command\DeleteGroupCommand
+        arguments:
+            - '@logger'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+    para.command.delete_project:
+        class: lrackwitz\Para\Command\DeleteProjectCommand
+        arguments:
+            - '@logger'
+            - '@para.yaml.configuration_manager'
+        tags:
+            - { name: console.command }
+
+    para.command.show_log:
+        class: lrackwitz\Para\Command\ShowLogCommand
+        arguments:
+            - '@logger'
+            - '@para.process_factory'
+            - '@para.yaml.configuration_manager'
+            - '%para.log_path%'
+        tags:
+            - { name: console.command }
+
+    para.command.show_config:
+        class: lrackwitz\Para\Command\ShowConfigCommand
+        arguments:
+            - '@logger'
+            - '@para.process_factory'
+            - '%para.config%'
+        tags:
+            - { name: console.command }
+
+    para.command.open_shell:
+        class: lrackwitz\Para\Command\OpenShellCommand
+        arguments:
+            - '@logger'
+            - '@para.shell_factory'
+            - '@para.yaml.configuration_manager'
+            - '%para.history%'
+        tags:
+            - { name: console.command }
+
+    para.command.self_update:
+        class: lrackwitz\Para\Command\SelfUpdateCommand
+        arguments:
+            - '@logger'
+            - '@para.application'
+            - '%para.tools_path%'
+        tags:
+            - { name: console.command }
+
+    para.command.sync:
+        class: lrackwitz\Para\Command\SyncCommand
+        arguments:
+            - '@para.sync.git_file_syncer'
+            - '@para.yaml.configuration_manager'
+            - '@filesystem'

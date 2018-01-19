@@ -1,0 +1,36 @@
+services:
+    event_dispatcher:
+        class: Symfony\Component\EventDispatcher\EventDispatcher
+        calls:
+            - [addSubscriber, ['@para.shell_command_event_subscriber']]
+            - [addSubscriber, ['@para.shell_key_press_event_subscriber']]
+            - [addSubscriber, ['@para.add_environment_variable_event_subscriber']]
+            - [addSubscriber, ['@para.log_process_output_event_subscriber']]
+            - [addSubscriber, ['@para.find_project_event_subscriber']]
+            - [addSubscriber, ['@para.approve_patch_apply_event_subscriber']]
+            - [addSubscriber, ['@para.sync_event_subscriber']]
+
+    para.shell_command_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\SanitizeShellCommandEventSubscriber
+
+    para.shell_key_press_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\ShellKeyPressEventSubscriber
+        arguments:
+            - '@para.history_shell_manager'
+
+    para.add_environment_variable_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\AddEnvironmentVariableEventSubscriber
+
+    para.log_process_output_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\LogProcessOutputEventSubscriber
+        arguments: ['%para.log_path%']
+
+    para.approve_patch_apply_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\ApprovePatchApplyEventSubscriber
+
+    para.find_project_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\FindProjectSubscriber
+        arguments: ['@para.yaml.configuration_manager']
+
+    para.sync_event_subscriber:
+        class: lrackwitz\Para\EventSubscriber\SyncSubscriber
