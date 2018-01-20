@@ -9,6 +9,7 @@ services:
             - [addSubscriber, ['@para.find_project_event_subscriber']]
             - [addSubscriber, ['@para.approve_patch_apply_event_subscriber']]
             - [addSubscriber, ['@para.sync_event_subscriber']]
+            - [addSubscriber, ['@para.compare_hunks_subscriber']]
 
     para.shell_command_event_subscriber:
         class: lrackwitz\Para\EventSubscriber\SanitizeShellCommandEventSubscriber
@@ -34,3 +35,6 @@ services:
 
     para.sync_event_subscriber:
         class: lrackwitz\Para\EventSubscriber\SyncSubscriber
+
+    para.compare_hunks_subscriber:
+        class: lrackwitz\Para\EventSubscriber\CompareHunksSubscriber

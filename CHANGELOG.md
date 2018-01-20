@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Projects can now have a fixed color configurable in the para.yml. (See [#7](https://github.com/rackberg/para/issues/7))
 - Added a shell script to see all available colors. The script is located under tools/colortable.sh.
+### Changed
+- Improved the file change detection for the sync command.
  
 ## [1.6.0] - 2018-01-19
 ### Added

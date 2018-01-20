@@ -8,10 +8,13 @@ namespace lrackwitz\Para\Service\Sync;
 
 use Exception;
 use lrackwitz\Para\Event\ApplyPatchEvent;
+use lrackwitz\Para\Event\CompareHunksEvent;
 use lrackwitz\Para\Event\FinishedCopyEvent;
 use lrackwitz\Para\Event\FinishedSyncEvent;
+use lrackwitz\Para\Event\HunksNotMatchingEvent;
 use lrackwitz\Para\Event\StartSyncEvent;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
@@ -110,7 +113,7 @@ class GitFileSyncer implements FileSyncerInterface
 
         // Construct the command to run.
         $command = sprintf(
-            'git diff --no-ext-diff %s > %s',
+            'git diff --no-ext-diff --ignore-all-space %s > %s',
             $file,
             $metaData['uri']
         );
@@ -145,22 +148,18 @@ class GitFileSyncer implements FileSyncerInterface
         // 2. Detect the hunks of the changes.
         $hunks = $this->detectHunks($patchFile, $targetFile);
 
-        // 3. Stash the current git working directory (backup).
+        // 3. Undo the copy.
         $this->runCommand(
-            'git stash',
+            sprintf(
+                'git checkout %s',
+                $targetFile->getFilename()
+            ),
             false,
             $this->targetGitRepository
         );
 
         // 4. Apply the hunks.
         $result = $this->applyHunks($hunks);
-
-        // 5. Re-apply the stashed backup.
-        $this->runCommand(
-            'git stash apply',
-            false,
-            $this->targetGitRepository
-        );
 
         return $result;
     }
@@ -279,10 +278,14 @@ class GitFileSyncer implements FileSyncerInterface
             }
 
             for ($i = 1; $i < $maxPatchHunks; $i++) {
+                // Trigger an event to compare the hunks.
+                $event = new CompareHunksEvent($hunk, $patchHunks[$i], $tmpHunks[$key - 1]);
+                $this->dispatcher->dispatch(CompareHunksEvent::NAME, $event);
+
                 // Forget all hunks that do not match.
-                if ($hunk === $patchHunks[$i]) {
-                    // Add the corresponding hunk header to the hunk content.
-                    $hunks[] = $tmpHunks[$key-1] . $hunk;
+                if ($event->isMatching()) {
+                    // Adds the compared hunk.
+                    $hunks[] = $event->getHunkIdentifier() . $event->getHunk();
                 }
             }
         }
@@ -318,7 +321,7 @@ class GitFileSyncer implements FileSyncerInterface
                 'git apply %s',
                 $patchFileMetaData['uri']
             );
-            $this->runCommand($command, false, $this->targetGitRepository);
+            $this->runCommand($command, true, $this->targetGitRepository);
             return true;
         }
 
