@@ -434,8 +434,11 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
                     $project = new Project();
                     $project->setName($projectName);
                     $project->setRootDirectory($data['path']);
-                    if (!empty($data['color'])) {
-                        $project->setColorCode($data['color']);
+                    if (!empty($data['foreground_color'])) {
+                        $project->setForegroundColor($data['foreground_color']);
+                    }
+                    if (!empty($data['background_color'])) {
+                        $project->setBackgroundColor($data['background_color']);
                     }
 
                     return $project;

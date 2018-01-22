@@ -23,18 +23,28 @@ interface ProjectInterface
     public function setName(string $name);
 
     /**
-     * Returns the color code.
+     * Returns foregroundColor.
      *
      * @return int
      */
-    public function getColorCode();
+    public function getForegroundColor();
 
     /**
-     * Sets the color code.
-     *
-     * @param int $colorCode
+     * @param int $foregroundColor
      */
-    public function setColorCode(int $colorCode);
+    public function setForegroundColor(int $foregroundColor);
+
+    /**
+     * Returns backgroundColor.
+     *
+     * @return int
+     */
+    public function getBackgroundColor();
+
+    /**
+     * @param int $backgroundColor
+     */
+    public function setBackgroundColor(int $backgroundColor);
 
     /**
      * Returns the path.

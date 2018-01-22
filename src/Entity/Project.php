@@ -21,11 +21,17 @@ class Project implements ProjectInterface
     private $name;
 
     /**
-     * The color code.
+     * The foreground color.
+     * @var int
+     */
+    private $foregroundColor;
+
+    /**
+     * The background color.
      *
      * @var int
      */
-    private $colorCode;
+    private $backgroundColor;
 
     /**
      * The path.
@@ -51,19 +57,39 @@ class Project implements ProjectInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns foregroundColor.
+     *
+     * @return int
      */
-    public function getColorCode()
+    public function getForegroundColor()
     {
-        return $this->colorCode;
+        return $this->foregroundColor;
     }
 
     /**
-     * {@inheritdoc}
+     * @param int $foregroundColor
      */
-    public function setColorCode(int $colorCode)
+    public function setForegroundColor(int $foregroundColor)
     {
-        $this->colorCode = $colorCode;
+        $this->foregroundColor = $foregroundColor;
+    }
+
+    /**
+     * Returns backgroundColor.
+     *
+     * @return int
+     */
+    public function getBackgroundColor()
+    {
+        return $this->backgroundColor;
+    }
+
+    /**
+     * @param int $backgroundColor
+     */
+    public function setBackgroundColor(int $backgroundColor)
+    {
+        $this->backgroundColor = $backgroundColor;
     }
 
     /**

@@ -65,10 +65,13 @@ class AsyncShellCommandExecutor
             $project = new Project();
             $project->setName($name);
             $project->setRootDirectory($data['path']);
-            if (!empty($data['color'])) {
-                $project->setColorCode($data['color']);
+            if (!empty($data['foreground_color'])) {
+                $project->setForegroundColor($data['foreground_color']);
             } else {
-                $project->setColorCode($this->getRandomColorCode());
+                $project->setForegroundColor($this->getRandomColorCode());
+            }
+            if (!empty($data['background_color'])) {
+                $project->setBackgroundColor($data['background_color']);
             }
 
             $projects[$name] = $project;

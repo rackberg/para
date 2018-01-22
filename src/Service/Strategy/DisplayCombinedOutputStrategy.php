@@ -185,7 +185,7 @@ class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements As
             );
 
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
-                if ($project->getColorCode() <= 0) {
+                if ($project->getForegroundColor() <= 0) {
                     $output->write(
                         sprintf(
                             '%s:' . "\t" . '%s',
@@ -197,12 +197,38 @@ class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements As
                     if ($this->writtenToBuffer) {
                         $output->write("\n");
                     }
+
+                    $projectName = sprintf(
+                        "\033[38;5;%dm%s:\033[0m",
+                        $project->getForegroundColor(),
+                        $project->getName()
+                    );
+
+                    if (!empty($project->getBackgroundColor())) {
+                        $projectName = sprintf(
+                            "\033[38;5;%dm%s:\033[0m",
+                            $project->getBackgroundColor(),
+                            $project->getName()
+                        );
+
+                        $projectOutput = sprintf(
+                            "\t\033[38;5;%dm\033[48;5;%dm%s\033[0m",
+                            $project->getForegroundColor(),
+                            $project->getBackgroundColor(),
+                            $incrementalOutput
+                        );
+                    } else {
+                        $projectOutput = sprintf(
+                            "\t%s",
+                            $incrementalOutput
+                        );
+                    }
+
                     $output->write(
                         sprintf(
-                            "\033[38;5;%dm".'%s:'."\033[0m\t".'%s',
-                            $project->getColorCode(),
-                            $project->getName(),
-                            $incrementalOutput
+                            '%s%s',
+                            $projectName,
+                            $projectOutput
                         )
                     );
                     $this->writtenToBuffer = true;
