@@ -55,10 +55,18 @@ interface ConfigurationManagerInterface
      * @param string $projectName The name of the project.
      * @param string $path The path where to find the project.
      * @param string $groupName (Optional) The name of the group. Defaults to 'default'.
+     * @param string $foregroundColor (Optional) The foreground color.
+     * @param string $backgroundColor (Optional) The background color.
      *
      * @return bool True if the project has been added successfully, otherwise false.
      */
-    public function addProject($projectName, $path, $groupName = 'default');
+    public function addProject(
+        $projectName,
+        $path,
+        $groupName = 'default',
+        $foregroundColor = '',
+        $backgroundColor = ''
+    );
 
     /**
      * Deletes an existing project.

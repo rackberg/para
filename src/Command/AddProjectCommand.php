@@ -11,6 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -74,6 +75,19 @@ class AddProjectCommand extends Command
                 'If this argument is used, the project will be grouped using this unique group name.',
                 'default'
             )
+
+            ->addOption(
+                'foreground_color',
+                'fg',
+                InputOption::VALUE_REQUIRED,
+                'The foreground color of the text output.'
+            )
+            ->addOption(
+                'background_color',
+                'bg',
+                InputOption::VALUE_REQUIRED,
+                'The background color of the text output.'
+            );
         ;
     }
 
@@ -86,7 +100,10 @@ class AddProjectCommand extends Command
         $path = $input->getArgument('project_path');
         $group = $input->getArgument('group_name');
 
-        if (!$this->configManager->addProject($project, $path, $group)) {
+        $foregroundColor = $input->getOption('foreground_color');
+        $backgroundColor = $input->getOption('background_color');
+
+        if (!$this->configManager->addProject($project, $path, $group, $foregroundColor, $backgroundColor)) {
             $this->logger->error('Failed to add the project.', ['arguments' => $input->getArguments()]);
 
             $output->writeln('<error>Failed to add the project.</error>');

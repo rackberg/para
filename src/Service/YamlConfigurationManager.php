@@ -162,10 +162,12 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      * @param string $projectName The name of the project.
      * @param string $path The path where to find the project.
      * @param string $groupName (Optional) The name of the group. Defaults to 'default'.
+     * @param string $foregroundColor (Optional) The foreground color.
+     * @param string $backgroundColor (Optional) The background color.
      *
      * @return bool True if the project has been added successfully, otherwise false.
      */
-    public function addProject($projectName, $path, $groupName = 'default')
+    public function addProject($projectName, $path, $groupName = 'default', $foregroundColor = '', $backgroundColor = '')
     {
         // Is the project already existing.
         if ($this->existsProject($projectName)) {
@@ -181,7 +183,17 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
         // Get the current configuration.
         $yaml = $this->readFile($this->yamlFile);
 
-        $yaml[$groupName][$projectName] = $path;
+        $yaml[$groupName][$projectName] = [
+            'path' => $path,
+        ];
+
+        if (!empty($foregroundColor)) {
+            $yaml[$groupName][$projectName]['foreground_color'] = $foregroundColor;
+        }
+
+        if (!empty($backgroundColor)) {
+            $yaml[$groupName][$projectName]['background_color'] = $backgroundColor;
+        }
 
         if (!$this->saveFileContent($this->yamlFile, $yaml)) {
             $this->logger->error('Failed to save the new project in the configuration file.', [

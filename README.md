@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rackberg/para.svg?branch=master)](https://travis-ci.org/rackberg/para)
 [![Dependency Status](https://dependencyci.com/github/rackberg/para/badge)](https://dependencyci.com/github/rackberg/para)
-[![Current Version](https://img.shields.io/badge/release-1.6.0-0e5487.svg)](https://github.com/rackberg/para/releases)
+[![Current Version](https://img.shields.io/badge/release-2.0.0-0e5487.svg)](https://github.com/rackberg/para/releases)
 
 A command-line tool for parallel execution of shell commands in multiple directories.
 
@@ -60,7 +60,7 @@ para --version
 Before you can use `para` you need at least to add the directories you want `para` to manage.
 This can be done by executing the following command:
 ```
-para add:project <project_name> <project_path> [<group_name>] [--color=<color>]
+para add:project <project_name> <project_path> [<group_name>] [--foreground_color=<color>] [--background_color=<color>]
 ```
 Arguments:
 * The value of the argument `project_name` should be a unique single word to identify the directory you want to add.
@@ -69,17 +69,17 @@ Arguments:
 
 #### Example
 ```
-para add:project project1 /opt/my_first_project my_group --color=222
-para add:project project2 /Users/user/second_project my_group --color=104
-para add:project project3 /Users/user/third_project my_group --color=129
-para add:project project4 /tmp/my_fourth_project --color=93 
+para add:project project1 /opt/my_first_project my_group --foreground_color=222
+para add:project project2 /Users/user/second_project my_group --foreground_color=104
+para add:project project3 /Users/user/third_project my_group --foreground_color=129
+para add:project project4 /tmp/my_fourth_project --foreground_color=93 
 ```
 
 This will result in two groups called `my_group` and `default`.<br>
 The group `my_group` will contain `project1`, `project2` and `project3`.<br>
 The group `default` will contain only `project4`.
 
-To see which color code you can choose execute the script tools/colortable.sh
+color: To see which color code you can choose execute the script tools/colortable.sh
 
 To see the current configuration enter this command:
 ```
