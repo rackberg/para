@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.0] - 2018-01-22
 ### Added
 - Projects can now have a fixed color (foreground and background) configurable in the para.yml. (See [#7](https://github.com/rackberg/para/issues/7))
 - Added a shell script to see all available colors. The script is located under tools/colortable.sh.
+- Added a [wiki page with upgrade instructions from version 1.6.0 to 2.0.0](https://github.com/rackberg/para/wiki/Upgrade-para-from-1.6.0-to-2.0.0-).
 ### Changed
 - Improved the file change detection for the sync command.
  
