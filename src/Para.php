@@ -1,11 +1,8 @@
 <?php
-/**
- * @file
- * Contains Para\Para.php.
- */
 
 namespace Para;
 
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -25,9 +22,38 @@ class Para extends Application
      */
     private $container;
 
+    /**
+     * Para constructor.
+     */
     public function __construct()
     {
         parent::__construct('Para Console Application', $this->getRelease());
+    }
+
+    /**
+     * Initializes the application.
+     *
+     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container The dependency injection container.
+     * @param \Symfony\Component\Config\Loader\LoaderInterface $loader The file loader.
+     *
+     * @return \Para\Para The para application instance.
+     *
+     * @throws \Exception When the config files could not be loaded.
+     */
+    public function setup(ContainerInterface $container, LoaderInterface $loader): Para
+    {
+        // Set the root directory.
+        $container->setParameter('root_dir', __DIR__ . '/../');
+
+        // Load the service configurations.
+        $loader->load('services.yml');
+        $loader->load('commands.services.yml');
+        $loader->load('event.services.yml');
+
+        $application = $container->get('para.application');
+        $application->setContainer($container);
+
+        return $application;
     }
 
     /**
