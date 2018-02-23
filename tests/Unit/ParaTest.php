@@ -2,11 +2,12 @@
 
 namespace Para\Tests\Unit;
 
+use Para\Factory\ProcessFactoryInterface;
 use Para\Para;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Class ParaTest
@@ -31,39 +32,47 @@ class ParaTest extends TestCase
     }
 
     /**
-     * Tests that the setup() method initializes the dependency injection container and loads the services.
-     *
-     * @throws \Exception
+     * Tests that the method getLongVersion() returns the current git version.
      */
-    public function testThatTheSetupMethodExecutesSuccessfully()
+    public function testThatTheMethodGetLongVersionReturnsTheGitVersion()
     {
-        $application = $this->prophesize(Para::class);
-        $application->setContainer(Argument::any())->shouldBeCalled();
+        $process = $this->prophesize(Process::class);
+        $process->run()->shouldBeCalled();
+        $process->isSuccessful()->willReturn(true);
+        $process->getOutput()->shouldBeCalled();
+
+        $processFactory = $this->prophesize(ProcessFactoryInterface::class);
+        $processFactory->getProcess(Argument::any(), Argument::any())->willReturn($process->reveal());
 
         $container = $this->prophesize(ContainerInterface::class);
-        $container
-            ->get('para.application')
-            ->willReturn($application->reveal());
-        $container
-            ->setParameter('root_dir', Argument::type('string'))
-            ->shouldBeCalled();
+        $container->get('para.process_factory')->willReturn($processFactory->reveal());
 
-        $loader = $this->prophesize(LoaderInterface::class);
-        $loader
-            ->load('services.yml')
-            ->shouldBeCalled();
-        $loader
-            ->load('commands.services.yml')
-            ->shouldBeCalled();
-        $loader
-            ->load('event.services.yml')
-            ->shouldBeCalled();
+        $this->para->setContainer($container->reveal());
 
-        $result = $this->para->setup(
-            $container->reveal(),
-            $loader->reveal()
-        );
+        $version = $this->para->getLongVersion();
 
-        $this->assertTrue($result instanceof Para);
+        $this->assertNotEquals('unknown', $version);
+    }
+
+    /**
+     * Tests that the method getLongVersion() returns the string "unknown" when the process detecting the git version fails.
+     */
+    public function testThatTheMethodGetLongVersionReturnsUnknownAsStringWhenTheProcessDetectingTheGitVersionFails()
+    {
+        $process = $this->prophesize(Process::class);
+        $process->run()->shouldBeCalled();
+        $process->isSuccessful()->willReturn(false);
+
+        $processFactory = $this->prophesize(ProcessFactoryInterface::class);
+        $processFactory->getProcess(Argument::any(), Argument::any())->willReturn($process->reveal());
+
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->get('para.process_factory')->willReturn($processFactory->reveal());
+
+        $this->para->setContainer($container->reveal());
+
+        $version = $this->para->getLongVersion();
+
+        $this->assertEquals('unknown', $version);
     }
 }

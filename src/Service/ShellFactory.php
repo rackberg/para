@@ -1,11 +1,8 @@
 <?php
-/**
- * @file
- * Contains Para\Service\ShellFactory.php.
- */
 
 namespace Para\Service;
 
+use Para\Factory\ProcessFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,7 +33,7 @@ class ShellFactory
     /**
      * The process factory.
      *
-     * @var ProcessFactory
+     * @var \Para\Factory\ProcessFactoryInterface
      */
     private $processFactory;
 
@@ -59,14 +56,14 @@ class ShellFactory
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
-     * @param \Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher The event dispatcher.
      * @param \Para\Service\HistoryShellManagerInterface $historyShellManager The history shell manager.
      */
     public function __construct(
         LoggerInterface $logger,
         Application $application,
-        ProcessFactory $processFactory,
+        ProcessFactoryInterface $processFactory,
         EventDispatcherInterface $dispatcher,
         HistoryShellManagerInterface $historyShellManager
     ) {

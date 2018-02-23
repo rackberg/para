@@ -1,13 +1,10 @@
 <?php
-/**
- * @file
- * Contains Para\Service\GroupShell.php.
- */
 
 namespace Para\Service;
 
 use Para\Event\BeforeShellCommandExecutionEvent;
 use Para\Event\ShellEvents;
+use Para\Factory\ProcessFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +36,7 @@ class GroupShell implements InteractiveShellInterface
     /**
      * The process factory.
      *
-     * @var ProcessFactory
+     * @var \Para\Factory\ProcessFactoryInterface
      */
     private $processFactory;
 
@@ -83,7 +80,7 @@ class GroupShell implements InteractiveShellInterface
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
-     * @param \Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher The event dispatcher.
      * @param \Para\Service\HistoryShellManagerInterface $historyShellManager The history shell manager.
      * @param \Symfony\Component\Console\Input\InputInterface $input The console input.
@@ -92,7 +89,7 @@ class GroupShell implements InteractiveShellInterface
     public function __construct(
         LoggerInterface $logger,
         Application $application,
-        ProcessFactory $processFactory,
+        ProcessFactoryInterface $processFactory,
         EventDispatcherInterface $dispatcher,
         HistoryShellManagerInterface $historyShellManager,
         InputInterface $input,

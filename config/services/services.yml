@@ -45,7 +45,7 @@ services:
             - '%para.config%'
 
     para.process_factory:
-        class: Para\Service\ProcessFactory
+        class: Para\Factory\ProcessFactory
 
     para.shell_factory:
         class: Para\Service\ShellFactory

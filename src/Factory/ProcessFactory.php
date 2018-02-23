@@ -1,10 +1,6 @@
 <?php
-/**
- * @file
- * Contains Para\Service\ProcessFactory.php.
- */
 
-namespace Para\Service;
+namespace Para\Factory;
 
 use Symfony\Component\Process\Process;
 
@@ -13,7 +9,7 @@ use Symfony\Component\Process\Process;
  *
  * @package Para\Service
  */
-class ProcessFactory
+class ProcessFactory implements ProcessFactoryInterface
 {
     /**
      * Creates a new process.
@@ -29,14 +25,14 @@ class ProcessFactory
      *
      *  @return Process
      */
-    public function create(
+    public function getProcess(
         $commandline,
         $cwd = null,
         array $env = null,
         $input = null,
         $timeout = 60,
         array $options = array()
-    ) {
+    ): Process {
         return new Process($commandline, $cwd, $env, $input, $timeout, $options);
     }
 }

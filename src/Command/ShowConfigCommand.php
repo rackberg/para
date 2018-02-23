@@ -1,16 +1,10 @@
 <?php
-/**
- * @file
- * Contains Para\Command\ShowConfigCommand.php.
- */
 
 namespace Para\Command;
 
-use Para\Service\ConfigurationManagerInterface;
-use Para\Service\ProcessFactory;
+use Para\Factory\ProcessFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -38,7 +32,7 @@ class ShowConfigCommand extends Command
     /**
      * The process factory.
      *
-     * @var ProcessFactory
+     * @var \Para\Factory\ProcessFactoryInterface
      */
     private $processFactory;
 
@@ -46,12 +40,12 @@ class ShowConfigCommand extends Command
      * ShowConfigCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
      * @param string $configPath The path where the configuration files are saved.
      */
     public function __construct(
         LoggerInterface $logger,
-        ProcessFactory $processFactory,
+        ProcessFactoryInterface $processFactory,
         $configPath
     ) {
         parent::__construct();

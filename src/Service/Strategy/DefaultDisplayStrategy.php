@@ -1,14 +1,9 @@
 <?php
-/**
- * @file
- * Contains Para\Service\Strategy\DefaultDisplayStrategy.php.
- */
 
 namespace Para\Service\Strategy;
 
-use Para\Event\PostProcessCreationEvent;
+use Para\Factory\ProcessFactoryInterface;
 use Para\Service\Output\BufferedOutputInterface;
-use Para\Service\ProcessFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 
@@ -22,7 +17,7 @@ abstract class DefaultDisplayStrategy
     /**
      * The process factory.
      *
-     * @var \Para\Service\ProcessFactory
+     * @var \Para\Factory\ProcessFactoryInterface
      */
     protected $processFactory;
 
@@ -43,11 +38,11 @@ abstract class DefaultDisplayStrategy
     /**
      * DefaultDisplayStrategy constructor.
      *
-     * @param \Para\Service\ProcessFactory $processFactory
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function __construct(
-        ProcessFactory $processFactory,
+        ProcessFactoryInterface $processFactory,
         EventDispatcherInterface $dispatcher
     ) {
         $this->processFactory = $processFactory;
@@ -76,7 +71,7 @@ abstract class DefaultDisplayStrategy
      */
     protected function createProcess(string $cmd, string $cwd): Process
     {
-        $process = $this->processFactory->create(
+        $process = $this->processFactory->getProcess(
             $cmd,
             $cwd,
             $this->discoverSystemEnvironment()

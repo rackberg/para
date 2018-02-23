@@ -1,16 +1,12 @@
 <?php
-/**
- * @file
- * Contains Para\Service\Strategy\DisplayCombinedOutputStrategy.php.
- */
 
 namespace Para\Service\Strategy;
 
 use Para\Entity\Project;
 use Para\Event\IncrementalOutputReceivedEvent;
 use Para\Event\PostProcessCreationEvent;
+use Para\Factory\ProcessFactoryInterface;
 use Para\Service\Output\BufferedOutputInterface;
-use Para\Service\ProcessFactory;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
@@ -40,11 +36,11 @@ class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements As
     /**
      * DisplayCombinedOutputStrategy constructor.
      *
-     * @param \Para\Service\ProcessFactory $processFactory
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function __construct(
-        ProcessFactory $processFactory,
+        ProcessFactoryInterface $processFactory,
         EventDispatcherInterface $dispatcher
     ) {
         parent::__construct($processFactory, $dispatcher);

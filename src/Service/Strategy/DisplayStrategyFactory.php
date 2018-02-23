@@ -1,12 +1,8 @@
 <?php
-/**
- * @file
- * Contains Para\Service\Strategy\DisplayStrategyFactory.php.
- */
 
 namespace Para\Service\Strategy;
 
-use Para\Service\ProcessFactory;
+use Para\Factory\ProcessFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -19,7 +15,7 @@ class DisplayStrategyFactory
     /**
      * The process factory.
      *
-     * @var \Para\Service\ProcessFactory
+     * @var \Para\Factory\ProcessFactoryInterface
      */
     private $processFactory;
 
@@ -33,11 +29,11 @@ class DisplayStrategyFactory
     /**
      * DisplayStrategyFactory constructor.
      *
-     * @param \Para\Service\ProcessFactory $processFactory
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function __construct(
-        ProcessFactory $processFactory,
+        ProcessFactoryInterface $processFactory,
         EventDispatcherInterface $dispatcher
     ) {
         $this->processFactory = $processFactory;

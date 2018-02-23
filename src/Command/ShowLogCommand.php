@@ -1,13 +1,9 @@
 <?php
-/**
- * @file
- * Contains Para\Command\ShowLogCommand.php.
- */
 
 namespace Para\Command;
 
+use Para\Factory\ProcessFactoryInterface;
 use Para\Service\ConfigurationManagerInterface;
-use Para\Service\ProcessFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -38,7 +34,7 @@ class ShowLogCommand extends Command
     /**
      * The process factory.
      *
-     * @var ProcessFactory
+     * @var \Para\Factory\ProcessFactoryInterface
      */
     private $processFactory;
 
@@ -53,13 +49,13 @@ class ShowLogCommand extends Command
      * ShowLogCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
      * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
      * @param string $logPath The path where the log files are saved.
      */
     public function __construct(
         LoggerInterface $logger,
-        ProcessFactory $processFactory,
+        ProcessFactoryInterface $processFactory,
         ConfigurationManagerInterface $configManager,
         $logPath
     ) {
