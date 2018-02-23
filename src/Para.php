@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains Para\ParaApplication.php.
+ * Contains Para\Para.php.
  */
 
 namespace Para;
@@ -16,7 +16,7 @@ use Symfony\Component\Process\Process;
  *
  * @package Para
  */
-class ParaApplication extends Application
+class Para extends Application
 {
     /**
      * The dependency injection container.

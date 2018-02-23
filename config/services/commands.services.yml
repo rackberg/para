@@ -1,6 +1,6 @@
 services:
     para.application:
-        class: Para\ParaApplication
+        class: Para\Para
         calls:
             - [add, ['@para.command.execute']]
             - [add, ['@para.command.add_project']]
