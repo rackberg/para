@@ -12,29 +12,29 @@ services:
             - [addSubscriber, ['@para.compare_hunks_subscriber']]
 
     para.shell_command_event_subscriber:
-        class: lrackwitz\Para\EventSubscriber\SanitizeShellCommandEventSubscriber
+        class: Para\EventSubscriber\SanitizeShellCommandEventSubscriber
 
     para.shell_key_press_event_subscriber:
-        class: lrackwitz\Para\EventSubscriber\ShellKeyPressEventSubscriber
+        class: Para\EventSubscriber\ShellKeyPressEventSubscriber
         arguments:
             - '@para.history_shell_manager'
 
     para.add_environment_variable_event_subscriber:
-        class: lrackwitz\Para\EventSubscriber\AddEnvironmentVariableEventSubscriber
+        class: Para\EventSubscriber\AddEnvironmentVariableEventSubscriber
 
     para.log_process_output_event_subscriber:
-        class: lrackwitz\Para\EventSubscriber\LogProcessOutputEventSubscriber
+        class: Para\EventSubscriber\LogProcessOutputEventSubscriber
         arguments: ['%para.log_path%']
 
     para.approve_patch_apply_event_subscriber:
-        class: lrackwitz\Para\EventSubscriber\ApprovePatchApplyEventSubscriber
+        class: Para\EventSubscriber\ApprovePatchApplyEventSubscriber
 
     para.find_project_event_subscriber:
-        class: lrackwitz\Para\EventSubscriber\FindProjectSubscriber
+        class: Para\EventSubscriber\FindProjectSubscriber
         arguments: ['@para.yaml.configuration_manager']
 
     para.sync_event_subscriber:
-        class: lrackwitz\Para\EventSubscriber\SyncSubscriber
+        class: Para\EventSubscriber\SyncSubscriber
 
     para.compare_hunks_subscriber:
-        class: lrackwitz\Para\EventSubscriber\CompareHunksSubscriber
+        class: Para\EventSubscriber\CompareHunksSubscriber

@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\tests\Service\ShellHistoryTest.php.
+ * Contains Para\tests\Service\ShellHistoryTest.php.
  */
 
-namespace lrackwitz\Para\tests\Service;
+namespace Para\tests\Unit\Service;
 
-use lrackwitz\Para\Service\ShellHistory;
-use lrackwitz\Para\Service\ShellHistoryInterface;
+use Para\Service\ShellHistory;
+use Para\Service\ShellHistoryInterface;
 use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
@@ -15,7 +15,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 /**
  * Class ShellHistoryTest.
  *
- * @package lrackwitz\Para\tests\Service
+ * @package Para\tests\Unit\Service
  */
 class ShellHistoryTest extends TestCase
 {

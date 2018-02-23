@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Entity\ProjectInterface.php.
+ * Contains Para\Entity\ProjectInterface.php.
  */
 
-namespace lrackwitz\Para\Entity;
+namespace Para\Entity;
 
 interface ProjectInterface
 {

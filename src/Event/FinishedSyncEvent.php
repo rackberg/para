@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\FinishedSyncEvent.php.
+ * Contains Para\Event\FinishedSyncEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\File\File;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * Class FinishedSyncEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class FinishedSyncEvent extends Event
 {

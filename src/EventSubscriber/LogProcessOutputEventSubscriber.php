@@ -1,19 +1,19 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\LogProcessOutputEventSubscriber.php.
+ * Contains Para\EventSubscriber\LogProcessOutputEventSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\IncrementalOutputReceivedEvent;
+use Para\Event\IncrementalOutputReceivedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class LogProcessOutputEventSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class LogProcessOutputEventSubscriber implements EventSubscriberInterface
 {
@@ -56,7 +56,7 @@ class LogProcessOutputEventSubscriber implements EventSubscriberInterface
     /**
      * Writes the incremental output received into a log file.
      *
-     * @param \lrackwitz\Para\Event\IncrementalOutputReceivedEvent $event
+     * @param \Para\Event\IncrementalOutputReceivedEvent $event
      */
     public function writeLogMessage(IncrementalOutputReceivedEvent $event)
     {

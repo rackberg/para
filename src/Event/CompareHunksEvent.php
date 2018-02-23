@@ -1,17 +1,17 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\CompareHunksEvent.php.
+ * Contains Para\Event\CompareHunksEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class CompareHunksEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class CompareHunksEvent extends Event
 {

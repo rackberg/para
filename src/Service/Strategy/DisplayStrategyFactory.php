@@ -1,25 +1,25 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Strategy\DisplayStrategyFactory.php.
+ * Contains Para\Service\Strategy\DisplayStrategyFactory.php.
  */
 
-namespace lrackwitz\Para\Service\Strategy;
+namespace Para\Service\Strategy;
 
-use lrackwitz\Para\Service\ProcessFactory;
+use Para\Service\ProcessFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class DisplayStrategyFactory.
  *
- * @package lrackwitz\Para\Service\Strategy
+ * @package Para\Service\Strategy
  */
 class DisplayStrategyFactory
 {
     /**
      * The process factory.
      *
-     * @var \lrackwitz\Para\Service\ProcessFactory
+     * @var \Para\Service\ProcessFactory
      */
     private $processFactory;
 
@@ -33,7 +33,7 @@ class DisplayStrategyFactory
     /**
      * DisplayStrategyFactory constructor.
      *
-     * @param \lrackwitz\Para\Service\ProcessFactory $processFactory
+     * @param \Para\Service\ProcessFactory $processFactory
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function __construct(
@@ -47,7 +47,7 @@ class DisplayStrategyFactory
     /**
      * Creates a new instance of the progress bar display strategy.
      *
-     * @return \lrackwitz\Para\Service\Strategy\DisplayProgressbarStrategy
+     * @return \Para\Service\Strategy\DisplayProgressbarStrategy
      */
     public function createProgressBarDisplayStrategy()
     {
@@ -57,7 +57,7 @@ class DisplayStrategyFactory
     /**
      * Creates a new instance of the combined output display strategy.
      *
-     * @return \lrackwitz\Para\Service\Strategy\DisplayCombinedOutputStrategy
+     * @return \Para\Service\Strategy\DisplayCombinedOutputStrategy
      */
     public function createCombinedOutputDisplayStrategy()
     {

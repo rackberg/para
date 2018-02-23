@@ -1,18 +1,18 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Sync\GitFileSyncer.php.
+ * Contains Para\Service\Sync\GitFileSyncer.php.
  */
 
-namespace lrackwitz\Para\Service\Sync;
+namespace Para\Service\Sync;
 
 use Exception;
-use lrackwitz\Para\Event\ApplyPatchEvent;
-use lrackwitz\Para\Event\CompareHunksEvent;
-use lrackwitz\Para\Event\FinishedCopyEvent;
-use lrackwitz\Para\Event\FinishedSyncEvent;
-use lrackwitz\Para\Event\HunksNotMatchingEvent;
-use lrackwitz\Para\Event\StartSyncEvent;
+use Para\Event\ApplyPatchEvent;
+use Para\Event\CompareHunksEvent;
+use Para\Event\FinishedCopyEvent;
+use Para\Event\FinishedSyncEvent;
+use Para\Event\HunksNotMatchingEvent;
+use Para\Event\StartSyncEvent;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\Process\Process;
 /**
  * Class GitFileSyncer.
  *
- * @package lrackwitz\Para\Service\Sync
+ * @package Para\Service\Sync
  */
 class GitFileSyncer implements FileSyncerInterface
 {

@@ -1,18 +1,18 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\AddEnvironmentVariableEventSubscriber.php.
+ * Contains Para\EventSubscriber\AddEnvironmentVariableEventSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\PostProcessCreationEvent;
+use Para\Event\PostProcessCreationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class AddEnvironmentVariableEventSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class AddEnvironmentVariableEventSubscriber implements EventSubscriberInterface
 {
@@ -32,7 +32,7 @@ class AddEnvironmentVariableEventSubscriber implements EventSubscriberInterface
     /**
      * This callback method adds an environment variable to a created process.
      *
-     * @param \lrackwitz\Para\Event\PostProcessCreationEvent $event
+     * @param \Para\Event\PostProcessCreationEvent $event
      */
     public function addEnvironmentVariable(PostProcessCreationEvent $event)
     {

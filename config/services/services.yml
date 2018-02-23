@@ -37,7 +37,7 @@ services:
         class: Symfony\Component\Filesystem\Filesystem
 
     para.yaml.configuration_manager:
-        class: lrackwitz\Para\Service\YamlConfigurationManager
+        class: Para\Service\YamlConfigurationManager
         arguments:
             - '@logger'
             - '@yaml.dumper'
@@ -45,10 +45,10 @@ services:
             - '%para.config%'
 
     para.process_factory:
-        class: lrackwitz\Para\Service\ProcessFactory
+        class: Para\Service\ProcessFactory
 
     para.shell_factory:
-        class: lrackwitz\Para\Service\ShellFactory
+        class: Para\Service\ShellFactory
         arguments:
             - '@logger'
             - '@para.application'
@@ -57,24 +57,24 @@ services:
             - '@para.history_shell_manager'
 
     para.async_shell_command_executor:
-        class: lrackwitz\Para\Service\AsyncShellCommandExecutor
+        class: Para\Service\AsyncShellCommandExecutor
         arguments: ['@para.display_strategy_factory']
 
     para.shell_history:
-        class: lrackwitz\Para\Service\ShellHistory
+        class: Para\Service\ShellHistory
 
     para.history_shell_manager:
-        class: lrackwitz\Para\Service\HistoryShellManager
+        class: Para\Service\HistoryShellManager
         arguments:
             - '@logger'
             - '@para.shell_history'
 
     para.display_strategy_factory:
-        class: lrackwitz\Para\Service\Strategy\DisplayStrategyFactory
+        class: Para\Service\Strategy\DisplayStrategyFactory
         arguments: ['@para.process_factory', '@event_dispatcher']
 
     para.sync.git_file_syncer:
-        class: lrackwitz\Para\Service\Sync\GitFileSyncer
+        class: Para\Service\Sync\GitFileSyncer
         arguments:
             - '@event_dispatcher'
 

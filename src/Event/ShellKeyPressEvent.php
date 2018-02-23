@@ -1,17 +1,17 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\ShellKeyPressEvent.php.
+ * Contains Para\Event\ShellKeyPressEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class ShellKeyPressEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class ShellKeyPressEvent extends Event
 {

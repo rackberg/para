@@ -17,8 +17,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "lrackwitz\\Para\\": "src/",
-            "lrackwitz\\Para\\tests\\": "tests/"
+            "Para\\": "src/",
+            "Para\\Tests\\": "tests/"
         }
     },
     "bin": [

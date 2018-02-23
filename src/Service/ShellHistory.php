@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\ShellHistory.php.
+ * Contains Para\Service\ShellHistory.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 /**
  * Class ShellHistory.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 class ShellHistory implements ShellHistoryInterface
 {

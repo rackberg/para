@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\ApprovePatchApplyEventSubscriber.php.
+ * Contains Para\EventSubscriber\ApprovePatchApplyEventSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\ApplyPatchEvent;
+use Para\Event\ApplyPatchEvent;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Class ApprovePatchApplyEventSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class ApprovePatchApplyEventSubscriber implements EventSubscriberInterface
 {
@@ -36,7 +36,7 @@ class ApprovePatchApplyEventSubscriber implements EventSubscriberInterface
     /**
      * Callback method that will be executed before a patch will be applied.
      *
-     * @param \lrackwitz\Para\Event\ApplyPatchEvent $event
+     * @param \Para\Event\ApplyPatchEvent $event
      *   The apply patch event.
      */
     public function beforePatchApply(ApplyPatchEvent $event)

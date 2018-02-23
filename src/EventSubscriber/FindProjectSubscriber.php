@@ -1,19 +1,19 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\FindProjectSubscriber.php.
+ * Contains Para\EventSubscriber\FindProjectSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\StartSyncEvent;
-use lrackwitz\Para\Service\ConfigurationManagerInterface;
+use Para\Event\StartSyncEvent;
+use Para\Service\ConfigurationManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class FindProjectSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class FindProjectSubscriber implements EventSubscriberInterface
 {
@@ -21,7 +21,7 @@ class FindProjectSubscriber implements EventSubscriberInterface
     /**
      * The configuration manager.
      *
-     * @var \lrackwitz\Para\Service\ConfigurationManagerInterface
+     * @var \Para\Service\ConfigurationManagerInterface
      */
     private $configManager;
 
@@ -40,7 +40,7 @@ class FindProjectSubscriber implements EventSubscriberInterface
     /**
      * FindProjectSubscriber constructor.
      *
-     * @param \lrackwitz\Para\Service\ConfigurationManagerInterface $configManager
+     * @param \Para\Service\ConfigurationManagerInterface $configManager
      *   The configuration manager.
      */
     public function __construct(ConfigurationManagerInterface $configManager)
@@ -53,7 +53,7 @@ class FindProjectSubscriber implements EventSubscriberInterface
      *
      * Will be executed when a start sync event has been triggered.
      *
-     * @param \lrackwitz\Para\Event\StartSyncEvent $event
+     * @param \Para\Event\StartSyncEvent $event
      *   The start sync event.
      */
     public function findProject(StartSyncEvent $event)

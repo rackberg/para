@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Entity\Project.php.
+ * Contains Para\Entity\Project.php.
  */
 
-namespace lrackwitz\Para\Entity;
+namespace Para\Entity;
 
 /**
  * Class Project.
  *
- * @package lrackwitz\Para\Entity
+ * @package Para\Entity
  */
 class Project implements ProjectInterface
 {

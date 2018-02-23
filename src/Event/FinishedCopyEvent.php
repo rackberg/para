@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\FinishedCopyEvent.php.
+ * Contains Para\Event\FinishedCopyEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\File\File;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * Class FinishedCopyEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class FinishedCopyEvent extends Event
 {

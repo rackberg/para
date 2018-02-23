@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Tests\Service\YamlConfigurationManagerTest.php.
+ * Contains Para\Tests\Service\YamlConfigurationManagerTest.php.
  */
 
-namespace lrackwitz\Para\Tests\Service;
+namespace Para\Tests\Unit\Service;
 
-use lrackwitz\Para\Entity\Project;
-use lrackwitz\Para\Service\YamlConfigurationManager;
+use Para\Entity\Project;
+use Para\Service\YamlConfigurationManager;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -19,14 +19,14 @@ use Symfony\Component\Yaml\Parser;
 /**
  * Class YamlConfigurationManagerTest.
  *
- * @package lrackwitz\Para\Tests\Service
+ * @package Para\Tests\Unit\Service
  */
 class YamlConfigurationManagerTest extends TestCase
 {
     /**
      * The yaml configuration manager to test.
      *
-     * @var \lrackwitz\Para\Service\YamlConfigurationManager
+     * @var \Para\Service\YamlConfigurationManager
      */
     private $yamlConfigManager;
 

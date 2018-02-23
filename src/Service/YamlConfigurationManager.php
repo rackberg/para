@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\YamlConfigurationManager.php.
+ * Contains Para\Service\YamlConfigurationManager.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
-use lrackwitz\Para\Entity\Project;
-use lrackwitz\Para\Exception\GroupNotFoundException;
-use lrackwitz\Para\Exception\ProjectNotFoundException;
+use Para\Entity\Project;
+use Para\Exception\GroupNotFoundException;
+use Para\Exception\ProjectNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
@@ -19,7 +19,7 @@ use Symfony\Component\Yaml\Parser;
 /**
  * Class YamlConfigurationManager.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 class YamlConfigurationManager implements ConfigurationManagerInterface
 {
@@ -110,7 +110,7 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      *
      * @return bool True if the group has been deleted successfully, otherwise false.
      *
-     * @throws \lrackwitz\Para\Exception\GroupNotFoundException
+     * @throws \Para\Exception\GroupNotFoundException
      */
     public function deleteGroup($groupName)
     {
@@ -214,7 +214,7 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      *
      * @return bool True if the project has been deleted successfully, otherwise false.
      *
-     * @throws \lrackwitz\Para\Exception\ProjectNotFoundException
+     * @throws \Para\Exception\ProjectNotFoundException
      */
     public function deleteProject($projectName)
     {
@@ -284,7 +284,7 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      *
      * @return \string[] An array with information of the group.
      *
-     * @throws \lrackwitz\Para\Exception\GroupNotFoundException If the group is not existing.
+     * @throws \Para\Exception\GroupNotFoundException If the group is not existing.
      */
     public function readGroup($groupName)
     {

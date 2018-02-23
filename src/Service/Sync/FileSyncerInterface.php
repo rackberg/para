@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Sync\FileSyncerInterface.php.
+ * Contains Para\Service\Sync\FileSyncerInterface.php.
  */
 
-namespace lrackwitz\Para\Service\Sync;
+namespace Para\Service\Sync;
 
 use Symfony\Component\HttpFoundation\File\File;
 

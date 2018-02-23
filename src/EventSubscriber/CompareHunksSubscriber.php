@@ -1,18 +1,18 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\CompareHunksSubscriber.php.
+ * Contains Para\EventSubscriber\CompareHunksSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\CompareHunksEvent;
+use Para\Event\CompareHunksEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class CompareHunksSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class CompareHunksSubscriber implements EventSubscriberInterface
 {

@@ -1,19 +1,19 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\StartSyncEvent.php.
+ * Contains Para\Event\StartSyncEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
-use lrackwitz\Para\Entity\ProjectInterface;
+use Para\Entity\ProjectInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Class StartSyncEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class StartSyncEvent extends Event
 {

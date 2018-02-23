@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Command\OpenShellCommand.php.
+ * Contains Para\Command\OpenShellCommand.php.
  */
 
-namespace lrackwitz\Para\Command;
+namespace Para\Command;
 
-use lrackwitz\Para\Service\ConfigurationManagerInterface;
-use lrackwitz\Para\Service\ShellFactory;
+use Para\Service\ConfigurationManagerInterface;
+use Para\Service\ShellFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class OpenShellCommand.
  *
- * @package lrackwitz\Para\Command
+ * @package Para\Command
  */
 class OpenShellCommand extends Command
 {
@@ -54,8 +54,8 @@ class OpenShellCommand extends Command
      * OpenShellCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \lrackwitz\Para\Service\ShellFactory $shellFactory The shell factory.
-     * @param \lrackwitz\Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param \Para\Service\ShellFactory $shellFactory The shell factory.
+     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
      * @param string $historyFile The path to the history file.
      */
     public function __construct(

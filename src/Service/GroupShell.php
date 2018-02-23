@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\GroupShell.php.
+ * Contains Para\Service\GroupShell.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
-use lrackwitz\Para\Event\BeforeShellCommandExecutionEvent;
-use lrackwitz\Para\Event\ShellEvents;
+use Para\Event\BeforeShellCommandExecutionEvent;
+use Para\Event\ShellEvents;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class GroupShell.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 class GroupShell implements InteractiveShellInterface
 {
@@ -83,9 +83,9 @@ class GroupShell implements InteractiveShellInterface
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
-     * @param \lrackwitz\Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Para\Service\ProcessFactory $processFactory The process factory.
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher The event dispatcher.
-     * @param \lrackwitz\Para\Service\HistoryShellManagerInterface $historyShellManager The history shell manager.
+     * @param \Para\Service\HistoryShellManagerInterface $historyShellManager The history shell manager.
      * @param \Symfony\Component\Console\Input\InputInterface $input The console input.
      * @param \Symfony\Component\Console\Output\OutputInterface $output The console output.
      */
@@ -256,7 +256,7 @@ EOF;
     /**
      * Returns historyShellManager.
      *
-     * @return \lrackwitz\Para\Service\HistoryShellManagerInterface
+     * @return \Para\Service\HistoryShellManagerInterface
      */
     public function getHistoryShellManager()
     {

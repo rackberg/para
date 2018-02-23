@@ -1,17 +1,17 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\ProcessFactory.php.
+ * Contains Para\Service\ProcessFactory.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 use Symfony\Component\Process\Process;
 
 /**
  * Class ProcessFactory.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 class ProcessFactory
 {

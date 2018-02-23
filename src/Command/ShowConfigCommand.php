@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Command\ShowConfigCommand.php.
+ * Contains Para\Command\ShowConfigCommand.php.
  */
 
-namespace lrackwitz\Para\Command;
+namespace Para\Command;
 
-use lrackwitz\Para\Service\ConfigurationManagerInterface;
-use lrackwitz\Para\Service\ProcessFactory;
+use Para\Service\ConfigurationManagerInterface;
+use Para\Service\ProcessFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ShowConfigCommand.
  *
- * @package lrackwitz\Para\Command
+ * @package Para\Command
  */
 class ShowConfigCommand extends Command
 {
@@ -46,7 +46,7 @@ class ShowConfigCommand extends Command
      * ShowConfigCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \lrackwitz\Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Para\Service\ProcessFactory $processFactory The process factory.
      * @param string $configPath The path where the configuration files are saved.
      */
     public function __construct(

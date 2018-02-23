@@ -1,27 +1,27 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\AsyncShellCommandExecutor.php.
+ * Contains Para\Service\AsyncShellCommandExecutor.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
-use lrackwitz\Para\Entity\Project;
-use lrackwitz\Para\Service\Output\BufferedOutputInterface;
-use lrackwitz\Para\Service\Strategy\AsyncShellCommandExecuteStrategy;
-use lrackwitz\Para\Service\Strategy\DisplayStrategyFactory;
+use Para\Entity\Project;
+use Para\Service\Output\BufferedOutputInterface;
+use Para\Service\Strategy\AsyncShellCommandExecuteStrategy;
+use Para\Service\Strategy\DisplayStrategyFactory;
 
 /**
  * Class AsyncShellCommandExecutor.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 class AsyncShellCommandExecutor
 {
     /**
      * The factory to create display strategies.
      *
-     * @var \lrackwitz\Para\Service\Strategy\DisplayStrategyFactory
+     * @var \Para\Service\Strategy\DisplayStrategyFactory
      */
     private $factory;
 
@@ -42,7 +42,7 @@ class AsyncShellCommandExecutor
     /**
      * AsyncShellCommandExecutor constructor.
      *
-     * @param \lrackwitz\Para\Service\Strategy\DisplayStrategyFactory $factory The display strategy factory.
+     * @param \Para\Service\Strategy\DisplayStrategyFactory $factory The display strategy factory.
      */
     public function __construct(DisplayStrategyFactory $factory)
     {
@@ -57,7 +57,7 @@ class AsyncShellCommandExecutor
      *
      * @param string $cmd The shell command.
      * @param array $projects The array of projects.
-     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output The output buffer.
+     * @param \Para\Service\Output\BufferedOutputInterface $output The output buffer.
      */
     public function execute($cmd, array $projects, BufferedOutputInterface $output)
     {

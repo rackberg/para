@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\ShellManagerInterface.php.
+ * Contains Para\Service\ShellManagerInterface.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 /**
  * Interface ShellManagerInterface.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 interface ShellManagerInterface
 {

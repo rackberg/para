@@ -1,21 +1,21 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\SyncSubscriber.php.
+ * Contains Para\EventSubscriber\SyncSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\FinishedCopyEvent;
-use lrackwitz\Para\Event\FinishedSyncEvent;
-use lrackwitz\Para\Event\StartSyncEvent;
+use Para\Event\FinishedCopyEvent;
+use Para\Event\FinishedSyncEvent;
+use Para\Event\StartSyncEvent;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class SyncSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class SyncSubscriber implements EventSubscriberInterface
 {
@@ -43,7 +43,7 @@ class SyncSubscriber implements EventSubscriberInterface
      *
      * Will be executed when a start sync event has been triggered.
      *
-     * @param \lrackwitz\Para\Event\StartSyncEvent $event
+     * @param \Para\Event\StartSyncEvent $event
      *   The start sync event.
      */
     public function startSyncProcess(StartSyncEvent $event)
@@ -64,7 +64,7 @@ class SyncSubscriber implements EventSubscriberInterface
      *
      * Will be executed when a finished sync event has been triggered.
      *
-     * @param \lrackwitz\Para\Event\FinishedSyncEvent $event
+     * @param \Para\Event\FinishedSyncEvent $event
      *   The finished sync event.
      */
     public function finishedSyncProcess(FinishedSyncEvent $event)
@@ -85,7 +85,7 @@ class SyncSubscriber implements EventSubscriberInterface
      *
      * Will be executed when a finished copy event has been triggered.
      *
-     * @param \lrackwitz\Para\Event\FinishedCopyEvent $event
+     * @param \Para\Event\FinishedCopyEvent $event
      *   The finished copy event.
      */
     public function finishedCopy(FinishedCopyEvent $event)

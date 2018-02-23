@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Command\SyncCommand.php.
+ * Contains Para\Command\SyncCommand.php.
  */
 
-namespace lrackwitz\Para\Command;
+namespace Para\Command;
 
-use lrackwitz\Para\Service\ConfigurationManagerInterface;
-use lrackwitz\Para\Service\Sync\FileSyncerInterface;
+use Para\Service\ConfigurationManagerInterface;
+use Para\Service\Sync\FileSyncerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,21 +18,21 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * Class SyncCommand.
  *
- * @package lrackwitz\Para\Command
+ * @package Para\Command
  */
 class SyncCommand extends Command
 {
     /**
      * The git file syncer.
      *
-     * @var \lrackwitz\Para\Service\Sync\FileSyncerInterface
+     * @var \Para\Service\Sync\FileSyncerInterface
      */
     private $fileSyncer;
 
     /**
      * The configuration manager.
      *
-     * @var \lrackwitz\Para\Service\ConfigurationManagerInterface
+     * @var \Para\Service\ConfigurationManagerInterface
      */
     private $configManager;
 
@@ -46,9 +46,9 @@ class SyncCommand extends Command
     /**
      * SyncCommand constructor.
      *
-     * @param \lrackwitz\Para\Service\Sync\FileSyncerInterface $fileSyncer
+     * @param \Para\Service\Sync\FileSyncerInterface $fileSyncer
      *   The git file syncer.
-     * @param \lrackwitz\Para\Service\ConfigurationManagerInterface $configurationManager
+     * @param \Para\Service\ConfigurationManagerInterface $configurationManager
      *   The configuration manager.
      * @param \Symfony\Component\Filesystem\Filesystem $fileSystem
      *   The file system.

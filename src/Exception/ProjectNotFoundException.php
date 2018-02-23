@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Exception\ProjectNotFoundException.php.
+ * Contains Para\Exception\ProjectNotFoundException.php.
  */
 
-namespace lrackwitz\Para\Exception;
+namespace Para\Exception;
 
 /**
  * Class ProjectNotFoundException.
  *
- * @package lrackwitz\Para\Exception
+ * @package Para\Exception
  */
 class ProjectNotFoundException extends \Exception
 {

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Command\SelfUpdateCommand.php.
+ * Contains Para\Command\SelfUpdateCommand.php.
  */
 
-namespace lrackwitz\Para\Command;
+namespace Para\Command;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
@@ -17,7 +17,7 @@ use Symfony\Component\Process\Process;
 /**
  * Class SelfUpdateCommand.
  *
- * @package lrackwitz\Para\Command
+ * @package Para\Command
  */
 class SelfUpdateCommand extends Command
 {

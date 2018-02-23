@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Command\ExecuteCommand.php.
+ * Contains Para\Command\ExecuteCommand.php.
  */
 
-namespace lrackwitz\Para\Command;
+namespace Para\Command;
 
-use lrackwitz\Para\Service\AsyncShellCommandExecutor;
-use lrackwitz\Para\Service\ConfigurationManagerInterface;
-use lrackwitz\Para\Service\Output\BufferedOutputAdapter;
-use lrackwitz\Para\Service\OutputBuffer\OutputBuffer;
+use Para\Service\AsyncShellCommandExecutor;
+use Para\Service\ConfigurationManagerInterface;
+use Para\Service\Output\BufferedOutputAdapter;
+use Para\Service\OutputBuffer\OutputBuffer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ExecuteCommand.
  *
- * @package lrackwitz\Para\Command
+ * @package Para\Command
  */
 class ExecuteCommand extends Command
 {
@@ -50,8 +50,8 @@ class ExecuteCommand extends Command
      * ExecuteCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \lrackwitz\Para\Service\AsyncShellCommandExecutor $asyncExecutor The asynchronous process executor.
-     * @param \lrackwitz\Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param \Para\Service\AsyncShellCommandExecutor $asyncExecutor The asynchronous process executor.
+     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
      */
     public function __construct(
         LoggerInterface $logger = null,

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\ConfigurationManagerInterface.php.
+ * Contains Para\Service\ConfigurationManagerInterface.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -105,7 +105,7 @@ interface ConfigurationManagerInterface
      *
      * @return string[] An array with information of the group.
      *
-     * @throws \lrackwitz\Para\Exception\GroupNotFoundException If the group is not existing.
+     * @throws \Para\Exception\GroupNotFoundException If the group is not existing.
      */
     public function readGroup($groupName);
 
@@ -133,7 +133,7 @@ interface ConfigurationManagerInterface
      * @param \Symfony\Component\HttpFoundation\File\File $file
      *   The file that is in a project.
      *
-     * @return \lrackwitz\Para\Entity\ProjectInterface|null
+     * @return \Para\Entity\ProjectInterface|null
      *   The found project or null.
      */
     public function findProjectByFile(File $file);

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\ShellFactory.php.
+ * Contains Para\Service\ShellFactory.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class ShellFactory.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 class ShellFactory
 {
@@ -59,9 +59,9 @@ class ShellFactory
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
-     * @param \lrackwitz\Para\Service\ProcessFactory $processFactory The process factory.
+     * @param \Para\Service\ProcessFactory $processFactory The process factory.
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher The event dispatcher.
-     * @param \lrackwitz\Para\Service\HistoryShellManagerInterface $historyShellManager The history shell manager.
+     * @param \Para\Service\HistoryShellManagerInterface $historyShellManager The history shell manager.
      */
     public function __construct(
         LoggerInterface $logger,
@@ -83,7 +83,7 @@ class ShellFactory
      * @param \Symfony\Component\Console\Input\InputInterface $input The console input.
      * @param \Symfony\Component\Console\Output\OutputInterface $output The console output.
      *
-     * @return \lrackwitz\Para\Service\GroupShell The created shell.
+     * @return \Para\Service\GroupShell The created shell.
      */
     public function create(InputInterface $input, OutputInterface $output)
     {

@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Exception\GroupNotFoundException.php.
+ * Contains Para\Exception\GroupNotFoundException.php.
  */
 
-namespace lrackwitz\Para\Exception;
+namespace Para\Exception;
 
 /**
  * Class GroupNotFoundException.
  *
- * @package lrackwitz\Para\Exception
+ * @package Para\Exception
  */
 class GroupNotFoundException extends \Exception
 {

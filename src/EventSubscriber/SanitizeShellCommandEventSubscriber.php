@@ -1,19 +1,19 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\SanitizeShellCommandEventSubscriber.php.
+ * Contains Para\EventSubscriber\SanitizeShellCommandEventSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\BeforeShellCommandExecutionEvent;
-use lrackwitz\Para\Event\ShellEvents;
+use Para\Event\BeforeShellCommandExecutionEvent;
+use Para\Event\ShellEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class SanitizeShellCommandEventSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class SanitizeShellCommandEventSubscriber implements EventSubscriberInterface
 {
@@ -47,7 +47,7 @@ class SanitizeShellCommandEventSubscriber implements EventSubscriberInterface
     /**
      * Callback method that sanitizes the command the user entered.
      *
-     * @param \lrackwitz\Para\Event\BeforeShellCommandExecutionEvent $event The event.
+     * @param \Para\Event\BeforeShellCommandExecutionEvent $event The event.
      */
     public function beforeExecution(BeforeShellCommandExecutionEvent $event)
     {

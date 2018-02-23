@@ -1,17 +1,17 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\BeforeShellCommandExecutionEvent.php.
+ * Contains Para\Event\BeforeShellCommandExecutionEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class BeforeCommandExecutionEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class BeforeShellCommandExecutionEvent extends Event
 {

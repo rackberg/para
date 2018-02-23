@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Command\EditGroupCommand.php.
+ * Contains Para\Command\EditGroupCommand.php.
  */
 
-namespace lrackwitz\Para\Command;
+namespace Para\Command;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class EditGroupCommand.
  *
- * @package lrackwitz\Para\Command
+ * @package Para\Command
  */
 class EditGroupCommand extends Command
 {

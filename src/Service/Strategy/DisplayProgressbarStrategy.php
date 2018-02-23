@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Strategy\DisplayProgressbarStrategy.php.
+ * Contains Para\Service\Strategy\DisplayProgressbarStrategy.php.
  */
 
-namespace lrackwitz\Para\Service\Strategy;
+namespace Para\Service\Strategy;
 
-use lrackwitz\Para\Entity\Project;
-use lrackwitz\Para\Service\Output\BufferedOutputInterface;
-use lrackwitz\Para\Service\ProcessFactory;
+use Para\Entity\Project;
+use Para\Service\Output\BufferedOutputInterface;
+use Para\Service\ProcessFactory;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
@@ -16,7 +16,7 @@ use Symfony\Component\Process\Process;
 /**
  * Class DisplayProgressbarStrategy.
  *
- * @package lrackwitz\Para\Service\Strategy
+ * @package Para\Service\Strategy
  */
 class DisplayProgressbarStrategy extends DefaultDisplayStrategy implements AsyncShellCommandExecuteStrategy
 {
@@ -30,7 +30,7 @@ class DisplayProgressbarStrategy extends DefaultDisplayStrategy implements Async
     /**
      * DisplayProgressbarStrategy constructor.
      *
-     * @param \lrackwitz\Para\Service\ProcessFactory $processFactory
+     * @param \Para\Service\ProcessFactory $processFactory
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function __construct(
@@ -47,7 +47,7 @@ class DisplayProgressbarStrategy extends DefaultDisplayStrategy implements Async
     {
         // For each project start an asynchronous process.
         $i = 0;
-        /** @var \lrackwitz\Para\Entity\Project $project */
+        /** @var \Para\Entity\Project $project */
         foreach ($projects as $project) {
             $process = $this->createProcess($cmd, $project->getPath());
             $progressBar = $this->createProgressBar($output, $project);
@@ -65,7 +65,7 @@ class DisplayProgressbarStrategy extends DefaultDisplayStrategy implements Async
      * Adds the process to the list of processes.
      *
      * @param \Symfony\Component\Process\Process $process The process to add.
-     * @param \lrackwitz\Para\Entity\Project $project The project.
+     * @param \Para\Entity\Project $project The project.
      * @param \Symfony\Component\Console\Helper\ProgressBar $progressBar The progress bar.
      * @param int $index The current index.
      */
@@ -86,7 +86,7 @@ class DisplayProgressbarStrategy extends DefaultDisplayStrategy implements Async
     /**
      * Creates a new progress bar for a project.
      *
-     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output Used to write the progress bar to the terminal.
+     * @param \Para\Service\Output\BufferedOutputInterface $output Used to write the progress bar to the terminal.
      * @param Project $project The project.
 
      * @return \Symfony\Component\Console\Helper\ProgressBar The created progressbar.
@@ -113,7 +113,7 @@ class DisplayProgressbarStrategy extends DefaultDisplayStrategy implements Async
     /**
      * Starts and renders the progress bars.
      *
-     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output
+     * @param \Para\Service\Output\BufferedOutputInterface $output
      */
     private function startProgressBars(BufferedOutputInterface $output)
     {
@@ -131,7 +131,7 @@ class DisplayProgressbarStrategy extends DefaultDisplayStrategy implements Async
      * Sets the cursor to the line where the progress bar with given index is displayed.
      *
      * @param int $index The progress bar index.
-     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output
+     * @param \Para\Service\Output\BufferedOutputInterface $output
      */
     private function setCursorToProgressBar(int $index, BufferedOutputInterface $output)
     {

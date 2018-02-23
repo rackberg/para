@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Command\DeleteGroupCommand.php.
+ * Contains Para\Command\DeleteGroupCommand.php.
  */
 
-namespace lrackwitz\Para\Command;
+namespace Para\Command;
 
-use lrackwitz\Para\Exception\GroupNotFoundException;
-use lrackwitz\Para\Service\ConfigurationManagerInterface;
+use Para\Exception\GroupNotFoundException;
+use Para\Service\ConfigurationManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class DeleteGroupCommand.
  *
- * @package lrackwitz\Para\Command
+ * @package Para\Command
  */
 class DeleteGroupCommand extends Command
 {
@@ -39,7 +39,7 @@ class DeleteGroupCommand extends Command
      * EditGroupCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \lrackwitz\Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
      */
     public function __construct(
         LoggerInterface $logger,

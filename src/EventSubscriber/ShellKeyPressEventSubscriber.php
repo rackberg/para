@@ -1,20 +1,20 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\EventSubscriber\ShellKeyPressEventSubscriber.php.
+ * Contains Para\EventSubscriber\ShellKeyPressEventSubscriber.php.
  */
 
-namespace lrackwitz\Para\EventSubscriber;
+namespace Para\EventSubscriber;
 
-use lrackwitz\Para\Event\ShellEvents;
-use lrackwitz\Para\Event\ShellKeyPressEvent;
-use lrackwitz\Para\Service\ShellManagerInterface;
+use Para\Event\ShellEvents;
+use Para\Event\ShellKeyPressEvent;
+use Para\Service\ShellManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class ShellKeyPressEventSubscriber.
  *
- * @package lrackwitz\Para\EventSubscriber
+ * @package Para\EventSubscriber
  */
 class ShellKeyPressEventSubscriber implements EventSubscriberInterface
 {

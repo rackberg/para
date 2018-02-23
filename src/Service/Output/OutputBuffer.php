@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Output\OutputBuffer.php.
+ * Contains Para\Service\Output\OutputBuffer.php.
  */
 
-namespace lrackwitz\Para\Service\Output;
+namespace Para\Service\Output;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class OutputBuffer.
  *
- * @package lrackwitz\Para\Service\Output
+ * @package Para\Service\Output
  */
 class OutputBuffer extends ConsoleOutput implements BufferedOutputInterface
 {

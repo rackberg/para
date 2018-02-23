@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\ParaApplication.php.
+ * Contains Para\ParaApplication.php.
  */
 
-namespace lrackwitz\Para;
+namespace Para;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;

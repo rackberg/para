@@ -1,17 +1,17 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Output\BufferedOutputInterface.php.
+ * Contains Para\Service\Output\BufferedOutputInterface.php.
  */
 
-namespace lrackwitz\Para\Service\Output;
+namespace Para\Service\Output;
 
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Interface BufferedOutputInterface.
  *
- * @package lrackwitz\Para\Service\Output
+ * @package Para\Service\Output
  */
 interface BufferedOutputInterface extends OutputInterface
 {

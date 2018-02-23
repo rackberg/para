@@ -1,16 +1,16 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Strategy\DisplayCombinedOutputStrategy.php.
+ * Contains Para\Service\Strategy\DisplayCombinedOutputStrategy.php.
  */
 
-namespace lrackwitz\Para\Service\Strategy;
+namespace Para\Service\Strategy;
 
-use lrackwitz\Para\Entity\Project;
-use lrackwitz\Para\Event\IncrementalOutputReceivedEvent;
-use lrackwitz\Para\Event\PostProcessCreationEvent;
-use lrackwitz\Para\Service\Output\BufferedOutputInterface;
-use lrackwitz\Para\Service\ProcessFactory;
+use Para\Entity\Project;
+use Para\Event\IncrementalOutputReceivedEvent;
+use Para\Event\PostProcessCreationEvent;
+use Para\Service\Output\BufferedOutputInterface;
+use Para\Service\ProcessFactory;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
@@ -18,7 +18,7 @@ use Symfony\Component\Process\Process;
 /**
  * Class DisplayCombinedOutputStrategy.
  *
- * @package lrackwitz\Para\Service\Strategy
+ * @package Para\Service\Strategy
  */
 class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements AsyncShellCommandExecuteStrategy
 {
@@ -40,7 +40,7 @@ class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements As
     /**
      * DisplayCombinedOutputStrategy constructor.
      *
-     * @param \lrackwitz\Para\Service\ProcessFactory $processFactory
+     * @param \Para\Service\ProcessFactory $processFactory
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function __construct(
@@ -56,7 +56,7 @@ class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements As
     public function execute(string $cmd, array $projects, BufferedOutputInterface $output)
     {
         // For each project start an asynchronous process.
-        /** @var \lrackwitz\Para\Entity\Project $project */
+        /** @var \Para\Entity\Project $project */
         foreach ($projects as $project) {
             $process = $this->createProcess($cmd, $project->getPath());
 
@@ -77,7 +77,7 @@ class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements As
      * Adds the process and project info.
      *
      * @param \Symfony\Component\Process\Process $process
-     * @param \lrackwitz\Para\Entity\Project $project
+     * @param \Para\Entity\Project $project
      */
     private function addProcessInfo(Process $process, Project $project)
     {
@@ -143,7 +143,7 @@ class DisplayCombinedOutputStrategy extends DefaultDisplayStrategy implements As
      * Handles the output for a process.
      *
      * @param array $processInfo The process information.
-     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output
+     * @param \Para\Service\Output\BufferedOutputInterface $output
      * @param callable $processTerminatedCallback
      */
     protected function handleProcessOutput(

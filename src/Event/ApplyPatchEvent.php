@@ -1,17 +1,17 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\ApplyPatchEvent.php.
+ * Contains Para\Event\ApplyPatchEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class ApplyPatchEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class ApplyPatchEvent extends Event
 {
@@ -34,7 +34,7 @@ class ApplyPatchEvent extends Event
     /**
      * The project.
      *
-     * @var \lrackwitz\Para\Entity\ProjectInterface
+     * @var \Para\Entity\ProjectInterface
      */
     private $project;
 
@@ -72,7 +72,7 @@ class ApplyPatchEvent extends Event
     /**
      * Returns project.
      *
-     * @return \lrackwitz\Para\Entity\ProjectInterface
+     * @return \Para\Entity\ProjectInterface
      */
     public function getProject()
     {
@@ -80,9 +80,9 @@ class ApplyPatchEvent extends Event
     }
 
     /**
-     * @param \lrackwitz\Para\Entity\ProjectInterface $project
+     * @param \Para\Entity\ProjectInterface $project
      */
-    public function setProject(\lrackwitz\Para\Entity\ProjectInterface $project)
+    public function setProject(\Para\Entity\ProjectInterface $project)
     {
         $this->project = $project;
     }

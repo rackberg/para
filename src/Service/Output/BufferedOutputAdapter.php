@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Output\BufferedOutputAdapter.php.
+ * Contains Para\Service\Output\BufferedOutputAdapter.php.
  */
 
-namespace lrackwitz\Para\Service\Output;
+namespace Para\Service\Output;
 
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class BufferedOutputAdapter.
  *
- * @package lrackwitz\Para\Service\Output
+ * @package Para\Service\Output
  */
 class BufferedOutputAdapter implements BufferedOutputInterface
 {

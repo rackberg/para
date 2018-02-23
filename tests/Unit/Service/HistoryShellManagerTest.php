@@ -1,27 +1,27 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Tests\Service\HistoryShellManagerTest.php.
+ * Contains Para\Tests\Service\HistoryShellManagerTest.php.
  */
 
-namespace lrackwitz\Para\Tests\Service;
+namespace Para\Tests\Unit\Service;
 
-use lrackwitz\Para\Service\HistoryShellManager;
-use lrackwitz\Para\Service\ShellHistoryInterface;
+use Para\Service\HistoryShellManager;
+use Para\Service\ShellHistoryInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
  * Class HistoryShellManagerTest.
  *
- * @package lrackwitz\Para\Tests\Service
+ * @package Para\Tests\Unit\Service
  */
 class HistoryShellManagerTest extends TestCase
 {
     /**
      * The history shell manager to test.
      *
-     * @var \lrackwitz\Para\Service\HistoryShellManagerInterface
+     * @var \Para\Service\HistoryShellManagerInterface
      */
     private $shellManager;
 
@@ -35,7 +35,7 @@ class HistoryShellManagerTest extends TestCase
     /**
      * The shell history mock object.
      *
-     * @var \lrackwitz\Para\Service\ShellHistoryInterface
+     * @var \Para\Service\ShellHistoryInterface
      */
     private $historyMock;
 

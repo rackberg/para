@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\InteractiveShellInterface.php.
+ * Contains Para\Service\InteractiveShellInterface.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 interface InteractiveShellInterface
 {

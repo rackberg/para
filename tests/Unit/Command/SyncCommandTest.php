@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Tests\Command\SyncCommandTest.php.
+ * Contains Para\Tests\Command\SyncCommandTest.php.
  */
 
-namespace lrackwitz\Para\Tests\Command;
+namespace Para\Tests\Unit\Command;
 
-use lrackwitz\Para\Command\SyncCommand;
-use lrackwitz\Para\Service\Sync\GitFileSyncer;
-use lrackwitz\Para\Service\YamlConfigurationManager;
+use Para\Command\SyncCommand;
+use Para\Service\Sync\GitFileSyncer;
+use Para\Service\YamlConfigurationManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Application;
@@ -18,7 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Class SyncCommandTest.
  *
- * @package lrackwitz\Para\Tests\Command
+ * @package Para\Tests\Unit\Command
  */
 class SyncCommandTest extends TestCase
 {
@@ -32,14 +32,14 @@ class SyncCommandTest extends TestCase
     /**
      * The git file syncer.
      *
-     * @var \lrackwitz\Para\Service\Sync\FileSyncerInterface
+     * @var \Para\Service\Sync\FileSyncerInterface
      */
     private $gitFileSyncer;
 
     /**
      * The config manager.
      *
-     * @var \lrackwitz\Para\Service\ConfigurationManagerInterface
+     * @var \Para\Service\ConfigurationManagerInterface
      */
     private $configManager;
 

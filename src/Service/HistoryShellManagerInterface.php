@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\HistoryShellManagerInterface.php.
+ * Contains Para\Service\HistoryShellManagerInterface.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 /**
  * Interface HistoryShellManagerInterface.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 interface HistoryShellManagerInterface extends ShellManagerInterface
 {

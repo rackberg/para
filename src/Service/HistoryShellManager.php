@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\HistoryShellManager.php.
+ * Contains Para\Service\HistoryShellManager.php.
  */
 
-namespace lrackwitz\Para\Service;
+namespace Para\Service;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 /**
  * Class HistoryShellManager.
  *
- * @package lrackwitz\Para\Service
+ * @package Para\Service
  */
 class HistoryShellManager implements HistoryShellManagerInterface
 {

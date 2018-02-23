@@ -1,19 +1,19 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Event\PostProcessCreationEvent.php.
+ * Contains Para\Event\PostProcessCreationEvent.php.
  */
 
-namespace lrackwitz\Para\Event;
+namespace Para\Event;
 
-use lrackwitz\Para\Entity\Project;
+use Para\Entity\Project;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Process\Process;
 
 /**
  * Class PostProcessCreationEvent.
  *
- * @package lrackwitz\Para\Event
+ * @package Para\Event
  */
 class PostProcessCreationEvent extends Event
 {

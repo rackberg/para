@@ -1,28 +1,28 @@
 <?php
 /**
  * @file
- * Contains lrackwitz\Para\Service\Strategy\DefaultDisplayStrategy.php.
+ * Contains Para\Service\Strategy\DefaultDisplayStrategy.php.
  */
 
-namespace lrackwitz\Para\Service\Strategy;
+namespace Para\Service\Strategy;
 
-use lrackwitz\Para\Event\PostProcessCreationEvent;
-use lrackwitz\Para\Service\Output\BufferedOutputInterface;
-use lrackwitz\Para\Service\ProcessFactory;
+use Para\Event\PostProcessCreationEvent;
+use Para\Service\Output\BufferedOutputInterface;
+use Para\Service\ProcessFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 
 /**
  * Class DefaultDisplayStrategy.
  *
- * @package lrackwitz\Para\Service\Strategy
+ * @package Para\Service\Strategy
  */
 abstract class DefaultDisplayStrategy
 {
     /**
      * The process factory.
      *
-     * @var \lrackwitz\Para\Service\ProcessFactory
+     * @var \Para\Service\ProcessFactory
      */
     protected $processFactory;
 
@@ -43,7 +43,7 @@ abstract class DefaultDisplayStrategy
     /**
      * DefaultDisplayStrategy constructor.
      *
-     * @param \lrackwitz\Para\Service\ProcessFactory $processFactory
+     * @param \Para\Service\ProcessFactory $processFactory
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function __construct(
@@ -90,7 +90,7 @@ abstract class DefaultDisplayStrategy
      * Moves the cursor up the given number of steps.
      *
      * @param int $steps The number of steps to move the cursor up.
-     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output The output
+     * @param \Para\Service\Output\BufferedOutputInterface $output The output
      */
     protected function moveCursorUp(int $steps, BufferedOutputInterface $output)
     {
@@ -101,7 +101,7 @@ abstract class DefaultDisplayStrategy
      * Moves the cursor down the given number of steps.
      *
      * @param int $steps The number of steps to move the cursor down.
-     * @param \lrackwitz\Para\Service\Output\BufferedOutputInterface $output The output.
+     * @param \Para\Service\Output\BufferedOutputInterface $output The output.
      */
     protected function moveCursorDown(int $steps, BufferedOutputInterface $output)
     {
