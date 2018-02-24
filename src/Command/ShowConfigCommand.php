@@ -84,7 +84,7 @@ class ShowConfigCommand extends Command
         }
 
         // Create a new process.
-        $process = $this->processFactory->create('cat ' . $configFile);
+        $process = $this->processFactory->getProcess('cat ' . $configFile);
         $process->run();
         $output->write($process->getOutput());
     }

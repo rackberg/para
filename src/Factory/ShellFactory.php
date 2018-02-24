@@ -1,8 +1,10 @@
 <?php
 
-namespace Para\Service;
+namespace Para\Factory;
 
-use Para\Factory\ProcessFactoryInterface;
+use Para\Service\GroupShell;
+use Para\Service\HistoryShellManagerInterface;
+use Para\Service\InteractiveShellInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,9 +14,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class ShellFactory.
  *
- * @package Para\Service
+ * @package Para\Factory
  */
-class ShellFactory
+class ShellFactory implements ShellFactoryInterface
 {
     /**
      * The logger.
@@ -75,14 +77,9 @@ class ShellFactory
     }
 
     /**
-     * Creates a new shell factory.
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input The console input.
-     * @param \Symfony\Component\Console\Output\OutputInterface $output The console output.
-     *
-     * @return \Para\Service\GroupShell The created shell.
+     * {@inheritdoc}
      */
-    public function create(InputInterface $input, OutputInterface $output)
+    public function create(InputInterface $input, OutputInterface $output): InteractiveShellInterface
     {
         return new GroupShell(
             $this->logger,

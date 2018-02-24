@@ -7,7 +7,7 @@
 namespace Para\Command;
 
 use Para\Service\ConfigurationManagerInterface;
-use Para\Service\ShellFactory;
+use Para\Factory\ShellFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -54,7 +54,7 @@ class OpenShellCommand extends Command
      * OpenShellCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Para\Service\ShellFactory $shellFactory The shell factory.
+     * @param \Para\Factory\ShellFactory $shellFactory The shell factory.
      * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
      * @param string $historyFile The path to the history file.
      */

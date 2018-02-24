@@ -48,7 +48,7 @@ services:
         class: Para\Factory\ProcessFactory
 
     para.shell_factory:
-        class: Para\Service\ShellFactory
+        class: Para\Factory\ShellFactory
         arguments:
             - '@logger'
             - '@para.application'
