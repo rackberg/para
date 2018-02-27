@@ -385,7 +385,7 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      */
     public function hasProject($projectName)
     {
-        return $this->existsProject($projectName);
+        return $this->existsProject($projectName) ? true : false;
     }
 
     /**

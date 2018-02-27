@@ -144,6 +144,76 @@ class YamlConfigurationManagerTest extends TestCase
         $this->yamlConfigManager->deleteGroup('not_existing_group');
     }
 
+    /**
+     * Tests that the hasGroup() method returns true, when the group exists in the configuration file.
+     */
+    public function testTheMethodHasGroupReturnsTrueWhenTheGroupExistsInTheConfigurationFile()
+    {
+        $this->assertTrue($this->yamlConfigManager->hasGroup('default'));
+    }
+
+    /**
+     * Tests that the hasGroup() method returns false, when the group does not exist in the configuration file.
+     */
+    public function testTheMethodHasGroupReturnsFalseWhenTheGroupDoesNotExistInTheConfigurationFile()
+    {
+        $this->assertFalse($this->yamlConfigManager->hasGroup('not_existing_group'));
+    }
+
+    /**
+     * Tests that the hasProject() method returns true, when the project exists in the configuration file.
+     */
+    public function testTheMethodHasProjectReturnsTrueWhenTheProjectExistsInTheConfigurationFile()
+    {
+        $this->assertTrue($this->yamlConfigManager->hasProject('project_a'));
+    }
+
+    /**
+     * Tests that the hasProject() method returns false, when the project does not exist in the configuration file.
+     */
+    public function testTheMethodHasProjectReturnsFalseWhenTheProjectDoesNotExistInTheConfigurationFile()
+    {
+        $this->assertFalse($this->yamlConfigManager->hasProject('not_existing_project'));
+    }
+
+    /**
+     * Tests that the readGroup() method returns an array.
+     */
+    public function testTheMethodReadGroupReturnsTheGroupAsArray()
+    {
+        $result = $this->yamlConfigManager->readGroup('default');
+
+        $this->assertTrue(is_array($result));
+    }
+
+    /**
+     * Tests that the readGroup() method throws a GroupNotFoundException.
+     *
+     * @expectedException \Para\Exception\GroupNotFoundException
+     */
+    public function testTheMethodReadGroupThrowsAGroupNotFoundExceptionWhenTheGroupIsNotExistingInTheConfigurationFile()
+    {
+        $this->yamlConfigManager->readGroup('not_existing_group');
+    }
+
+    /**
+     * Tests that the readProject() method returns an array with the project data.
+     */
+    public function testsTheReadProjectMethodReturnsAnArrayWithProjectData()
+    {
+        $result = $this->yamlConfigManager->readProject('project_a');
+
+        $this->assertArrayHasKey('path', $result);
+    }
+
+    /**
+     * Tests that the readProject() method returns null when the project doeas not exist.
+     */
+    public function testsTheReadProjectMethodReturnsNullIfTheProjectDoesNotExist()
+    {
+        $this->assertNull($this->yamlConfigManager->readProject('not_existing'));
+    }
+    
     private function createTestConfiguration()
     {
         vfsStream::newFile('para.yml')->at($this->vfsRoot)->setContent(
