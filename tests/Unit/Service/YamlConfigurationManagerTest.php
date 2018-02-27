@@ -104,6 +104,46 @@ class YamlConfigurationManagerTest extends TestCase
         ];
     }
 
+    /**
+     * Tests that the addGroup() method adds a new group entry into the
+     */
+    public function testTheAddGroupMethodAddsANewGroupIntoTheConfigurationFile()
+    {
+        $result = $this->yamlConfigManager->addGroup('new_group');
+
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Tests that the addGroup() method returns false when the group to add already exists.
+     */
+    public function testTheAddGroupMethodReturnsFalseWhenTheGroupToAddAlreadyExists()
+    {
+        $result = $this->yamlConfigManager->addGroup('default');
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Tests that the deleteGroup() method deletes an existing group from the configuration file.
+     */
+    public function testTheDeleteGroupMethodDeletesAnExistingGroupFromTheConfigurationFile()
+    {
+        $result = $this->yamlConfigManager->deleteGroup('default');
+
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Tests that a GroupNotFoundException will be thrown when trying to delete a not existing group.
+     *
+     * @expectedException \Para\Exception\GroupNotFoundException
+     */
+    public function testTheDeleteGroupMethodThrowsAGroupNotFoundExceptionWhenTheGroupToDeleteDoesNotExist()
+    {
+        $this->yamlConfigManager->deleteGroup('not_existing_group');
+    }
+
     private function createTestConfiguration()
     {
         vfsStream::newFile('para.yml')->at($this->vfsRoot)->setContent(

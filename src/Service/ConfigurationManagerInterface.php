@@ -29,14 +29,6 @@ interface ConfigurationManagerInterface
     public function deleteGroup($groupName);
 
     /**
-     * Changes the name of an existing group.
-     *
-     * @param string $savedGroupName The name of the group to change.
-     * @param string $newGroupName The new name of the group.
-     */
-    public function editGroupName($savedGroupName, $newGroupName);
-
-    /**
      * Checks if a group exists in the configuration.
      *
      * @param string $groupName The name of the group
@@ -74,22 +66,6 @@ interface ConfigurationManagerInterface
      * @param string $projectName The name of the project.
      */
     public function deleteProject($projectName);
-
-    /**
-     * Changes the name of an existing project.
-     *
-     * @param string $projectName The name of the project to change.
-     * @param string $newProjectName The new name of the project.
-     */
-    public function editProjectName($projectName, $newProjectName);
-
-    /**
-     * Changes the path of the project.
-     *
-     * @param string $projectName The name of the project.
-     * @param string $path The new path of the project.
-     */
-    public function editProjectPath($projectName, $path);
 
     /**
      * Reads all groups from the configuration.

@@ -90,15 +90,7 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
 
         // Get the current configuration.
         $yaml = $this->readFile($this->yamlFile);
-
         $yaml[$groupName] = [];
-
-        if (!$this->saveFileContent($this->yamlFile, $yaml)) {
-            $this->logger->error('Failed to save the new group in the configuration file.', [
-               'groupName' => $groupName,
-            ]);
-            return false;
-        }
 
         return true;
     }
@@ -123,13 +115,7 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
             unset($yaml[$groupName]);
 
             // Save the file.
-            if (!$this->saveFileContent($this->yamlFile, $yaml)) {
-                $this->logger->error('Failed to save the configuration file atfer removing the group.', [
-                    'groupName' => $groupName,
-                    'yamlFile' => $this->yamlFile,
-                ]);
-                return false;
-            }
+            $this->saveFileContent($this->yamlFile, $yaml);
         } else {
             $this->logger->warning('The group to delete is not existing in the configuration.', [
                 'groupName' => $groupName,
@@ -139,17 +125,6 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
         }
 
         return true;
-    }
-
-    /**
-     * Changes the name of an existing group.
-     *
-     * @param string $savedGroupName The name of the group to change.
-     * @param string $newGroupName The new name of the group.
-     */
-    public function editGroupName($savedGroupName, $newGroupName)
-    {
-        // TODO: Implement editGroupName() method.
     }
 
     /**
@@ -243,28 +218,6 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
         }
 
         return true;
-    }
-
-    /**
-     * Changes the name of an existing project.
-     *
-     * @param string $projectName The name of the project to change.
-     * @param string $newProjectName The new name of the project.
-     */
-    public function editProjectName($projectName, $newProjectName)
-    {
-        // TODO: Implement editProjectName() method.
-    }
-
-    /**
-     * Changes the path of the project.
-     *
-     * @param string $projectName The name of the project.
-     * @param string $path The new path of the project.
-     */
-    public function editProjectPath($projectName, $path)
-    {
-        // TODO: Implement editProjectPath() method.
     }
 
     /**
