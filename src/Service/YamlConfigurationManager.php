@@ -52,6 +52,13 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     private $yamlFile;
 
     /**
+     * The data array.
+     *
+     * @var string[]
+     */
+    private $data;
+
+    /**
      * YamlConfigurationManager constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
@@ -412,5 +419,32 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save(string $fileName, string $content): bool
+    {
+        return false === file_put_contents($fileName, $content) ? false : true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function read(string $fileName): void
+    {
+        $content = file_get_contents($fileName);
+        if (false !== $content) {
+            $this->data = $this->parser->parse($content);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getData(): array
+    {
+        return $this->data;
     }
 }

@@ -23,14 +23,32 @@ use Symfony\Component\Yaml\Parser;
  */
 class YamlConfigurationManagerTest extends TestCase
 {
+    const TEST_CONTENT =
+        <<< EOT
+default:
+    project_a: 
+        path: projects/project_a
+    project_b:
+        path: projects/project_b
+    project_c:
+        path: projects/project_c
+EOT;
+
     /**
      * The yaml configuration manager to test.
      *
-     * @var \Para\Service\YamlConfigurationManager
+     * @var \Para\Service\ConfigurationManagerInterface
      */
     private $yamlConfigManager;
 
     private $vfsRoot;
+
+    /**
+     * The parser mock object.
+     *
+     * @var \Symfony\Component\Yaml\Parser
+     */
+    private $parser;
 
     /**
      * {@inheritdoc}
@@ -40,10 +58,27 @@ class YamlConfigurationManagerTest extends TestCase
         $this->vfsRoot = vfsStream::setup();
         $this->createTestConfiguration();
 
+        $this->parser = $this->prophesize(Parser::class);
+        $this->parser
+            ->parse(Argument::type('string'))
+            ->willReturn([
+                'default' => [
+                    'project_a' => [
+                        'path' => 'projects/project_a',
+                    ],
+                    'project_b' => [
+                        'path' => 'projects/project_b',
+                    ],
+                    'project_c' => [
+                        'path' => 'projects/project_c',
+                    ],
+                ],
+            ]);
+
         $this->yamlConfigManager = new YamlConfigurationManager(
             $this->prophesize(LoggerInterface::class)->reveal(),
             new Dumper(),
-            new Parser(),
+            $this->parser->reveal(),
             vfsStream::url('root/para.yml')
         );
     }
@@ -199,7 +234,7 @@ class YamlConfigurationManagerTest extends TestCase
     /**
      * Tests that the readProject() method returns an array with the project data.
      */
-    public function testsTheReadProjectMethodReturnsAnArrayWithProjectData()
+    public function testTheReadProjectMethodReturnsAnArrayWithProjectData()
     {
         $result = $this->yamlConfigManager->readProject('project_a');
 
@@ -209,23 +244,52 @@ class YamlConfigurationManagerTest extends TestCase
     /**
      * Tests that the readProject() method returns null when the project doeas not exist.
      */
-    public function testsTheReadProjectMethodReturnsNullIfTheProjectDoesNotExist()
+    public function testTheReadProjectMethodReturnsNullIfTheProjectDoesNotExist()
     {
         $this->assertNull($this->yamlConfigManager->readProject('not_existing'));
     }
-    
+
+    /**
+     * Tests that the save() method saves the configuration.
+     */
+    public function testTheSaveMethodSavesTheConfiguration()
+    {
+        $fileName = 'vfs://root/config.yml';
+        $content = 'test';
+        $result = $this->yamlConfigManager->save($fileName, $content);
+
+        $this->assertTrue(file_exists($fileName));
+        $this->assertTrue($result);
+        $this->assertEquals($content, file_get_contents($fileName));
+    }
+
+    /**
+     * Tests that the read() method reads the content of a yml file.
+     */
+    public function testTheReadMethodReadsTheContentOfAYmlFile()
+    {
+        $fileName = vfsStream::url('root/para.yml');
+        $this->yamlConfigManager->read($fileName);
+
+        $data = $this->yamlConfigManager->getData();
+        $this->assertNotNull($data);
+    }
+
+    /**
+     * Tests that the getData() method returns an array of data.
+     */
+    public function testTheGetDataMethodReturnsAnArrayWithData()
+    {
+        $this->yamlConfigManager->read('vfs://root/para.yml');
+        $data = $this->yamlConfigManager->getData();
+
+        $this->assertTrue(is_array($data));
+    }
+
     private function createTestConfiguration()
     {
-        vfsStream::newFile('para.yml')->at($this->vfsRoot)->setContent(
-            <<< EOT
-default:
-    project_a: 
-        path: projects/project_a
-    project_b:
-        path: projects/project_b
-    project_c:
-        path: projects/project_c
-EOT
-        );
+        vfsStream::newFile('para.yml')
+            ->at($this->vfsRoot)
+            ->setContent(self::TEST_CONTENT);
     }
 }

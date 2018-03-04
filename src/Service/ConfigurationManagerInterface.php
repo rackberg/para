@@ -113,4 +113,28 @@ interface ConfigurationManagerInterface
      *   The found project or null.
      */
     public function findProjectByFile(File $file);
+
+    /**
+     * Reads the content of a file.
+     *
+     * @param string $fileName The file to read.
+     */
+    public function read(string $fileName): void;
+
+    /**
+     * Saves the configuration file.
+     *
+     * @param string $fileName The name of the file to save.
+     * @param string $content The content to save.
+     *
+     * @return bool Returns true when the file has been saved otherwise false.
+     */
+    public function save(string $fileName, string $content): bool;
+
+    /**
+     * Returns the data array.
+     *
+     * @return array Returns an array with data.
+     */
+    public function getData(): array;
 }
