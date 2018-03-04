@@ -6,7 +6,7 @@
 
 namespace Para\Command;
 
-use Para\Service\ConfigurationManagerInterface;
+use Para\Configuration\ProjectConfigurationInterface;
 use Para\Service\Sync\FileSyncerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,11 +30,11 @@ class SyncCommand extends Command
     private $fileSyncer;
 
     /**
-     * The configuration manager.
+     * The project configuration.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var \Para\Configuration\ProjectConfigurationInterface
      */
-    private $configManager;
+    private $projectConfiguration;
 
     /**
      * The file system.
@@ -48,20 +48,20 @@ class SyncCommand extends Command
      *
      * @param \Para\Service\Sync\FileSyncerInterface $fileSyncer
      *   The git file syncer.
-     * @param \Para\Service\ConfigurationManagerInterface $configurationManager
-     *   The configuration manager.
+     * @param \Para\Configuration\ProjectConfigurationInterface $projectConfiguration
+     *   The project configuration.
      * @param \Symfony\Component\Filesystem\Filesystem $fileSystem
      *   The file system.
      */
     public function __construct(
         FileSyncerInterface $fileSyncer,
-        ConfigurationManagerInterface $configurationManager,
+        ProjectConfigurationInterface $projectConfiguration,
         Filesystem $fileSystem
     ) {
         parent::__construct();
 
         $this->fileSyncer = $fileSyncer;
-        $this->configManager = $configurationManager;
+        $this->projectConfiguration = $projectConfiguration;
         $this->fileSystem = $fileSystem;
     }
 
@@ -181,14 +181,18 @@ class SyncCommand extends Command
      */
     private function isInputValid(InputInterface $input, OutputInterface $output)
     {
+        $project = $this->projectConfiguration->getProject(
+            $input->getArgument('source_project')
+        );
+
         // Check if the source project is configured.
-        if (!$this->configManager->hasProject($input->getArgument('source_project'))) {
+        if (!$project) {
             $output->writeln('<error>The project you are trying to use as source_project is not configured.</error>', 1);
             return false;
         }
 
         // Get the source project path.
-        $path = $this->getProjectPath($input->getArgument('source_project'));
+        $path = $project->getPath();
         if ($path{strlen($path) - 1} != '/') {
             $path .= '/';
         }
@@ -201,7 +205,7 @@ class SyncCommand extends Command
 
         // Check if the target projects are configured.
         foreach ($input->getArgument('target_project') as $project) {
-            if (!$this->configManager->hasProject($project)) {
+            if (!$this->projectConfiguration->getProject($project)) {
                 $output->writeln('<error>The project "' . $project . '" you are trying to use as target_project is not configured.</error>', 1);
                 return false;
             }
@@ -221,7 +225,7 @@ class SyncCommand extends Command
      */
     private function getProjectPath(string $projectName): string
     {
-        $project = $this->configManager->readProject($projectName);
-        return $project['path'];
+        $project = $this->projectConfiguration->getProject($projectName);
+        return $project->getPath();
     }
 }

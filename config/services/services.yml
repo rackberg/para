@@ -78,4 +78,12 @@ services:
         arguments:
             - '@event_dispatcher'
 
+    para.project_factory:
+        class: Para\Factory\ProjectFactory
+
+    para.project_configuration:
+        class: Para\Configuration\ProjectConfiguration
+        arguments: ['@para.yaml.configuration_manager', '@para.project_factory']
+
+
 

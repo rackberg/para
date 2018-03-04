@@ -16,7 +16,7 @@ class ProjectConfiguration implements ProjectConfigurationInterface
     /**
      * The configuration manager.
      *
-     * @var ConfigurationManagerInterface
+     * @var \Para\Service\ConfigurationManagerInterface
      */
     private $configurationManager;
 
@@ -58,4 +58,5 @@ class ProjectConfiguration implements ProjectConfigurationInterface
 
         return null;
     }
+
 }

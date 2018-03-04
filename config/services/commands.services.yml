@@ -87,5 +87,5 @@ services:
         class: Para\Command\SyncCommand
         arguments:
             - '@para.sync.git_file_syncer'
-            - '@para.yaml.configuration_manager'
+            - '@para.project_configuration'
             - '@filesystem'

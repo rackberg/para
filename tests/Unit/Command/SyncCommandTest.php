@@ -1,14 +1,11 @@
 <?php
-/**
- * @file
- * Contains Para\Tests\Command\SyncCommandTest.php.
- */
 
 namespace Para\Tests\Unit\Command;
 
 use Para\Command\SyncCommand;
+use Para\Configuration\ProjectConfigurationInterface;
+use Para\Entity\Project;
 use Para\Service\Sync\GitFileSyncer;
-use Para\Service\YamlConfigurationManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Application;
@@ -37,11 +34,11 @@ class SyncCommandTest extends TestCase
     private $gitFileSyncer;
 
     /**
-     * The config manager.
+     * The project configuration.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var \Para\Configuration\ProjectConfigurationInterface
      */
-    private $configManager;
+    private $projectConfiguration;
 
     /**
      * The file system.
@@ -56,13 +53,13 @@ class SyncCommandTest extends TestCase
     protected function setUp()
     {
         $this->gitFileSyncer = $this->prophesize(GitFileSyncer::class);
-        $this->configManager = $this->prophesize(YamlConfigurationManager::class);
+        $this->projectConfiguration = $this->prophesize(ProjectConfigurationInterface::class);
         $this->fileSystem = $this->prophesize(Filesystem::class);
 
         $this->application = new Application();
         $this->application->add(new SyncCommand(
             $this->gitFileSyncer->reveal(),
-            $this->configManager->reveal(),
+            $this->projectConfiguration->reveal(),
             $this->fileSystem->reveal()
         ));
     }
@@ -80,21 +77,26 @@ class SyncCommandTest extends TestCase
             'target_project' => ['target_project1', 'target_project2'],
         ];
 
-        $this->simulateValidSourceAndTargetProjects(
-            $parameters['source_project'],
-            $parameters['target_project']
-        );
-        $this->configManager
-            ->readProject($parameters['source_project'])
-            ->willReturn(['path' => 'path/to/source/project']);
+        $sourceProject = new Project();
+        $sourceProject->setRootDirectory('path/to/source/project');
 
-        $this->configManager
-            ->readProject($parameters['target_project'][0])
-            ->willReturn(['path' => 'path/to/target/project1']);
+        $targetProject1 = new Project();
+        $targetProject1->setRootDirectory('path/to/target/project1');
 
-        $this->configManager
-            ->readProject($parameters['target_project'][1])
-            ->willReturn(['path' => 'path/to/target/project2']);
+        $targetProject2 = new Project();
+        $targetProject2->setRootDirectory('path/to/target/project2');
+
+        $this->projectConfiguration
+            ->getProject($parameters['source_project'])
+            ->willReturn($sourceProject);
+
+        $this->projectConfiguration
+            ->getProject($parameters['target_project'][0])
+            ->willReturn($targetProject1);
+
+        $this->projectConfiguration
+            ->getProject($parameters['target_project'][1])
+            ->willReturn($targetProject2);
 
         $this->fileSystem->exists(Argument::any())->willReturn(true);
 
@@ -115,16 +117,6 @@ class SyncCommandTest extends TestCase
 
         $output = $commandTester->getDisplay();
 
-//        $this->assertContains(
-//            sprintf(
-//                'Synced file "%s" of project "%s" to project',
-//                $parameters['source_project'] . '/' . $parameters['file'],
-//                $parameters['source_project']
-//            ),
-//            $output,
-//            'Expected that the command output contains the message that the sync has been started.'
-//        );
-
         $this->assertContains(
             'Finished sync',
             $output,
@@ -137,8 +129,6 @@ class SyncCommandTest extends TestCase
      */
     public function testExecuteInvalidSourceProject()
     {
-        $this->configManager->hasProject('source_project')->willReturn(false);
-
         $command = $this->application->find('sync');
         $parameters = [
             'command' => $command->getName(),
@@ -170,13 +160,15 @@ class SyncCommandTest extends TestCase
             'target_project' => ['target_project1', 'target_project2'],
         ];
 
-        $this->simulateValidSourceAndTargetProjects(
-            $parameters['source_project'],
-            $parameters['target_project']
-        );
-
         // Simulate that the file could not be found.
         $this->fileSystem->exists(Argument::any())->willReturn(false);
+
+        $sourceProject = new Project();
+        $sourceProject->setName('source_project');
+
+        $this->projectConfiguration
+            ->getProject($parameters['source_project'])
+            ->willReturn($sourceProject);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -203,10 +195,15 @@ class SyncCommandTest extends TestCase
 
         $this->fileSystem->exists(Argument::any())->willReturn(true);
 
-        $this->configManager->hasProject($parameters['source_project'])->willReturn(true);
-        $this->configManager->hasProject($parameters['target_project'][0])->willReturn(false);
+        $sourceProject = new Project();
+        $sourceProject->setName('source_project');
 
-        $this->configManager->readProject($parameters['source_project'])->willReturn(['path' => 'path/to/source_project']);
+        $this->projectConfiguration
+            ->getProject($parameters['source_project'])
+            ->willReturn($sourceProject);
+        $this->projectConfiguration
+            ->getProject($parameters['target_project'][0])
+            ->willReturn(null);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -216,23 +213,5 @@ class SyncCommandTest extends TestCase
             $commandTester->getDisplay(),
             'Expected that an error message for the invalid target_project parameter will be shown.'
         );
-    }
-
-    /**
-     * Simulates that the source and target projects are valid.
-     *
-     * @param string $sourceProject
-     *   The name of the source project.
-     * @param array $targetProjects
-     *   The names of the target projects.
-     */
-    private function simulateValidSourceAndTargetProjects(string $sourceProject, array $targetProjects)
-    {
-        $this->configManager->hasProject($sourceProject)->willReturn(true);
-        foreach ($targetProjects as $targetProject) {
-            $this->configManager->hasProject($targetProject)->willReturn(true);
-        }
-
-        $this->configManager->readProject(Argument::type('string'))->willReturn(['path' => 'path/to/project']);
     }
 }
