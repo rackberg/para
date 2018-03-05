@@ -36,11 +36,15 @@ services:
     filesystem:
         class: Symfony\Component\Filesystem\Filesystem
 
+    para.yaml.dumper:
+        class: Para\Dumper\YamlDumper
+        arguments: ['@yaml.dumper']
+
     para.yaml.configuration_manager:
         class: Para\Service\YamlConfigurationManager
         arguments:
             - '@logger'
-            - '@yaml.dumper'
+            - '@para.yaml.dumper'
             - '@yaml.parser'
             - '%para.config%'
 

@@ -1,11 +1,9 @@
 <?php
-/**
- * @file
- * Contains Para\Tests\Service\YamlConfigurationManagerTest.php.
- */
 
 namespace Para\Tests\Unit\Service;
 
+use Para\Dumper\DumperInterface;
+use Para\Dumper\YamlDumper;
 use Para\Entity\Project;
 use Para\Service\YamlConfigurationManager;
 use org\bovigo\vfs\vfsStream;
@@ -51,6 +49,13 @@ EOT;
     private $parser;
 
     /**
+     * The dumper mock object.
+     *
+     * @var DumperInterface
+     */
+    private $dumper;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -75,9 +80,11 @@ EOT;
                 ],
             ]);
 
+        $this->dumper = $this->prophesize(DumperInterface::class);
+
         $this->yamlConfigManager = new YamlConfigurationManager(
             $this->prophesize(LoggerInterface::class)->reveal(),
-            new Dumper(),
+            $this->dumper->reveal(),
             $this->parser->reveal(),
             vfsStream::url('root/para.yml')
         );
@@ -140,62 +147,6 @@ EOT;
     }
 
     /**
-     * Tests that the addGroup() method adds a new group entry into the
-     */
-    public function testTheAddGroupMethodAddsANewGroupIntoTheConfigurationFile()
-    {
-        $result = $this->yamlConfigManager->addGroup('new_group');
-
-        $this->assertTrue($result);
-    }
-
-    /**
-     * Tests that the addGroup() method returns false when the group to add already exists.
-     */
-    public function testTheAddGroupMethodReturnsFalseWhenTheGroupToAddAlreadyExists()
-    {
-        $result = $this->yamlConfigManager->addGroup('default');
-
-        $this->assertFalse($result);
-    }
-
-    /**
-     * Tests that the deleteGroup() method deletes an existing group from the configuration file.
-     */
-    public function testTheDeleteGroupMethodDeletesAnExistingGroupFromTheConfigurationFile()
-    {
-        $result = $this->yamlConfigManager->deleteGroup('default');
-
-        $this->assertTrue($result);
-    }
-
-    /**
-     * Tests that a GroupNotFoundException will be thrown when trying to delete a not existing group.
-     *
-     * @expectedException \Para\Exception\GroupNotFoundException
-     */
-    public function testTheDeleteGroupMethodThrowsAGroupNotFoundExceptionWhenTheGroupToDeleteDoesNotExist()
-    {
-        $this->yamlConfigManager->deleteGroup('not_existing_group');
-    }
-
-    /**
-     * Tests that the hasGroup() method returns true, when the group exists in the configuration file.
-     */
-    public function testTheMethodHasGroupReturnsTrueWhenTheGroupExistsInTheConfigurationFile()
-    {
-        $this->assertTrue($this->yamlConfigManager->hasGroup('default'));
-    }
-
-    /**
-     * Tests that the hasGroup() method returns false, when the group does not exist in the configuration file.
-     */
-    public function testTheMethodHasGroupReturnsFalseWhenTheGroupDoesNotExistInTheConfigurationFile()
-    {
-        $this->assertFalse($this->yamlConfigManager->hasGroup('not_existing_group'));
-    }
-
-    /**
      * Tests that the hasProject() method returns true, when the project exists in the configuration file.
      */
     public function testTheMethodHasProjectReturnsTrueWhenTheProjectExistsInTheConfigurationFile()
@@ -254,9 +205,9 @@ EOT;
      */
     public function testTheSaveMethodSavesTheConfiguration()
     {
-        $fileName = 'vfs://root/config.yml';
+        $fileName = 'vfs://root/para.yml';
         $content = 'test';
-        $result = $this->yamlConfigManager->save($fileName, $content);
+        $result = $this->yamlConfigManager->save($content);
 
         $this->assertTrue(file_exists($fileName));
         $this->assertTrue($result);
@@ -284,6 +235,15 @@ EOT;
         $data = $this->yamlConfigManager->getData();
 
         $this->assertTrue(is_array($data));
+    }
+
+    /**
+     * Tests that the getDumper() method returns the dumper.
+     */
+    public function testTheGetDumperMethodReturnsTheYamlDumper()
+    {
+        $dumper = $this->yamlConfigManager->getDumper();
+        $this->assertTrue($dumper instanceof DumperInterface);
     }
 
     private function createTestConfiguration()

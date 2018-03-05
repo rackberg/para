@@ -6,13 +6,13 @@
 
 namespace Para\Service;
 
+use Para\Dumper\DumperInterface;
 use Para\Entity\Project;
 use Para\Exception\GroupNotFoundException;
 use Para\Exception\ProjectNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser;
 
@@ -33,7 +33,7 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     /**
      * Dumps data into a yaml file.
      *
-     * @var Dumper
+     * @var DumperInterface
      */
     private $dumper;
 
@@ -62,13 +62,13 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
      * YamlConfigurationManager constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Symfony\Component\Yaml\Dumper $dumper The yaml file dumper.
+     * @param \Para\Dumper\DumperInterface $dumper The yaml file dumper.
      * @param \Symfony\Component\Yaml\Parser $parser The yaml file parser.
      * @param string $yamlFile The path to the yaml file.
      */
     public function __construct(
         LoggerInterface $logger,
-        Dumper $dumper,
+        DumperInterface $dumper,
         Parser $parser,
         $yamlFile
     ) {
@@ -424,9 +424,9 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function save(string $fileName, string $content): bool
+    public function save(string $content): bool
     {
-        return false === file_put_contents($fileName, $content) ? false : true;
+        return false === file_put_contents($this->yamlFile, $content) ? false : true;
     }
 
     /**
@@ -446,5 +446,10 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     public function getData(): array
     {
         return $this->data;
+    }
+
+    public function getDumper(): DumperInterface
+    {
+        return $this->dumper;
     }
 }

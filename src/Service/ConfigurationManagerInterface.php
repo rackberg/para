@@ -6,6 +6,7 @@
 
 namespace Para\Service;
 
+use Para\Dumper\DumperInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
 interface ConfigurationManagerInterface
@@ -124,12 +125,11 @@ interface ConfigurationManagerInterface
     /**
      * Saves the configuration file.
      *
-     * @param string $fileName The name of the file to save.
      * @param string $content The content to save.
      *
      * @return bool Returns true when the file has been saved otherwise false.
      */
-    public function save(string $fileName, string $content): bool;
+    public function save(string $content): bool;
 
     /**
      * Returns the data array.
@@ -137,4 +137,11 @@ interface ConfigurationManagerInterface
      * @return array Returns an array with data.
      */
     public function getData(): array;
+
+    /**
+     * Returns the file dumper.
+     *
+     * @return \Para\Dumper\DumperInterface The file dumper.
+     */
+    public function getDumper(): DumperInterface;
 }

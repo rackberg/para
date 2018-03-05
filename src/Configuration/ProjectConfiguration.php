@@ -11,15 +11,8 @@ use Para\Service\ConfigurationManagerInterface;
  *
  * @package Para\Configuration
  */
-class ProjectConfiguration implements ProjectConfigurationInterface
+class ProjectConfiguration extends AbstractConfiguration implements ProjectConfigurationInterface
 {
-    /**
-     * The configuration manager.
-     *
-     * @var \Para\Service\ConfigurationManagerInterface
-     */
-    private $configurationManager;
-
     /**
      * The project factory.
      *
@@ -37,7 +30,7 @@ class ProjectConfiguration implements ProjectConfigurationInterface
         ConfigurationManagerInterface $configurationManager,
         ProjectFactoryInterface $projectFactory
     ) {
-        $this->configurationManager = $configurationManager;
+        parent::__construct($configurationManager);
         $this->projectFactory = $projectFactory;
     }
     
