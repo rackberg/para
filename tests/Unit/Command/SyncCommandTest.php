@@ -5,6 +5,7 @@ namespace Para\Tests\Unit\Command;
 use Para\Command\SyncCommand;
 use Para\Configuration\ProjectConfigurationInterface;
 use Para\Entity\Project;
+use Para\Entity\ProjectInterface;
 use Para\Service\Sync\GitFileSyncer;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -213,5 +214,89 @@ class SyncCommandTest extends TestCase
             $commandTester->getDisplay(),
             'Expected that an error message for the invalid target_project parameter will be shown.'
         );
+    }
+
+    /**
+     * Tests that the execute() method returns the correct output when the file sync failed.
+     */
+    public function testTheExecuteMethodReturnsTheCorrectOutputWhenTheFileSyncFailed()
+    {
+        $command = $this->application->find('sync');
+        $parameters = [
+            'command' => $command->getName(),
+            'source_project' => 'source_project',
+            'file' => 'the_file',
+            'target_project' => ['target_project'],
+        ];
+
+        $project = $this->prophesize(ProjectInterface::class);
+        $project->getPath()->willReturn('the/project/path/');
+
+        $this->projectConfiguration
+            ->getProject(Argument::type('string'))
+            ->willReturn($project->reveal());
+
+        $this->fileSystem
+            ->exists(Argument::type('string'))
+            ->willReturn(true);
+
+        $this->gitFileSyncer
+            ->sync(Argument::any(), Argument::any())
+            ->willReturn(false);
+        $this->gitFileSyncer
+            ->setSourceGitRepository(Argument::type('string'))
+            ->shouldBeCalled();
+        $this->gitFileSyncer
+            ->setTargetGitRepository(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute($parameters);
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains('Failed to sync the file with project "target_project"', $output);
+    }
+
+    /**
+     * Tests that the execute() method catches an exception when the file sync failed.
+     */
+    public function testTheExecuteMethodCatchesExceptionWhenTheFileSyncFailed()
+    {
+        $command = $this->application->find('sync');
+        $parameters = [
+            'command' => $command->getName(),
+            'source_project' => 'source_project',
+            'file' => 'the_file',
+            'target_project' => ['target_project'],
+        ];
+
+        $project = $this->prophesize(ProjectInterface::class);
+        $project->getPath()->willReturn('the/project/path/');
+
+        $this->projectConfiguration
+            ->getProject(Argument::type('string'))
+            ->willReturn($project->reveal());
+
+        $this->fileSystem
+            ->exists(Argument::type('string'))
+            ->willReturn(true);
+
+        $this->gitFileSyncer
+            ->sync(Argument::any(), Argument::any())
+            ->willThrow(new \Exception('The exception message'));
+        $this->gitFileSyncer
+            ->setSourceGitRepository(Argument::type('string'))
+            ->shouldBeCalled();
+        $this->gitFileSyncer
+            ->setTargetGitRepository(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute($parameters);
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains('The exception message', $output);
     }
 }

@@ -6,9 +6,11 @@
 
 namespace Para\Command;
 
+use Para\Factory\BufferedOutputAdapterFactoryInterface;
 use Para\Service\AsyncShellCommandExecutor;
 use Para\Service\ConfigurationManagerInterface;
 use Para\Service\Output\BufferedOutputAdapter;
+use Para\Service\Output\BufferedOutputInterface;
 use Para\Service\OutputBuffer\OutputBuffer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -47,24 +49,37 @@ class ExecuteCommand extends Command
     private $configManager;
 
     /**
+     * The buffered output adapter factory.
+     *
+     * @var \Para\Factory\BufferedOutputAdapterFactoryInterface
+     */
+    private $bufferedOutputAdapterFactory;
+
+    /**
      * ExecuteCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Para\Service\AsyncShellCommandExecutor $asyncExecutor The asynchronous process executor.
      * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param \Para\Factory\BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory The buffered output adapter factory.
      */
     public function __construct(
         LoggerInterface $logger = null,
         AsyncShellCommandExecutor $asyncExecutor,
-        ConfigurationManagerInterface $configManager
+        ConfigurationManagerInterface $configManager,
+        BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->asyncExecutor = $asyncExecutor;
         $this->configManager = $configManager;
+        $this->bufferedOutputAdapterFactory = $bufferedOutputAdapterFactory;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -82,10 +97,13 @@ class ExecuteCommand extends Command
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // Make sure we are dealing with a buffered output.
-        $outputAdapter = new BufferedOutputAdapter($output);
+        $outputAdapter = $this->bufferedOutputAdapterFactory->getOutputAdapter($output);
 
         // Get the shell command.
         $cmd = $input->getArgument('cmd');
@@ -118,11 +136,7 @@ class ExecuteCommand extends Command
                         'group' => $group,
                         'cmd' => $cmd,
                     ]);
-                    if ($output->isDebug()) {
-                        $output->writeln(
-                            'Ignoring configured project "'.$project.'" for command execution.'
-                        );
-                    }
+
                     unset($projects[$project]);
                 }
             }

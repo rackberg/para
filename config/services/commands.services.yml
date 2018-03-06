@@ -18,6 +18,7 @@ services:
             - '@logger'
             - '@para.async_shell_command_executor'
             - '@para.yaml.configuration_manager'
+            - '@para.buffered_output_adapter_factory'
         tags:
             - { name: console.command }
 
@@ -79,6 +80,7 @@ services:
         arguments:
             - '@logger'
             - '@para.application'
+            - '@para.process_factory'
             - '%para.tools_path%'
         tags:
             - { name: console.command }

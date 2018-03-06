@@ -123,7 +123,7 @@ class ShowLogCommand extends Command
         }
 
         // Create a new process.
-        $process = $this->processFactory->create('cat ' . $logFile);
+        $process = $this->processFactory->getProcess('cat ' . $logFile);
         $process->run();
         $output->write($process->getOutput());
     }

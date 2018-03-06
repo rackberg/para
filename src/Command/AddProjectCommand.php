@@ -96,14 +96,14 @@ class AddProjectCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $project = $input->getArgument('project_name');
-        $path = $input->getArgument('project_path');
-        $group = $input->getArgument('group_name');
+        $projectName = $input->getArgument('project_name');
+        $projectPath = $input->getArgument('project_path');
+        $groupName = $input->getArgument('group_name');
 
         $foregroundColor = $input->getOption('foreground_color');
         $backgroundColor = $input->getOption('background_color');
 
-        if (!$this->configManager->addProject($project, $path, $group, $foregroundColor, $backgroundColor)) {
+        if (!$this->configManager->addProject($projectName, $projectPath, $groupName, $foregroundColor, $backgroundColor)) {
             $this->logger->error('Failed to add the project.', ['arguments' => $input->getArguments()]);
 
             $output->writeln('<error>Failed to add the project.</error>');
@@ -111,8 +111,8 @@ class AddProjectCommand extends Command
             $output->writeln(
                 sprintf(
                     '<info>Successfully added the project "%s" to the group "%s".</info>',
-                    $project,
-                    $group
+                    $projectName,
+                    $groupName
                 )
             );
         }

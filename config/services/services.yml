@@ -77,6 +77,9 @@ services:
         class: Para\Service\Strategy\DisplayStrategyFactory
         arguments: ['@para.process_factory', '@event_dispatcher']
 
+    para.buffered_output_adapter_factory:
+        class: Para\Factory\BufferedOutputAdapterFactory
+
     para.sync.git_file_syncer:
         class: Para\Service\Sync\GitFileSyncer
         arguments:

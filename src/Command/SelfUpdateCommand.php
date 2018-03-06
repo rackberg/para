@@ -6,6 +6,7 @@
 
 namespace Para\Command;
 
+use Para\Factory\ProcessFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -43,21 +44,31 @@ class SelfUpdateCommand extends Command
     private $toolsPath;
 
     /**
+     * The process factory.
+     *
+     * @var \Para\Factory\ProcessFactoryInterface
+     */
+    private $processFactory;
+
+    /**
      * SelfUpdateCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Symfony\Component\Console\Application $application The application.
+     * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
      * @param string $toolsPath The path to the tool scripts.
      */
     public function __construct(
         LoggerInterface $logger,
         Application $application,
+        ProcessFactoryInterface $processFactory,
         $toolsPath
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->application = $application;
+        $this->processFactory = $processFactory;
         $this->toolsPath = $toolsPath;
     }
 
@@ -88,7 +99,7 @@ class SelfUpdateCommand extends Command
         // Get the update method.
         $updateMethod = $input->getOption('unstable') ? 'unstable' : 'stable';
 
-        $process = new Process('./update.sh ' . $updateMethod, $this->toolsPath);
+        $process = $this->processFactory->getProcess('./update.sh ' . $updateMethod, $this->toolsPath);
         $process->run();
 
         $out = $process->getOutput();

@@ -6,6 +6,7 @@
 
 namespace Para\Command;
 
+use Para\Factory\ShellFactoryInterface;
 use Para\Service\ConfigurationManagerInterface;
 use Para\Factory\ShellFactory;
 use Psr\Log\LoggerInterface;
@@ -25,21 +26,21 @@ class OpenShellCommand extends Command
     /**
      * The logger.
      *
-     * @var LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
     /**
      * The shell factory.
      *
-     * @var ShellFactory
+     * @var \Para\Factory\ShellFactoryInterface
      */
     private $shellFactory;
 
     /**
      * The configuration manager.
      *
-     * @var ConfigurationManagerInterface
+     * @var \Para\Service\ConfigurationManagerInterface
      */
     private $configManager;
 
@@ -54,13 +55,13 @@ class OpenShellCommand extends Command
      * OpenShellCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Para\Factory\ShellFactory $shellFactory The shell factory.
+     * @param \Para\Factory\ShellFactoryInterface $shellFactory The shell factory.
      * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
      * @param string $historyFile The path to the history file.
      */
     public function __construct(
         LoggerInterface $logger,
-        ShellFactory $shellFactory,
+        ShellFactoryInterface $shellFactory,
         ConfigurationManagerInterface $configManager,
         $historyFile
     ) {
