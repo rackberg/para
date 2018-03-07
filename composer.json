@@ -2,12 +2,6 @@
     "name": "lrackwitz/para",
     "description": "A command-line tool for parallel execution of shell commands in multiple directories.",
     "license": "GPLv3",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/Users/lrosenberg/www/Private/para_sync_plugin"
-        }
-    ],
     "require": {
         "composer/installers": "^1.2",
         "oomphinc/composer-installers-extender": "^1.1",
@@ -16,7 +10,6 @@
         "symfony/monolog-bundle": ">=2.9 ^3.0",
         "symfony/yaml": ">=2.9 ^3.4",
         "monolog/monolog": "^1.22",
-        "lrackwitz/para-sync": "@dev",
         "symfony/finder": "^4.0"
     },
     "require-dev": {
