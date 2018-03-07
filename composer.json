@@ -1,7 +1,7 @@
 {
     "name": "lrackwitz/para",
     "description": "A command-line tool for parallel execution of shell commands in multiple directories.",
-    "license": "GPLv3",
+    "license": "GPL-3.0-or-later",
     "require": {
         "composer/installers": "^1.2",
         "oomphinc/composer-installers-extender": "^1.1",

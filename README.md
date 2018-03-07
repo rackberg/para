@@ -187,4 +187,4 @@ Have a look at the [CHANGELOG.md](CHANGELOG.md).
 I want to say thank you to [comm-press GmbH](https://comm-press.de/) for supporting me developing `para`. 
 
 ## License
-This project is licensed under the GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the GPL-3.0-or-later License - see the [LICENSE.md](LICENSE.md) file for details.
