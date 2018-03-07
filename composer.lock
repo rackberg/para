@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "20be175208d61168b1510f75ee37fb1c",
+    "content-hash": "a05ee1dc372e5935bbf0b0915b5935a5",
     "packages": [
         {
             "name": "composer/installers",
@@ -125,41 +125,6 @@
                 "zikula"
             ],
             "time": "2017-12-29T09:13:20+00:00"
-        },
-        {
-            "name": "lrackwitz/para-sync",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "/Users/lrosenberg/www/Private/para_sync_plugin",
-                "reference": "e4c1b11c9c0edf7430bac05d8df6961ba743236b",
-                "shasum": null
-            },
-            "require": {
-                "lrackwitz/para": "dev-master"
-            },
-            "require-dev": {
-                "mikey179/vfsstream": "^1.6",
-                "php-mock/php-mock-prophecy": "^0.0.2",
-                "phpunit/phpunit": "^6.0"
-            },
-            "type": "para-plugin",
-            "autoload": {
-                "psr-4": {
-                    "Para\\Plugin\\": "src/",
-                    "Para\\Plugin\\Tests\\": "tests/"
-                }
-            },
-            "license": [
-                "GPLv3"
-            ],
-            "authors": [
-                {
-                    "name": "Lars Rosenberg",
-                    "email": "larsrosenberg88@gmail.com"
-                }
-            ],
-            "description": "A plugin for the para console application to enable file syncing."
         },
         {
             "name": "monolog/monolog",
@@ -2905,9 +2870,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "lrackwitz/para-sync": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
