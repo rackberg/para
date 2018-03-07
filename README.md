@@ -114,9 +114,6 @@ project3:   foo
 
 You can continue entering more shell commands or type `exit` to leave the `para shell`.
 
-### Syncing the changes of a file from one `para project` to other `para projects`
-This command works only if the `para projects` you use as arguments are local `git` repositories.
-
 #### Example
 Imagine `project1`, `project2` and `project3` have a `composer.json` file.
 We changed something in the `composer.json` of `project2` and want to sync the changes to `project1` and `project3`.
@@ -136,6 +133,41 @@ para show:log <project>
 Show the log of `para` project `project2`.
 ```
 para show:log project2
+```
+
+### Extending the functionality with your own code
+To extend the functionality of `para` with your own code, you simply need to create a new composer
+package. The `type` in the `composer.json` needs to be `para-project`.
+
+See the example composer.json file:
+```
+{
+    "name": "vendor/para-plugin-name",
+    "description": "An example para plugin",
+    "type": "para-plugin",
+    "require": {
+        "lrackwitz/para": "^2.0"
+    }
+}
+```
+ 
+### Installing a custom `para` plugin
+Execute the following commands:
+```
+# Change into the directory where you installed para.
+cd <para-install-path>
+
+# Use composer to install the custom para plugin
+composer require vendor/para-plugin-name
+```
+
+If everything worked, you can now use the extended functionality of your custom `para` plugin
+when executing `para` as usual.
+
+### Synchronization of files within `para` projects
+In order to be able to synchronize files within `para` projects you need to install the `para-sync` plugin.
+```
+composer require lrackwitz/para-sync
 ```
 
 ## Contributing
