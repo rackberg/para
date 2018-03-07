@@ -1,10 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-use Para\Para;
+use Para\Loader\ServicesLoader;
+use Para\Loader\YmlFileLoaderFactory;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Console\DependencyInjection\AddConsoleCommandPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Finder\Finder;
 
 // Include composer autoloader.
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
@@ -15,22 +17,25 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 
 // Create the dependency injection container.
 $container = new ContainerBuilder();
+$container->addCompilerPass(new AddConsoleCommandPass());
 
 // Set the root directory.
 $container->setParameter('root_dir', __DIR__ . '/../');
 
-// Create the file loader.
-$loader = new YamlFileLoader($container, new FileLocator([
-    __DIR__ . '/../config/services'
-]));
+$loader = new ServicesLoader(
+    new YmlFileLoaderFactory($container, new FileLocator()),
+    new Finder()
+);
+$loader->loadServices([
+    __DIR__.'/../config/services',
+    __DIR__.'/../src/Plugin/*/config',
+]);
 
-// Load the service configurations.
-$loader->load('services.yml');
-$loader->load('commands.services.yml');
-$loader->load('event.services.yml');
+$container->compile();
 
 // Create and run the application.
 $application = $container->get('para.application');
+$application->setCommandLoader($container->get('console.command_loader'));
 $application->setContainer($container);
 try {
     $application->run();
@@ -38,4 +43,3 @@ try {
     print 'An error occurred while trying to run para.' . "\n" . 'Reason: ' . $e->getMessage();
     exit(1);
 }
-?>

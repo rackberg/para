@@ -4,3 +4,4 @@ logs/
 vendor/
 /config/.para_history
 /tests/build/
+src/Plugin/*

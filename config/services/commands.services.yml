@@ -1,16 +1,7 @@
 services:
     para.application:
+        public: true
         class: Para\Para
-        calls:
-            - [add, ['@para.command.execute']]
-            - [add, ['@para.command.add_project']]
-            - [add, ['@para.command.delete_group']]
-            - [add, ['@para.command.delete_project']]
-            - [add, ['@para.command.show_log']]
-            - [add, ['@para.command.show_config']]
-            - [add, ['@para.command.open_shell']]
-            - [add, ['@para.command.self_update']]
-            - [add, ['@para.command.sync']]
 
     para.command.execute:
         class: Para\Command\ExecuteCommand
@@ -20,7 +11,7 @@ services:
             - '@para.yaml.configuration_manager'
             - '@para.buffered_output_adapter_factory'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'execute' }
 
     para.command.add_project:
         class: Para\Command\AddProjectCommand
@@ -28,7 +19,7 @@ services:
             - '@logger'
             - '@para.yaml.configuration_manager'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'add:project' }
 
     para.command.delete_group:
         class: Para\Command\DeleteGroupCommand
@@ -36,7 +27,7 @@ services:
             - '@logger'
             - '@para.yaml.configuration_manager'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'delete:group' }
 
     para.command.delete_project:
         class: Para\Command\DeleteProjectCommand
@@ -44,7 +35,7 @@ services:
             - '@logger'
             - '@para.yaml.configuration_manager'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'delete:project' }
 
     para.command.show_log:
         class: Para\Command\ShowLogCommand
@@ -54,7 +45,7 @@ services:
             - '@para.yaml.configuration_manager'
             - '%para.log_path%'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'show:log' }
 
     para.command.show_config:
         class: Para\Command\ShowConfigCommand
@@ -63,7 +54,7 @@ services:
             - '@para.process_factory'
             - '%para.config%'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'show:config' }
 
     para.command.open_shell:
         class: Para\Command\OpenShellCommand
@@ -73,7 +64,7 @@ services:
             - '@para.yaml.configuration_manager'
             - '%para.history%'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'open:shell' }
 
     para.command.self_update:
         class: Para\Command\SelfUpdateCommand
@@ -83,11 +74,6 @@ services:
             - '@para.process_factory'
             - '%para.tools_path%'
         tags:
-            - { name: console.command }
+            - { name: console.command, command: 'self-update' }
 
-    para.command.sync:
-        class: Para\Command\SyncCommand
-        arguments:
-            - '@para.sync.git_file_syncer'
-            - '@para.project_configuration'
-            - '@filesystem'
+

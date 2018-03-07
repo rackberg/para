@@ -49,6 +49,7 @@ services:
             - '%para.config%'
 
     para.process_factory:
+        public: true
         class: Para\Factory\ProcessFactory
 
     para.shell_factory:
