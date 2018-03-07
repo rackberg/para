@@ -170,6 +170,8 @@ In order to be able to synchronize files within `para` projects you need to inst
 composer require lrackwitz/para-sync
 ```
 
+The code of the para plugin is here: https://github.com/rackberg/para-sync 
+
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduct, and the process for creating issues or submitting pull requests.
 
