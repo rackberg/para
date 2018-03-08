@@ -1,40 +1,47 @@
 services:
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
-        calls:
-            - [addSubscriber, ['@para.shell_command_event_subscriber']]
-            - [addSubscriber, ['@para.shell_key_press_event_subscriber']]
-            - [addSubscriber, ['@para.add_environment_variable_event_subscriber']]
-            - [addSubscriber, ['@para.log_process_output_event_subscriber']]
-            - [addSubscriber, ['@para.find_project_event_subscriber']]
-            - [addSubscriber, ['@para.approve_patch_apply_event_subscriber']]
-            - [addSubscriber, ['@para.sync_event_subscriber']]
-            - [addSubscriber, ['@para.compare_hunks_subscriber']]
 
     para.shell_command_event_subscriber:
         class: Para\EventSubscriber\SanitizeShellCommandEventSubscriber
+        tags:
+            - { name: 'kernel.event_subscriber' }
 
     para.shell_key_press_event_subscriber:
         class: Para\EventSubscriber\ShellKeyPressEventSubscriber
         arguments:
             - '@para.history_shell_manager'
+        tags:
+            - { name: 'kernel.event_subscriber' }
 
     para.add_environment_variable_event_subscriber:
         class: Para\EventSubscriber\AddEnvironmentVariableEventSubscriber
+        tags:
+            - { name: 'kernel.event_subscriber' }
 
     para.log_process_output_event_subscriber:
         class: Para\EventSubscriber\LogProcessOutputEventSubscriber
         arguments: ['%para.log_path%']
+        tags:
+            - { name: 'kernel.event_subscriber' }
 
     para.approve_patch_apply_event_subscriber:
         class: Para\EventSubscriber\ApprovePatchApplyEventSubscriber
+        tags:
+            - { name: 'kernel.event_subscriber' }
 
     para.find_project_event_subscriber:
         class: Para\EventSubscriber\FindProjectSubscriber
         arguments: ['@para.yaml.configuration_manager']
+        tags:
+            - { name: 'kernel.event_subscriber' }
 
     para.sync_event_subscriber:
         class: Para\EventSubscriber\SyncSubscriber
+        tags:
+            - { name: 'kernel.event_subscriber' }
 
     para.compare_hunks_subscriber:
         class: Para\EventSubscriber\CompareHunksSubscriber
+        tags:
+            - { name: 'kernel.event_subscriber' }

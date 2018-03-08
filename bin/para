@@ -3,6 +3,7 @@
 
 use Para\Loader\ServicesLoader;
 use Para\Loader\YmlFileLoaderFactory;
+use Para\Pass\AddSubscriberPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\DependencyInjection\AddConsoleCommandPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -18,6 +19,7 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 // Create the dependency injection container.
 $container = new ContainerBuilder();
 $container->addCompilerPass(new AddConsoleCommandPass());
+$container->addCompilerPass(new AddSubscriberPass());
 
 // Set the root directory.
 $container->setParameter('root_dir', __DIR__ . '/../');
