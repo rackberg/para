@@ -6,12 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.1.0] - 2018-03-08
+## [2.1.1] - 2018-03-08
 ### Added
 - New plugin system to easily install custom para plugins.
 - Several unit tests for commands.
 ### Removed
 - Removed the sync command and extracted it into a new para plugin called lrackwitz/para-sync.
+### Fixed
+- Re-added lost command aliases `log`, `config` and `shell`
 
 ## [2.0.0] - 2018-01-22
 ### Added
