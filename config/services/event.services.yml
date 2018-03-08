@@ -24,24 +24,3 @@ services:
         arguments: ['%para.log_path%']
         tags:
             - { name: 'kernel.event_subscriber' }
-
-    para.approve_patch_apply_event_subscriber:
-        class: Para\EventSubscriber\ApprovePatchApplyEventSubscriber
-        tags:
-            - { name: 'kernel.event_subscriber' }
-
-    para.find_project_event_subscriber:
-        class: Para\EventSubscriber\FindProjectSubscriber
-        arguments: ['@para.yaml.configuration_manager']
-        tags:
-            - { name: 'kernel.event_subscriber' }
-
-    para.sync_event_subscriber:
-        class: Para\EventSubscriber\SyncSubscriber
-        tags:
-            - { name: 'kernel.event_subscriber' }
-
-    para.compare_hunks_subscriber:
-        class: Para\EventSubscriber\CompareHunksSubscriber
-        tags:
-            - { name: 'kernel.event_subscriber' }
