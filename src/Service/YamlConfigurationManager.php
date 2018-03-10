@@ -424,20 +424,17 @@ class YamlConfigurationManager implements ConfigurationManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function save(string $content): bool
+    public function dump(array $configuration): string
     {
-        return false === file_put_contents($this->yamlFile, $content) ? false : true;
+        return $this->dumper->dump($configuration);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function read(string $fileName): void
+    public function read(string $content): array
     {
-        $content = file_get_contents($fileName);
-        if (false !== $content) {
-            $this->data = $this->parser->parse($content);
-        }
+        return $this->parser->parse($content);
     }
 
     /**

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Para\Event\BeforeShellCommandExecutionEvent.php.
- */
 
 namespace Para\Event;
 
@@ -15,6 +11,8 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class BeforeShellCommandExecutionEvent extends Event
 {
+    const NAME = 'para.event.before.shell_command_execute';
+
     /**
      * The shell command.
      *

@@ -38,7 +38,7 @@ class SanitizeShellCommandEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ShellEvents::BEFORE_SHELL_COMMAND_EXECUTION_EVENT => [
+            BeforeShellCommandExecutionEvent::NAME => [
                 ['beforeExecution']
             ],
         ];

@@ -3,7 +3,7 @@
 namespace Para\Configuration;
 
 use Para\Dumper\DumperInterface;
-use Para\Service\ConfigurationManagerInterface;
+use Para\Parser\ParserInterface;
 
 /**
  * Class AbstractConfiguration
@@ -13,37 +13,65 @@ use Para\Service\ConfigurationManagerInterface;
 abstract class AbstractConfiguration implements ConfigurationInterface
 {
     /**
-     * The configuration manager.
+     * The full configuration.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var string[]
      */
-    protected $configurationManager;
+    protected $configuration = [];
+
+    /**
+     * The parser.
+     *
+     * @var ParserInterface
+     */
+    protected $parser;
+
+    /**
+     * The dumper.
+     *
+     * @var DumperInterface
+     */
+    protected $dumper;
 
     /**
      * AbstractConfiguration constructor.
      *
-     * @param \Para\Service\ConfigurationManagerInterface $configurationManager The configuration manager.
+     * @param ParserInterface $parser The parser.
+     * @param DumperInterface $dumper The dumper.
      */
     protected function __construct(
-        ConfigurationManagerInterface $configurationManager
+        ParserInterface $parser,
+        DumperInterface $dumper
     ) {
-        $this->configurationManager = $configurationManager;
+        $this->parser = $parser;
+        $this->dumper = $dumper;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function read(string $fileName): void
+    public function load(string $fileName): void
     {
-        // TODO: Implement read() method.
+        $content = file_get_contents($fileName);
+        if (false !== $content) {
+            $this->configuration = $this->parser->parse($content);
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function save(array $configuration): void
+    public function save(string $fileName): bool
     {
-        $content = $this->configurationManager->getDumper()->dump($configuration);
-        $this->configurationManager->save($content);
+        $content = $this->dumper->dump($this->configuration);
+        return file_put_contents($fileName, $content);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfiguration(): array
+    {
+        return $this->configuration;
     }
 }

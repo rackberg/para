@@ -40,6 +40,10 @@ services:
         class: Para\Dumper\YamlDumper
         arguments: ['@yaml.dumper']
 
+    para.yaml.parser:
+        class: Para\Parser\YamlParser
+        arguments: ['@yaml.parser']
+
     para.yaml.configuration_manager:
         class: Para\Service\YamlConfigurationManager
         arguments:

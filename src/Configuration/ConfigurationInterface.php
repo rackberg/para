@@ -10,16 +10,25 @@ namespace Para\Configuration;
 interface ConfigurationInterface
 {
     /**
-     * Reads the content of a file.
+     * Loads the configuration from a file.
      *
-     * @param string $fileName The file to read.
+     * @param string $fileName The file to load the configuration from.
      */
-    public function read(string $fileName): void;
+    public function load(string $fileName): void;
 
     /**
      * Saves the data into the configuration file.
      *
-     * @param array $configuration The configuration data to save.
+     * @param string $fileName The full filename.
+     *
+     * @return bool Returns true if the configuration has been saved successfully, otherwise false.
      */
-    public function save(array $configuration): void;
+    public function save(string $fileName): bool;
+
+    /**
+     * Returns the full configuration.
+     *
+     * @return array
+     */
+    public function getConfiguration(): array;
 }
