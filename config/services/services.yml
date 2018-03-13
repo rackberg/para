@@ -51,6 +51,9 @@ services:
             - '@para.yaml.dumper'
             - '@para.factory.group_factory'
             - '@para.factory.project_factory'
+            - '%para.config%'
+        calls:
+            - [load]
 
     para.process_factory:
         public: true

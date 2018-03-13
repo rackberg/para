@@ -32,29 +32,19 @@ class DeleteProjectCommand extends Command
     private $groupConfiguration;
 
     /**
-     * The full path to the config file.
-     *
-     * @var string
-     */
-    private $configFile;
-
-    /**
      * DeleteProjectCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param GroupConfigurationInterface $groupConfiguration The group configuration.
-     * @param string $configFile The full path to the config file.
      */
     public function __construct(
         LoggerInterface $logger,
-        GroupConfigurationInterface $groupConfiguration,
-        string $configFile
+        GroupConfigurationInterface $groupConfiguration
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->groupConfiguration = $groupConfiguration;
-        $this->configFile = $configFile;
     }
 
     /**
@@ -81,9 +71,8 @@ class DeleteProjectCommand extends Command
         $projectName = $input->getArgument('project_name');
 
         try {
-            $this->groupConfiguration->load($this->configFile);
             $this->groupConfiguration->removeProject($projectName);
-            $this->groupConfiguration->save($this->configFile);
+            $this->groupConfiguration->save();
         } catch (ProjectNotFoundException $e) {
             $output->writeln('<error>The project you are trying to delete is ' .
                 'not stored in the configuration.</error>', 1);
@@ -94,6 +83,4 @@ class DeleteProjectCommand extends Command
 
         $output->writeln('<info>Successfully deleted the project from the configuration.</info>');
     }
-
-
 }

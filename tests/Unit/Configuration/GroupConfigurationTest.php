@@ -79,7 +79,8 @@ class GroupConfigurationTest extends TestCase
             $this->parser->reveal(),
             $this->dumper->reveal(),
             $this->groupFactory->reveal(),
-            $this->projectFactory->reveal()
+            $this->projectFactory->reveal(),
+            'the/path/to/the/config/file.yml'
         );
     }
 
@@ -189,7 +190,9 @@ EOF;
                 ],
             ]);
 
-        $this->groupConfiguration->load(vfsStream::url('root/config/para.yml'));
+        $this->groupConfiguration->setConfigFile(vfsStream::url('root/config/para.yml'));
+
+        $this->groupConfiguration->load();
 
         $newProject = new Project('my_new_project', 'this/is/the/path');
 
@@ -220,7 +223,7 @@ EOF;
             ->dump(Argument::type('array'))
             ->willReturn($expectedContent);
 
-        $result = $this->groupConfiguration->save(vfsStream::url('root/config/para.yml'));
+        $result = $this->groupConfiguration->save();
 
         $this->assertTrue($result);
         $this->assertEquals($expectedContent, $fileSystem->getChild('config/para.yml')->getContent());

@@ -72,8 +72,7 @@ class AddProjectCommandTest extends TestCase
             $this->logger->reveal(),
             $this->groupConfiguration->reveal(),
             $this->projectFactory->reveal(),
-            $this->projectArrayDecoratorFactory->reveal(),
-            'the/path/to/the/config/file.yml'
+            $this->projectArrayDecoratorFactory->reveal()
         ));
     }
 
@@ -85,10 +84,6 @@ class AddProjectCommandTest extends TestCase
         $command = $this->application->find('add:project');
         $parameters = $this->getCommandParameters();
 
-        $this->groupConfiguration
-            ->load(Argument::type('string'))
-            ->shouldBeCalled();
-
         /** @var GroupInterface $group */
         $group = $this->prophesize(GroupInterface::class);
 
@@ -96,9 +91,7 @@ class AddProjectCommandTest extends TestCase
             ->getGroup('my_group')
             ->willReturn($group->reveal());
 
-        $this->groupConfiguration
-            ->save(Argument::type('string'))
-            ->shouldBeCalled();
+        $this->groupConfiguration->save()->shouldBeCalled();
 
         $project = $this->prophesize(ProjectInterface::class);
 

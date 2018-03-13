@@ -50,8 +50,7 @@ class DeleteGroupCommandTest extends TestCase
         $this->application = new Application();
         $this->application->add(new DeleteGroupCommand(
             $this->logger->reveal(),
-            $this->groupConfiguration->reveal(),
-            'path/to/the/config/file.yml'
+            $this->groupConfiguration->reveal()
         ));
     }
 
@@ -67,16 +66,10 @@ class DeleteGroupCommandTest extends TestCase
         ];
 
         $this->groupConfiguration
-            ->load(Argument::type('string'))
-            ->shouldBeCalled();
-
-        $this->groupConfiguration
             ->deleteGroup('my_group')
             ->shouldBeCalled();
 
-        $this->groupConfiguration
-            ->save(Argument::type('string'))
-            ->shouldBeCalled();
+        $this->groupConfiguration->save()->shouldBeCalled();
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -96,10 +89,6 @@ class DeleteGroupCommandTest extends TestCase
             'command' => $command->getName(),
             'group_name' => 'my_group',
         ];
-
-        $this->groupConfiguration
-            ->load(Argument::type('string'))
-            ->shouldBeCalled();
 
         $this->groupConfiguration
             ->deleteGroup('my_group')

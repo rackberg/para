@@ -48,27 +48,18 @@ class ShowLogCommand extends Command
     private $groupConfiguration;
 
     /**
-     * The path to the config file.
-     *
-     * @var string
-     */
-    private $configFile;
-
-    /**
      * ShowLogCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
      * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param string $logPath The path where the log files are saved.
-     * @param string $configFile The path to the config file.
      */
     public function __construct(
         LoggerInterface $logger,
         ProcessFactoryInterface $processFactory,
         GroupConfigurationInterface $groupConfiguration,
-        string $logPath,
-        string $configFile
+        string $logPath
     ) {
         parent::__construct();
 
@@ -76,7 +67,6 @@ class ShowLogCommand extends Command
         $this->processFactory = $processFactory;
         $this->groupConfiguration = $groupConfiguration;
         $this->logPath = $logPath;
-        $this->configFile = $configFile;
     }
 
     /**
@@ -102,8 +92,6 @@ class ShowLogCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $projectName = $input->getArgument('project');
-
-        $this->groupConfiguration->load($this->configFile);
 
         $project = $this->groupConfiguration->getProject($projectName);
         if (!$project) {

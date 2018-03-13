@@ -34,24 +34,37 @@ abstract class AbstractConfiguration implements ConfigurationInterface
     protected $dumper;
 
     /**
+     * The path to the config file.
+     *
+     * @var string
+     */
+    protected $configFile;
+
+    /**
      * AbstractConfiguration constructor.
      *
      * @param ParserInterface $parser The parser.
      * @param DumperInterface $dumper The dumper.
+     * @param string $configFile The path to the config file.
      */
     protected function __construct(
         ParserInterface $parser,
-        DumperInterface $dumper
+        DumperInterface $dumper,
+        string $configFile
     ) {
         $this->parser = $parser;
         $this->dumper = $dumper;
+        $this->configFile = $configFile;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function load(string $fileName): void
+    public function load(string $fileName = null): void
     {
+        if (!$fileName) {
+            $fileName = $this->configFile;
+        }
         $content = file_get_contents($fileName);
         if (false !== $content) {
             $this->configuration = $this->parser->parse($content);
@@ -61,8 +74,11 @@ abstract class AbstractConfiguration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function save(string $fileName): bool
+    public function save(string $fileName = null): bool
     {
+        if (!$fileName) {
+            $fileName = $this->configFile;
+        }
         $content = $this->dumper->dump($this->configuration);
         return file_put_contents($fileName, $content);
     }
@@ -73,5 +89,13 @@ abstract class AbstractConfiguration implements ConfigurationInterface
     public function getConfiguration(): array
     {
         return $this->configuration;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConfigFile(string $configFile): void
+    {
+        $this->configFile = $configFile;
     }
 }

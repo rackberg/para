@@ -52,8 +52,7 @@ class DeleteProjectCommandTest extends TestCase
         $this->application = new Application();
         $this->application->add(new DeleteProjectCommand(
             $this->logger->reveal(),
-            $this->groupConfiguration->reveal(),
-            'the/path/to/the/config/file.yml'
+            $this->groupConfiguration->reveal()
         ));
     }
 
@@ -80,10 +79,6 @@ class DeleteProjectCommandTest extends TestCase
         $group2->addProject(['name' => 'project4', 'path' => '']);
 
         $this->groupConfiguration
-            ->load(Argument::type('string'))
-            ->shouldBeCalled();
-
-        $this->groupConfiguration
             ->getGroups()
             ->willReturn([$group1, $group2]);
 
@@ -91,9 +86,7 @@ class DeleteProjectCommandTest extends TestCase
             ->removeProject('my_project')
             ->shouldBeCalled();
 
-        $this->groupConfiguration
-            ->save(Argument::type('string'))
-            ->shouldBeCalled();
+        $this->groupConfiguration->save()->shouldBeCalled();
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -113,10 +106,6 @@ class DeleteProjectCommandTest extends TestCase
             'command' => $command->getName(),
             'project_name' => 'unknown_project',
         ];
-
-        $this->groupConfiguration
-            ->load(Argument::type('string'))
-            ->shouldBeCalled();
 
         $this->groupConfiguration
             ->removeProject('unknown_project')

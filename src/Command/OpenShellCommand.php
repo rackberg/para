@@ -47,27 +47,18 @@ class OpenShellCommand extends Command
     private $historyFile;
 
     /**
-     * The full path to the config file.
-     *
-     * @var string
-     */
-    private $configFile;
-
-    /**
      * OpenShellCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Para\Factory\ShellFactoryInterface $shellFactory The shell factory.
      * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param string $historyFile The path to the history file.
-     * @param string $configFile The full path to the config file.
      */
     public function __construct(
         LoggerInterface $logger,
         ShellFactoryInterface $shellFactory,
         GroupConfigurationInterface $groupConfiguration,
-        string $historyFile,
-        string $configFile
+        string $historyFile
     ) {
         parent::__construct();
 
@@ -75,7 +66,6 @@ class OpenShellCommand extends Command
         $this->shellFactory = $shellFactory;
         $this->groupConfiguration = $groupConfiguration;
         $this->historyFile = $historyFile;
-        $this->configFile = $configFile;
     }
 
     /**
@@ -108,8 +98,6 @@ class OpenShellCommand extends Command
     {
         // Check if the group the user wants to use exists.
         $groupName = $input->getArgument('group');
-
-        $this->groupConfiguration->load($this->configFile);
 
         $group = $this->groupConfiguration->getGroup($groupName);
         if (!$group) {

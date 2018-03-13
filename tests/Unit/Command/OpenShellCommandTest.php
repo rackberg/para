@@ -57,19 +57,14 @@ class OpenShellCommandTest extends TestCase
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->shellFactory = $this->prophesize(ShellFactoryInterface::class);
-
         $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
-        $this->groupConfiguration
-            ->load(Argument::type('string'))
-            ->shouldBeCalled();
 
         $this->application = new Application();
         $this->application->add(new OpenShellCommand(
             $this->logger->reveal(),
             $this->shellFactory->reveal(),
             $this->groupConfiguration->reveal(),
-            'history_file.txt',
-            'the/path/to/the/config/file.yml'
+            'history_file.txt'
         ));
     }
 

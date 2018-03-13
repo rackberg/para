@@ -47,14 +47,16 @@ class GroupConfiguration extends AbstractConfiguration implements GroupConfigura
      * @param DumperInterface $dumper The dumper.
      * @param \Para\Factory\GroupFactoryInterface $groupFactory The group factory.
      * @param ProjectFactoryInterface $projectFactory The project factory.
+     * @param string $configFile The path to the config file.
      */
     public function __construct(
         ParserInterface $parser,
         DumperInterface $dumper,
         GroupFactoryInterface $groupFactory,
-        ProjectFactoryInterface $projectFactory
+        ProjectFactoryInterface $projectFactory,
+        string $configFile
     ) {
-        parent::__construct($parser, $dumper);
+        parent::__construct($parser, $dumper, $configFile);
 
         $this->groupFactory = $groupFactory;
         $this->projectFactory = $projectFactory;
@@ -104,7 +106,7 @@ class GroupConfiguration extends AbstractConfiguration implements GroupConfigura
     /**
      * {@inheritdoc}
      */
-    public function load(string $fileName): void
+    public function load(string $fileName = null): void
     {
         parent::load($fileName);
 
@@ -118,7 +120,7 @@ class GroupConfiguration extends AbstractConfiguration implements GroupConfigura
     /**
      * {@inheritdoc}
      */
-    public function save(string $fileName): bool
+    public function save(string $fileName = null): bool
     {
         unset($this->configuration['groups']);
 

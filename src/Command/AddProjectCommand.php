@@ -48,27 +48,18 @@ class AddProjectCommand extends Command
     private $decoratorFactory;
 
     /**
-     * The config file.
-     *
-     * @var string
-     */
-    private $configFile;
-
-    /**
      * InitCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param ProjectFactoryInterface $projectFactory The project factory.
      * @param DecoratorFactoryInterface $decoratorFactory The decorator factory.
-     * @param string $configFile The config file.
      */
     public function __construct(
         LoggerInterface $logger,
         GroupConfigurationInterface $groupConfiguration,
         ProjectFactoryInterface $projectFactory,
-        DecoratorFactoryInterface $decoratorFactory,
-        string $configFile
+        DecoratorFactoryInterface $decoratorFactory
     ) {
         parent::__construct();
 
@@ -76,7 +67,6 @@ class AddProjectCommand extends Command
         $this->groupConfiguration = $groupConfiguration;
         $this->projectFactory = $projectFactory;
         $this->decoratorFactory = $decoratorFactory;
-        $this->configFile = $configFile;
     }
 
     /**
@@ -131,8 +121,6 @@ class AddProjectCommand extends Command
         $foregroundColor = $input->getOption('foreground_color');
         $backgroundColor = $input->getOption('background_color');
 
-        $this->groupConfiguration->load($this->configFile);
-
         $group = $this->groupConfiguration->getGroup($groupName);
         if (!$group) {
             $this->logger->error(
@@ -148,7 +136,7 @@ class AddProjectCommand extends Command
         $arrayDecorator = $this->decoratorFactory->getArrayDecorator($project);
         $group->addProject($arrayDecorator->asArray());
 
-        $this->groupConfiguration->save($this->configFile);
+        $this->groupConfiguration->save();
 
         $output->writeln(
             sprintf(

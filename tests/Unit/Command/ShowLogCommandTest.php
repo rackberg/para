@@ -56,19 +56,14 @@ class ShowLogCommandTest extends TestCase
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->processFactory = $this->prophesize(ProcessFactoryInterface::class);
-
         $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
-        $this->groupConfiguration
-            ->load(Argument::type('string'))
-            ->shouldBeCalled();
 
         $this->application = new Application();
         $this->application->add(new ShowLogCommand(
             $this->logger->reveal(),
             $this->processFactory->reveal(),
             $this->groupConfiguration->reveal(),
-            'the/log/path/',
-            'the/path/to/the/config/file.yml'
+            'the/log/path/'
         ));
     }
 

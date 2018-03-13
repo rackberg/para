@@ -67,17 +67,14 @@ class ExecuteCommandTest extends TestCase
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->asyncExecutor = $this->prophesize(AsyncShellCommandExecutor::class);
         $this->bufferedOutputAdapterFactory = $this->prophesize(BufferedOutputAdapterFactoryInterface::class);
-
         $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
-        $this->groupConfiguration->load(Argument::type('string'))->shouldBeCalled();
 
         $this->application = new Application();
         $this->application->add(new ExecuteCommand(
             $this->logger->reveal(),
             $this->asyncExecutor->reveal(),
             $this->groupConfiguration->reveal(),
-            $this->bufferedOutputAdapterFactory->reveal(),
-            'the/path/to/the/config/file.yml'
+            $this->bufferedOutputAdapterFactory->reveal()
         ));
     }
 

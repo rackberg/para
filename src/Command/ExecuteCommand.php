@@ -57,27 +57,18 @@ class ExecuteCommand extends Command
     private $bufferedOutputAdapterFactory;
 
     /**
-     * The path to the config file.
-     *
-     * @var string
-     */
-    private $configFile;
-
-    /**
      * ExecuteCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Para\Service\AsyncShellCommandExecutor $asyncExecutor The asynchronous process executor.
      * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param \Para\Factory\BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory The buffered output adapter factory.
-     * @param string $configFile The path to the config file.
      */
     public function __construct(
         LoggerInterface $logger = null,
         AsyncShellCommandExecutor $asyncExecutor,
         GroupConfigurationInterface $groupConfiguration,
-        BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory,
-        string $configFile
+        BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory
     ) {
         parent::__construct();
 
@@ -85,7 +76,6 @@ class ExecuteCommand extends Command
         $this->asyncExecutor = $asyncExecutor;
         $this->groupConfiguration = $groupConfiguration;
         $this->bufferedOutputAdapterFactory = $bufferedOutputAdapterFactory;
-        $this->configFile = $configFile;
     }
 
     /**
@@ -113,9 +103,6 @@ class ExecuteCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // Load the configuration.
-        $this->groupConfiguration->load($this->configFile);
-
         // Make sure we are dealing with a buffered output.
         $outputAdapter = $this->bufferedOutputAdapterFactory->getOutputAdapter($output);
 

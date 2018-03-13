@@ -10,7 +10,6 @@ services:
             - '@para.async_shell_command_executor'
             - '@para.configuration.group_configuration'
             - '@para.buffered_output_adapter_factory'
-            - '%para.config%'
         tags:
             - { name: console.command, command: 'execute' }
 
@@ -21,7 +20,6 @@ services:
             - '@para.configuration.group_configuration'
             - '@para.factory.project_factory'
             - '@para.factory.project_array_decorator_factory'
-            - '%para.config%'
         tags:
             - { name: console.command, command: 'add:project' }
 
@@ -30,7 +28,6 @@ services:
         arguments:
             - '@logger'
             - '@para.configuration.group_configuration'
-            - '%para.config%'
         tags:
             - { name: console.command, command: 'delete:group' }
 
@@ -39,7 +36,6 @@ services:
         arguments:
             - '@logger'
             - '@para.configuration.group_configuration'
-            - '%para.config%'
         tags:
             - { name: console.command, command: 'delete:project' }
 
@@ -50,7 +46,6 @@ services:
             - '@para.process_factory'
             - '@para.configuration.group_configuration'
             - '%para.log_path%'
-            - '%para.config%'
         tags:
             - { name: console.command, command: 'show:log' }
             - { name: console.command, command: 'log' }
@@ -72,7 +67,6 @@ services:
             - '@para.shell_factory'
             - '@para.configuration.group_configuration'
             - '%para.history%'
-            - '%para.config%'
         tags:
             - { name: console.command, command: 'open:shell' }
             - { name: console.command, command: 'shell' }

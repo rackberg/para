@@ -14,7 +14,7 @@ interface ConfigurationInterface
      *
      * @param string $fileName The file to load the configuration from.
      */
-    public function load(string $fileName): void;
+    public function load(string $fileName = null): void;
 
     /**
      * Saves the data into the configuration file.
@@ -23,7 +23,7 @@ interface ConfigurationInterface
      *
      * @return bool Returns true if the configuration has been saved successfully, otherwise false.
      */
-    public function save(string $fileName): bool;
+    public function save(string $fileName = null): bool;
 
     /**
      * Returns the full configuration.
@@ -31,4 +31,11 @@ interface ConfigurationInterface
      * @return array
      */
     public function getConfiguration(): array;
+
+    /**
+     * Sets the path to the config file.
+     *
+     * @param string $configFile The path to the config file.
+     */
+    public function setConfigFile(string $configFile): void;
 }
