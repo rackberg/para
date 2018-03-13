@@ -2,6 +2,8 @@
 
 namespace Para\Command;
 
+use Para\Configuration\GroupConfigurationInterface;
+use Para\Exception\ProjectNotFoundException;
 use Para\Factory\ProcessFactoryInterface;
 use Para\Service\ConfigurationManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -39,32 +41,42 @@ class ShowLogCommand extends Command
     private $processFactory;
 
     /**
-     * The configuration manager.
+     * The group configuration.
      *
-     * @var ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
+
+    /**
+     * The path to the config file.
+     *
+     * @var string
+     */
+    private $configFile;
 
     /**
      * ShowLogCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
-     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param string $logPath The path where the log files are saved.
+     * @param string $configFile The path to the config file.
      */
     public function __construct(
         LoggerInterface $logger,
         ProcessFactoryInterface $processFactory,
-        ConfigurationManagerInterface $configManager,
-        $logPath
+        GroupConfigurationInterface $groupConfiguration,
+        string $logPath,
+        string $configFile
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->processFactory = $processFactory;
-        $this->configManager = $configManager;
+        $this->groupConfiguration = $groupConfiguration;
         $this->logPath = $logPath;
+        $this->configFile = $configFile;
     }
 
     /**
@@ -89,22 +101,26 @@ class ShowLogCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $project = $input->getArgument('project');
-        if (!$this->configManager->hasProject($project)) {
+        $projectName = $input->getArgument('project');
+
+        $this->groupConfiguration->load($this->configFile);
+
+        $project = $this->groupConfiguration->getProject($projectName);
+        if (!$project) {
             $this->logger->warning('The user tries to show the log for an unknown project.', [
                 'arguments' => $input->getArguments()
             ]);
             $output->writeln(
                 sprintf(
                     '<error>The project "%s" is not configured.',
-                    $project
+                    $projectName
                 ),
                 1
             );
             return false;
         }
 
-        $logFile = $this->logPath . strtolower($project) . '.project.log';
+        $logFile = $this->logPath . strtolower($projectName) . '.project.log';
 
         // Check if the log file exists.
         if (!file_exists($logFile)) {
@@ -115,7 +131,7 @@ class ShowLogCommand extends Command
             $output->writeln(
                 sprintf(
                     '<error>The log file for the project "%s" could not be found.</error>',
-                    $project
+                    $projectName
                 ),
                 1
             );

@@ -3,7 +3,7 @@
 namespace Para\Tests\Unit\Entity;
 
 use Para\Entity\Group;
-use Para\Entity\Project;
+use Para\Entity\GroupInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,9 +46,12 @@ class GroupTest extends TestCase
      */
     public function testTheGetProjectMethodReturnsAnArrayOfProjects()
     {
-        $project1 = new Project();
-        $project2 = new Project();
-        $projects = [$project1, $project2];
+        $project1 = $this->prophesize(GroupInterface::class);
+        $project1->getName()->willReturn('project1');
+        $project2 = $this->prophesize(GroupInterface::class);
+        $project2->getName()->willReturn('project2');
+
+        $projects = [$project1->reveal(), $project2->reveal()];
         $this->group->setProjects($projects);
 
         $result = $this->group->getProjects();

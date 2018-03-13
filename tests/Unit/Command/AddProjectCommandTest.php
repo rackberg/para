@@ -3,7 +3,12 @@
 namespace Para\Tests\Unit\Command;
 
 use Para\Command\AddProjectCommand;
-use Para\Service\ConfigurationManagerInterface;
+use Para\Configuration\GroupConfigurationInterface;
+use Para\Decorator\EntityArrayDecoratorInterface;
+use Para\Entity\GroupInterface;
+use Para\Entity\ProjectInterface;
+use Para\Factory\DecoratorFactoryInterface;
+use Para\Factory\ProjectFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
@@ -32,11 +37,25 @@ class AddProjectCommandTest extends TestCase
     private $logger;
 
     /**
-     * The configuration manager mock object.
+     * The group configuration mock object.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
+
+    /**
+     * The project factory mock object.
+     *
+     * @var ProjectFactoryInterface
+     */
+    private $projectFactory;
+
+    /**
+     * The project array decorator factory mock object.
+     *
+     * @var DecoratorFactoryInterface
+     */
+    private $projectArrayDecoratorFactory;
 
     /**
      * {@inheritdoc}
@@ -44,12 +63,17 @@ class AddProjectCommandTest extends TestCase
     protected function setUp()
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->configManager = $this->prophesize(ConfigurationManagerInterface::class);
+        $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
+        $this->projectFactory = $this->prophesize(ProjectFactoryInterface::class);
+        $this->projectArrayDecoratorFactory = $this->prophesize(DecoratorFactoryInterface::class);
 
         $this->application = new Application();
         $this->application->add(new AddProjectCommand(
             $this->logger->reveal(),
-            $this->configManager->reveal()
+            $this->groupConfiguration->reveal(),
+            $this->projectFactory->reveal(),
+            $this->projectArrayDecoratorFactory->reveal(),
+            'the/path/to/the/config/file.yml'
         ));
     }
 
@@ -61,15 +85,41 @@ class AddProjectCommandTest extends TestCase
         $command = $this->application->find('add:project');
         $parameters = $this->getCommandParameters();
 
-        $this->configManager
-            ->addProject(
-                Argument::type('string'),
-                Argument::type('string'),
-                Argument::type('string'),
-                Argument::any(),
-                Argument::any()
-            )
-            ->willReturn(true);
+        $this->groupConfiguration
+            ->load(Argument::type('string'))
+            ->shouldBeCalled();
+
+        /** @var GroupInterface $group */
+        $group = $this->prophesize(GroupInterface::class);
+
+        $this->groupConfiguration
+            ->getGroup('my_group')
+            ->willReturn($group->reveal());
+
+        $this->groupConfiguration
+            ->save(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $project = $this->prophesize(ProjectInterface::class);
+
+        $this->projectFactory
+            ->getProject('my_project', 'path/to/project', Argument::type('string'), Argument::type('string'))
+            ->willReturn($project->reveal());
+
+        $projectArrayDecorator = $this->prophesize(EntityArrayDecoratorInterface::class);
+        $projectArrayDecorator->asArray()
+            ->willReturn([
+                'name' => 'my_project',
+                'path' => 'path/to/project',
+                'foreground_color' => 13,
+                'background_color' => 25,
+            ]);
+
+        $this->projectArrayDecoratorFactory
+            ->getArrayDecorator($project->reveal())
+            ->willReturn($projectArrayDecorator->reveal());
+
+        $group->addProject(Argument::type('array'))->shouldBeCalled();
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -80,48 +130,12 @@ class AddProjectCommandTest extends TestCase
     }
 
     /**
-     * Tests that the execute() method returns the correct response when adding a new project failed.
-     */
-    public function testTheExecuteMethodReturnsTheCorrectResponseWhenAddingAProjectFailed()
-    {
-        $command = $this->application->find('add:project');
-        $parameters = $this->getCommandParameters();
-
-        $this->configManager
-            ->addProject(
-                Argument::type('string'),
-                Argument::type('string'),
-                Argument::type('string'),
-                Argument::any(),
-                Argument::any()
-            )
-            ->willReturn(false);
-
-        $commandTester = new CommandTester($command);
-        $commandTester->execute($parameters);
-
-        $output = $commandTester->getDisplay();
-
-        $this->assertContains('Failed to add the project', $output);
-    }
-
-    /**
      * Tests that the execute() method writes a log message when adding a new project failed.
      */
     public function testTheExecuteMethodWritesALogMessageWhenAddingAProjectFailed()
     {
         $command = $this->application->find('add:project');
         $parameters = $this->getCommandParameters();
-
-        $this->configManager
-            ->addProject(
-                Argument::type('string'),
-                Argument::type('string'),
-                Argument::type('string'),
-                Argument::any(),
-                Argument::any()
-            )
-            ->willReturn(false);
 
         $this->logger
             ->error(Argument::type('string'), Argument::type('array'))

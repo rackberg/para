@@ -1,13 +1,9 @@
 <?php
-/**
- * @file
- * Contains Para\Command\DeleteProjectCommand.php.
- */
 
 namespace Para\Command;
 
+use Para\Configuration\GroupConfigurationInterface;
 use Para\Exception\ProjectNotFoundException;
-use Para\Service\ConfigurationManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,27 +25,36 @@ class DeleteProjectCommand extends Command
     private $logger;
 
     /**
-     * The configuration manager.
+     * The group configuration.
      *
-     * @var ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
+    /**
+     * The full path to the config file.
+     *
+     * @var string
+     */
+    private $configFile;
 
     /**
      * DeleteProjectCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param GroupConfigurationInterface $groupConfiguration The group configuration.
+     * @param string $configFile The full path to the config file.
      */
     public function __construct(
         LoggerInterface $logger,
-        ConfigurationManagerInterface $configManager
+        GroupConfigurationInterface $groupConfiguration,
+        string $configFile
     ) {
         parent::__construct();
 
         $this->logger = $logger;
-        $this->configManager = $configManager;
+        $this->groupConfiguration = $groupConfiguration;
+        $this->configFile = $configFile;
     }
 
     /**
@@ -73,24 +78,21 @@ class DeleteProjectCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $project = $input->getArgument('project_name');
+        $projectName = $input->getArgument('project_name');
 
-        $ret = false;
         try {
-            $ret = $this->configManager->deleteProject($project);
+            $this->groupConfiguration->load($this->configFile);
+            $this->groupConfiguration->removeProject($projectName);
+            $this->groupConfiguration->save($this->configFile);
         } catch (ProjectNotFoundException $e) {
             $output->writeln('<error>The project you are trying to delete is ' .
                 'not stored in the configuration.</error>', 1);
+
+            $output->writeln('<error>Failed to delete the project "' . $projectName . '".', 1);
+            return;
         }
 
-        if (!$ret) {
-            $this->logger->error('Failed to delete the project.', [
-                'projectName' => $project,
-            ]);
-            $output->writeln('<error>Failed to delete the project "' . $project . '".', 1);
-        } else {
-            $output->writeln('<info>Successfully deleted the project from the configuration.</info>');
-        }
+        $output->writeln('<info>Successfully deleted the project from the configuration.</info>');
     }
 
 

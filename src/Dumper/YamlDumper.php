@@ -3,6 +3,7 @@
 namespace Para\Dumper;
 
 use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class YamlDumper
@@ -33,6 +34,6 @@ class YamlDumper implements DumperInterface
      */
     public function dump(array $input): string
     {
-        return $this->dumper->dump($input, 3);
+        return $this->dumper->dump($input, 20, 0, Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE);
     }
 }

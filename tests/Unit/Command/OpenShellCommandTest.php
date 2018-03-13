@@ -3,11 +3,11 @@
 namespace Para\Tests\Unit\Command;
 
 use Para\Command\OpenShellCommand;
+use Para\Configuration\GroupConfigurationInterface;
+use Para\Entity\GroupInterface;
 use Para\Factory\ShellFactoryInterface;
-use Para\Service\ConfigurationManagerInterface;
 use Para\Service\GroupShell;
 use Para\Service\HistoryShellManagerInterface;
-use Para\Service\InteractiveShellInterface;
 use Para\Service\ShellHistoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -44,11 +44,11 @@ class OpenShellCommandTest extends TestCase
     private $shellFactory;
 
     /**
-     * The configuration manager mock object.
+     * The group configuration mock object.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
     /**
      * {@inheritdoc}
@@ -57,14 +57,19 @@ class OpenShellCommandTest extends TestCase
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->shellFactory = $this->prophesize(ShellFactoryInterface::class);
-        $this->configManager = $this->prophesize(ConfigurationManagerInterface::class);
+
+        $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
+        $this->groupConfiguration
+            ->load(Argument::type('string'))
+            ->shouldBeCalled();
 
         $this->application = new Application();
         $this->application->add(new OpenShellCommand(
             $this->logger->reveal(),
             $this->shellFactory->reveal(),
-            $this->configManager->reveal(),
-            'history_file.txt'
+            $this->groupConfiguration->reveal(),
+            'history_file.txt',
+            'the/path/to/the/config/file.yml'
         ));
     }
 
@@ -79,9 +84,11 @@ class OpenShellCommandTest extends TestCase
             'group' => 'my_group',
         ];
 
-        $this->configManager
-            ->hasGroup('my_group')
-            ->willReturn(true);
+        $group = $this->prophesize(GroupInterface::class);
+
+        $this->groupConfiguration
+            ->getGroup('my_group')
+            ->willReturn($group->reveal());
 
         $history = $this->prophesize(ShellHistoryInterface::class);
         $history->saveHistory(Argument::type('string'))->shouldBeCalled();
@@ -119,6 +126,10 @@ class OpenShellCommandTest extends TestCase
             'command' => $command->getName(),
             'group' => 'my_group',
         ];
+
+        $this->groupConfiguration
+            ->getGroup('my_group')
+            ->willReturn(null);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);

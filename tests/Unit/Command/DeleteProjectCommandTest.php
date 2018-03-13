@@ -3,9 +3,12 @@
 namespace Para\Tests\Unit\Command;
 
 use Para\Command\DeleteProjectCommand;
+use Para\Configuration\GroupConfigurationInterface;
+use Para\Entity\Group;
+use Para\Entity\Project;
 use Para\Exception\ProjectNotFoundException;
-use Para\Service\ConfigurationManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -32,11 +35,11 @@ class DeleteProjectCommandTest extends TestCase
     private $logger;
 
     /**
-     * The configuration manager mock object.
+     * The group configuration mock object.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
     /**
      * {@inheritdoc}
@@ -44,12 +47,13 @@ class DeleteProjectCommandTest extends TestCase
     protected function setUp()
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->configManager = $this->prophesize(ConfigurationManagerInterface::class);
+        $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
 
         $this->application = new Application();
         $this->application->add(new DeleteProjectCommand(
             $this->logger->reveal(),
-            $this->configManager->reveal()
+            $this->groupConfiguration->reveal(),
+            'the/path/to/the/config/file.yml'
         ));
     }
 
@@ -64,9 +68,32 @@ class DeleteProjectCommandTest extends TestCase
             'project_name' => 'my_project',
         ];
 
-        $this->configManager
-            ->deleteProject('my_project')
-            ->willReturn(true);
+        $group1 = new Group();
+        $group1->setName('default');
+        $group1->addProject(['name' => 'project1', 'path' => '']);
+        $group1->addProject(['name' => 'my_project', 'path' => '']);
+        $group1->addProject(['name' => 'project2', 'path' => '']);
+
+        $group2 = new Group();
+        $group2->setName('second_group');
+        $group2->addProject(['name' => 'project3', 'path' => '']);
+        $group2->addProject(['name' => 'project4', 'path' => '']);
+
+        $this->groupConfiguration
+            ->load(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $this->groupConfiguration
+            ->getGroups()
+            ->willReturn([$group1, $group2]);
+
+        $this->groupConfiguration
+            ->removeProject('my_project')
+            ->shouldBeCalled();
+
+        $this->groupConfiguration
+            ->save(Argument::type('string'))
+            ->shouldBeCalled();
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -87,8 +114,12 @@ class DeleteProjectCommandTest extends TestCase
             'project_name' => 'unknown_project',
         ];
 
-        $this->configManager
-            ->deleteProject('unknown_project')
+        $this->groupConfiguration
+            ->load(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $this->groupConfiguration
+            ->removeProject('unknown_project')
             ->willThrow(new ProjectNotFoundException('unknown_project'));
 
         $commandTester = new CommandTester($command);

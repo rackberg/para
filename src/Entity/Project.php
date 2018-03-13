@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Para\Entity\Project.php.
- */
 
 namespace Para\Entity;
 
@@ -39,6 +35,22 @@ class Project implements ProjectInterface
      * @var string
      */
     private $path;
+
+    /**
+     * Project constructor.
+     *
+     * @param string $name The name of the project.
+     * @param string $path The path.
+     * @param int $foregroundColor The foreground color.
+     * @param int $backgroundColor The background color.
+     */
+    public function __construct(string $name, string $path, int $foregroundColor = null, int $backgroundColor = null)
+    {
+        $this->name = $name;
+        $this->foregroundColor = $foregroundColor;
+        $this->backgroundColor = $backgroundColor;
+        $this->path = $path;
+    }
 
     /**
      * {@inheritdoc}
@@ -103,7 +115,7 @@ class Project implements ProjectInterface
     /**
      * {@inheritdoc}
      */
-    public function setRootDirectory(string $path)
+    public function setPath(string $path)
     {
         $this->path = $path;
     }

@@ -3,9 +3,10 @@
 namespace Para\Tests\Unit\Command;
 
 use Para\Command\DeleteGroupCommand;
+use Para\Configuration\GroupConfigurationInterface;
 use Para\Exception\GroupNotFoundException;
-use Para\Service\ConfigurationManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -32,11 +33,11 @@ class DeleteGroupCommandTest extends TestCase
     private $logger;
 
     /**
-     * The configuration manager mock object.
+     * The group configuration mock object.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
     /**
      * {@inheritdoc}
@@ -44,12 +45,13 @@ class DeleteGroupCommandTest extends TestCase
     protected function setUp()
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
-        $this->configManager = $this->prophesize(ConfigurationManagerInterface::class);
+        $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
 
         $this->application = new Application();
         $this->application->add(new DeleteGroupCommand(
             $this->logger->reveal(),
-            $this->configManager->reveal()
+            $this->groupConfiguration->reveal(),
+            'path/to/the/config/file.yml'
         ));
     }
 
@@ -64,9 +66,17 @@ class DeleteGroupCommandTest extends TestCase
             'group_name' => 'my_group',
         ];
 
-        $this->configManager
+        $this->groupConfiguration
+            ->load(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $this->groupConfiguration
             ->deleteGroup('my_group')
-            ->willReturn(true);
+            ->shouldBeCalled();
+
+        $this->groupConfiguration
+            ->save(Argument::type('string'))
+            ->shouldBeCalled();
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -87,7 +97,11 @@ class DeleteGroupCommandTest extends TestCase
             'group_name' => 'my_group',
         ];
 
-        $this->configManager
+        $this->groupConfiguration
+            ->load(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $this->groupConfiguration
             ->deleteGroup('my_group')
             ->willThrow(new GroupNotFoundException('my_group'));
 

@@ -19,9 +19,19 @@ class Group implements GroupInterface
     /**
      * The projects array.
      *
-     * @var \Para\Entity\Project[]
+     * @var array
      */
-    private $projects;
+    private $projects = [];
+
+    /**
+     * Group constructor.
+     *
+     * @param string $name The name of the group.
+     */
+    public function __construct(string $name = null)
+    {
+        $this->name = $name;
+    }
 
     /**
      * {@inheritdoc}
@@ -37,6 +47,22 @@ class Group implements GroupInterface
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addProject(array $project): void
+    {
+        $this->projects[$project['name']] = $project;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeProject($projectName): void
+    {
+        unset($this->projects[$projectName]);
     }
 
     /**

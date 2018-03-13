@@ -12,7 +12,6 @@ use Para\Entity\GroupInterface;
  */
 class GroupFactory implements GroupFactoryInterface
 {
-
     /**
      * {@inheritdoc}
      */

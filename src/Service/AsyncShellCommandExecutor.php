@@ -62,9 +62,7 @@ class AsyncShellCommandExecutor
     public function execute($cmd, array $projects, BufferedOutputInterface $output)
     {
         foreach ($projects as $name => $data) {
-            $project = new Project();
-            $project->setName($name);
-            $project->setRootDirectory($data['path']);
+            $project = new Project($name, $data['path']);
             if (!empty($data['foreground_color'])) {
                 $project->setForegroundColor($data['foreground_color']);
             } else {

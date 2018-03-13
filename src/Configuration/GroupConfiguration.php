@@ -2,11 +2,15 @@
 
 namespace Para\Configuration;
 
+use Para\Dumper\DumperInterface;
 use Para\Entity\GroupInterface;
+use Para\Entity\ProjectInterface;
 use Para\Exception\AddGroupException;
 use Para\Exception\GroupNotFoundException;
+use Para\Exception\ProjectNotFoundException;
 use Para\Factory\GroupFactoryInterface;
-use Para\Service\ConfigurationManagerInterface;
+use Para\Factory\ProjectFactoryInterface;
+use Para\Parser\ParserInterface;
 
 /**
  * Class GroupConfiguration
@@ -23,25 +27,37 @@ class GroupConfiguration extends AbstractConfiguration implements GroupConfigura
     private $groups;
 
     /**
-     * The group factory mock object.
+     * The group factory.
      *
      * @var \Para\Factory\GroupFactoryInterface
      */
     private $groupFactory;
 
     /**
+     * The project factory.
+     *
+     * @var ProjectFactoryInterface
+     */
+    private $projectFactory;
+
+    /**
      * GroupConfiguration constructor.
      *
-     * @param \Para\Service\ConfigurationManagerInterface $configurationManager The configuration manager.
+     * @param ParserInterface $parser The parser.
+     * @param DumperInterface $dumper The dumper.
      * @param \Para\Factory\GroupFactoryInterface $groupFactory The group factory.
+     * @param ProjectFactoryInterface $projectFactory The project factory.
      */
     public function __construct(
-        ConfigurationManagerInterface $configurationManager,
-        GroupFactoryInterface $groupFactory
+        ParserInterface $parser,
+        DumperInterface $dumper,
+        GroupFactoryInterface $groupFactory,
+        ProjectFactoryInterface $projectFactory
     ) {
-        parent::__construct($configurationManager);
+        parent::__construct($parser, $dumper);
+
         $this->groupFactory = $groupFactory;
-        $this->addDefaultGroup();
+        $this->projectFactory = $projectFactory;
     }
 
     /**
@@ -85,8 +101,63 @@ class GroupConfiguration extends AbstractConfiguration implements GroupConfigura
         return isset($this->groups[$groupName]) ? $this->groups[$groupName] : null;
     }
 
-    private function addDefaultGroup()
+    /**
+     * {@inheritdoc}
+     */
+    public function load(string $fileName): void
     {
-        $this->groups['default'] = $this->groupFactory->getGroup('default');
+        parent::load($fileName);
+
+        foreach ($this->configuration['groups'] as $name => $value) {
+            $group = $this->groupFactory->getGroup($name);
+            $group->setProjects($value);
+            $this->groups[$name] = $group;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save(string $fileName): bool
+    {
+        unset($this->configuration['groups']);
+
+        foreach ($this->groups as $group) {
+            $this->configuration['groups'][$group->getName()] = $group->getProjects();
+        }
+
+        return parent::save($fileName);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeProject(string $projectName): void
+    {
+        foreach ($this->groups as $groupName => $group) {
+            if (array_key_exists($projectName, $group->getProjects())) {
+                $group->removeProject($projectName);
+                return;
+            }
+        }
+
+        throw new ProjectNotFoundException($projectName);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProject(string $projectName): ?ProjectInterface
+    {
+        foreach ($this->groups as $group) {
+            $projects = $group->getProjects();
+            if (array_key_exists($projectName, $projects)) {
+                $projectData = $projects[$projectName];
+                $projectData['name'] = $projectName;
+                return $this->projectFactory->getProjectFromArray($projectData);
+            }
+        }
+
+        return null;
     }
 }

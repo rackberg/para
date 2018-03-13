@@ -3,6 +3,8 @@
 namespace Para\Configuration;
 
 use Para\Entity\GroupInterface;
+use Para\Entity\ProjectInterface;
+use Para\Exception\ProjectNotFoundException;
 
 /**
  * Interface GroupConfigurationInterface.
@@ -44,4 +46,22 @@ interface GroupConfigurationInterface extends ConfigurationInterface
      * @return null|\Para\Entity\GroupInterface The group instance or null.
      */
     public function getGroup(string $groupName): ?GroupInterface;
+
+    /**
+     * Removes a project from a group.
+     *
+     * @param string $projectName The name of the project to remove.
+     *
+     * @throws ProjectNotFoundException When the project to remove is not configured.
+     */
+    public function removeProject(string $projectName): void;
+
+    /**
+     * Returns a project by it's name.
+     *
+     * @param string $projectName The project name.
+     *
+     * @return ProjectInterface|null The found project or null
+     */
+    public function getProject(string $projectName): ?ProjectInterface;
 }

@@ -44,13 +44,13 @@ services:
         class: Para\Parser\YamlParser
         arguments: ['@yaml.parser']
 
-    para.yaml.configuration_manager:
-        class: Para\Service\YamlConfigurationManager
+    para.configuration.group_configuration:
+        class: Para\Configuration\GroupConfiguration
         arguments:
-            - '@logger'
+            - '@para.yaml.parser'
             - '@para.yaml.dumper'
-            - '@yaml.parser'
-            - '%para.config%'
+            - '@para.factory.group_factory'
+            - '@para.factory.project_factory'
 
     para.process_factory:
         public: true
@@ -64,6 +64,9 @@ services:
             - '@para.process_factory'
             - '@event_dispatcher'
             - '@para.history_shell_manager'
+
+    para.factory.project_array_decorator_factory:
+        class: Para\Factory\ProjectArrayDecoratorFactory
 
     para.async_shell_command_executor:
         class: Para\Service\AsyncShellCommandExecutor
@@ -85,12 +88,9 @@ services:
     para.buffered_output_adapter_factory:
         class: Para\Factory\BufferedOutputAdapterFactory
 
-    para.project_factory:
+    para.factory.project_factory:
         class: Para\Factory\ProjectFactory
 
-    para.project_configuration:
-        class: Para\Configuration\ProjectConfiguration
-        arguments: ['@para.yaml.configuration_manager', '@para.project_factory']
-
-
+    para.factory.group_factory:
+        class: Para\Factory\GroupFactory
 

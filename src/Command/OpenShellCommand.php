@@ -1,14 +1,9 @@
 <?php
-/**
- * @file
- * Contains Para\Command\OpenShellCommand.php.
- */
 
 namespace Para\Command;
 
+use Para\Configuration\GroupConfigurationInterface;
 use Para\Factory\ShellFactoryInterface;
-use Para\Service\ConfigurationManagerInterface;
-use Para\Factory\ShellFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -38,11 +33,11 @@ class OpenShellCommand extends Command
     private $shellFactory;
 
     /**
-     * The configuration manager.
+     * The group configuration.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
     /**
      * The path to the history file.
@@ -52,25 +47,35 @@ class OpenShellCommand extends Command
     private $historyFile;
 
     /**
+     * The full path to the config file.
+     *
+     * @var string
+     */
+    private $configFile;
+
+    /**
      * OpenShellCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Para\Factory\ShellFactoryInterface $shellFactory The shell factory.
-     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param string $historyFile The path to the history file.
+     * @param string $configFile The full path to the config file.
      */
     public function __construct(
         LoggerInterface $logger,
         ShellFactoryInterface $shellFactory,
-        ConfigurationManagerInterface $configManager,
-        $historyFile
+        GroupConfigurationInterface $groupConfiguration,
+        string $historyFile,
+        string $configFile
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->shellFactory = $shellFactory;
-        $this->configManager = $configManager;
+        $this->groupConfiguration = $groupConfiguration;
         $this->historyFile = $historyFile;
+        $this->configFile = $configFile;
     }
 
     /**
@@ -102,11 +107,15 @@ class OpenShellCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // Check if the group the user wants to use exists.
-        $group = $input->getArgument('group');
-        if (!$this->configManager->hasGroup($group)) {
-            $this->logger->warning('The group the user tries use is not configured.', [
+        $groupName = $input->getArgument('group');
+
+        $this->groupConfiguration->load($this->configFile);
+
+        $group = $this->groupConfiguration->getGroup($groupName);
+        if (!$group) {
+            $this->logger->warning('The group the user tries to use is not configured.', [
                 'arguments' => $input->getArguments(),
-                'options' => $input->getOptions(),
+                'options' => $input->getOptions()
             ]);
 
             $output->writeln('<error>The group you are trying to use is not configured.</error>', 1);
@@ -117,7 +126,7 @@ class OpenShellCommand extends Command
 
         $shell = $this->shellFactory->create($input, $output);
 
-        $shell->run($group, $excludedProjects, $this->historyFile);
+        $shell->run($groupName, $excludedProjects, $this->historyFile);
 
         // Persist the shell commands to the history file.
         if ($this->historyFile) {

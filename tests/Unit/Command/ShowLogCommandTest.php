@@ -3,8 +3,9 @@
 namespace Para\Tests\Unit\Command;
 
 use Para\Command\ShowLogCommand;
+use Para\Configuration\GroupConfigurationInterface;
+use Para\Entity\Project;
 use Para\Factory\ProcessFactoryInterface;
-use Para\Service\ConfigurationManagerInterface;
 use phpmock\prophecy\PHPProphet;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -42,11 +43,11 @@ class ShowLogCommandTest extends TestCase
     private $processFactory;
 
     /**
-     * The configuration manager mock object.
+     * The group configuration mock object.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
     /**
      * {@inheritdoc}
@@ -55,14 +56,19 @@ class ShowLogCommandTest extends TestCase
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->processFactory = $this->prophesize(ProcessFactoryInterface::class);
-        $this->configManager = $this->prophesize(ConfigurationManagerInterface::class);
+
+        $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
+        $this->groupConfiguration
+            ->load(Argument::type('string'))
+            ->shouldBeCalled();
 
         $this->application = new Application();
         $this->application->add(new ShowLogCommand(
             $this->logger->reveal(),
             $this->processFactory->reveal(),
-            $this->configManager->reveal(),
-            'the/log/path/'
+            $this->groupConfiguration->reveal(),
+            'the/log/path/',
+            'the/path/to/the/config/file.yml'
         ));
     }
 
@@ -76,6 +82,10 @@ class ShowLogCommandTest extends TestCase
             'command' => $command->getName(),
             'project' => 'my_project',
         ];
+
+        $this->groupConfiguration
+            ->getProject('my_project')
+            ->willReturn(null);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
@@ -98,9 +108,11 @@ class ShowLogCommandTest extends TestCase
             'project' => 'my_project',
         ];
 
-        $this->configManager
-            ->hasProject('my_project')
-            ->willReturn(true);
+        $project = new Project('my_project', '');
+
+        $this->groupConfiguration
+            ->getProject('my_project')
+            ->willReturn($project);
 
         $prophet = new PHPProphet();
         $prophecy = $prophet->prophesize('\Para\Command');
@@ -136,9 +148,9 @@ class ShowLogCommandTest extends TestCase
             'project' => 'my_project',
         ];
 
-        $this->configManager
-            ->hasProject('my_project')
-            ->willReturn(true);
+        $this->groupConfiguration
+            ->getProject('my_project')
+            ->willReturn(new Project('my_project', ''));
 
         $prophet = new PHPProphet();
         $prophecy = $prophet->prophesize('\Para\Command');

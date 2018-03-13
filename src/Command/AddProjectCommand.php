@@ -1,12 +1,10 @@
 <?php
-/**
- * @file
- * Contains Para\Command\AddProjectCommand.php.
- */
 
 namespace Para\Command;
 
-use Para\Service\ConfigurationManagerInterface;
+use Para\Configuration\GroupConfigurationInterface;
+use Para\Factory\DecoratorFactoryInterface;
+use Para\Factory\ProjectFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,26 +27,56 @@ class AddProjectCommand extends Command
     private $logger;
 
     /**
-     * The configuration manager.
+     * The group configuration.
      *
-     * @var ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
+
+    /**
+     * The project factory.
+     *
+     * @var ProjectFactoryInterface
+     */
+    private $projectFactory;
+
+    /**
+     * The decorator factory.
+     *
+     * @var DecoratorFactoryInterface
+     */
+    private $decoratorFactory;
+
+    /**
+     * The config file.
+     *
+     * @var string
+     */
+    private $configFile;
 
     /**
      * InitCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param GroupConfigurationInterface $groupConfiguration The group configuration.
+     * @param ProjectFactoryInterface $projectFactory The project factory.
+     * @param DecoratorFactoryInterface $decoratorFactory The decorator factory.
+     * @param string $configFile The config file.
      */
     public function __construct(
         LoggerInterface $logger,
-        ConfigurationManagerInterface $configManager
+        GroupConfigurationInterface $groupConfiguration,
+        ProjectFactoryInterface $projectFactory,
+        DecoratorFactoryInterface $decoratorFactory,
+        string $configFile
     ) {
         parent::__construct();
 
         $this->logger = $logger;
-        $this->configManager = $configManager;
+        $this->groupConfiguration = $groupConfiguration;
+        $this->projectFactory = $projectFactory;
+        $this->decoratorFactory = $decoratorFactory;
+        $this->configFile = $configFile;
     }
 
     /**
@@ -103,18 +131,31 @@ class AddProjectCommand extends Command
         $foregroundColor = $input->getOption('foreground_color');
         $backgroundColor = $input->getOption('background_color');
 
-        if (!$this->configManager->addProject($projectName, $projectPath, $groupName, $foregroundColor, $backgroundColor)) {
-            $this->logger->error('Failed to add the project.', ['arguments' => $input->getArguments()]);
+        $this->groupConfiguration->load($this->configFile);
+
+        $group = $this->groupConfiguration->getGroup($groupName);
+        if (!$group) {
+            $this->logger->error(
+                'The group to add the project to is not configured.',
+                ['arguments' => $input->getArguments()]
+            );
 
             $output->writeln('<error>Failed to add the project.</error>');
-        } else {
-            $output->writeln(
-                sprintf(
-                    '<info>Successfully added the project "%s" to the group "%s".</info>',
-                    $projectName,
-                    $groupName
-                )
-            );
+            return;
         }
+
+        $project = $this->projectFactory->getProject($projectName, $projectPath, $foregroundColor, $backgroundColor);
+        $arrayDecorator = $this->decoratorFactory->getArrayDecorator($project);
+        $group->addProject($arrayDecorator->asArray());
+
+        $this->groupConfiguration->save($this->configFile);
+
+        $output->writeln(
+            sprintf(
+                '<info>Successfully added the project "%s" to the group "%s".</info>',
+                $projectName,
+                $groupName
+            )
+        );
     }
 }

@@ -1,12 +1,13 @@
 <?php
-/**
- * @file
- * Contains Para\Entity\ProjectInterface.php.
- */
 
 namespace Para\Entity;
 
-interface ProjectInterface
+/**
+ * Interface ProjectInterface.
+ *
+ * @package Para\Entity
+ */
+interface ProjectInterface extends EntityInterface
 {
     /**
      * Returns the name.
@@ -58,5 +59,5 @@ interface ProjectInterface
      *
      * @param string $path
      */
-    public function setRootDirectory(string $path);
+    public function setPath(string $path);
 }

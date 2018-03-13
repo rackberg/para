@@ -6,6 +6,7 @@
 
 namespace Para\Command;
 
+use Para\Configuration\GroupConfigurationInterface;
 use Para\Factory\BufferedOutputAdapterFactoryInterface;
 use Para\Service\AsyncShellCommandExecutor;
 use Para\Service\ConfigurationManagerInterface;
@@ -42,11 +43,11 @@ class ExecuteCommand extends Command
     private $asyncExecutor;
 
     /**
-     * The configuration manager.
+     * The group configuration.
      *
-     * @var ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
     /**
      * The buffered output adapter factory.
@@ -56,25 +57,35 @@ class ExecuteCommand extends Command
     private $bufferedOutputAdapterFactory;
 
     /**
+     * The path to the config file.
+     *
+     * @var string
+     */
+    private $configFile;
+
+    /**
      * ExecuteCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param \Para\Service\AsyncShellCommandExecutor $asyncExecutor The asynchronous process executor.
-     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param \Para\Factory\BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory The buffered output adapter factory.
+     * @param string $configFile The path to the config file.
      */
     public function __construct(
         LoggerInterface $logger = null,
         AsyncShellCommandExecutor $asyncExecutor,
-        ConfigurationManagerInterface $configManager,
-        BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory
+        GroupConfigurationInterface $groupConfiguration,
+        BufferedOutputAdapterFactoryInterface $bufferedOutputAdapterFactory,
+        string $configFile
     ) {
         parent::__construct();
 
         $this->logger = $logger;
         $this->asyncExecutor = $asyncExecutor;
-        $this->configManager = $configManager;
+        $this->groupConfiguration = $groupConfiguration;
         $this->bufferedOutputAdapterFactory = $bufferedOutputAdapterFactory;
+        $this->configFile = $configFile;
     }
 
     /**
@@ -102,6 +113,9 @@ class ExecuteCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // Load the configuration.
+        $this->groupConfiguration->load($this->configFile);
+
         // Make sure we are dealing with a buffered output.
         $outputAdapter = $this->bufferedOutputAdapterFactory->getOutputAdapter($output);
 
@@ -109,10 +123,12 @@ class ExecuteCommand extends Command
         $cmd = $input->getArgument('cmd');
 
         // Check if the group the user wants to use exists.
-        $group = $input->getArgument('group');
-        if (!$this->configManager->hasGroup($group)) {
+        $groupName = $input->getArgument('group');
+
+        $group = $this->groupConfiguration->getGroup($groupName);
+        if (!$group) {
             $this->logger->warning('The group the user tries use is not configured.', [
-                'group' => $group,
+                'group' => $groupName,
                 'cmd' => $cmd,
             ]);
 
@@ -121,9 +137,9 @@ class ExecuteCommand extends Command
         }
 
         // Get all for the group available projects.
-        $projects = $this->configManager->readGroup($group);
+        $projects = $group->getProjects();
         if ($projects == []) {
-            $output->writeln('<error>No projects found in the group "' . $group . '". Aborting execution.</error>', 1);
+            $output->writeln('<error>No projects found in the group "' . $groupName . '". Aborting execution.</error>', 1);
         }
 
         // Exclude one or more projects.
@@ -133,7 +149,7 @@ class ExecuteCommand extends Command
                     $this->logger->debug('User excludes project from execution.', [
                         'excludedProject' => $project,
                         'projects' => $projects,
-                        'group' => $group,
+                        'group' => $groupName,
                         'cmd' => $cmd,
                     ]);
 

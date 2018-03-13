@@ -3,11 +3,13 @@
 namespace Para\Tests\Unit\Command;
 
 use Para\Command\ExecuteCommand;
+use Para\Configuration\GroupConfigurationInterface;
+use Para\Entity\Group;
+use Para\Entity\GroupInterface;
+use Para\Entity\Project;
 use Para\Factory\BufferedOutputAdapterFactoryInterface;
 use Para\Service\AsyncShellCommandExecutor;
-use Para\Service\ConfigurationManagerInterface;
 use Para\Service\Output\BufferedOutputInterface;
-use phpmock\prophecy\PHPProphet;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
@@ -44,11 +46,11 @@ class ExecuteCommandTest extends TestCase
     private $asyncExecutor;
 
     /**
-     * The configuration manager mock object.
+     * The group configuration mock object.
      *
-     * @var \Para\Service\ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
 
     /**
      * The buffered output adapter factory mock object.
@@ -64,15 +66,18 @@ class ExecuteCommandTest extends TestCase
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->asyncExecutor = $this->prophesize(AsyncShellCommandExecutor::class);
-        $this->configManager = $this->prophesize(ConfigurationManagerInterface::class);
         $this->bufferedOutputAdapterFactory = $this->prophesize(BufferedOutputAdapterFactoryInterface::class);
+
+        $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
+        $this->groupConfiguration->load(Argument::type('string'))->shouldBeCalled();
 
         $this->application = new Application();
         $this->application->add(new ExecuteCommand(
             $this->logger->reveal(),
             $this->asyncExecutor->reveal(),
-            $this->configManager->reveal(),
-            $this->bufferedOutputAdapterFactory->reveal()
+            $this->groupConfiguration->reveal(),
+            $this->bufferedOutputAdapterFactory->reveal(),
+            'the/path/to/the/config/file.yml'
         ));
     }
 
@@ -94,6 +99,10 @@ class ExecuteCommandTest extends TestCase
             ->getOutputAdapter(Argument::type(OutputInterface::class))
             ->willReturn($output->reveal());
 
+        $this->groupConfiguration
+            ->getGroup('my_group')
+            ->willReturn(null);
+
         $commandTester = new CommandTester($command);
         $commandTester->execute($parameters);
 
@@ -114,12 +123,12 @@ class ExecuteCommandTest extends TestCase
             'cmd' => 'pwd',
         ];
 
-        $this->configManager
-            ->hasGroup('my_group')
-            ->willReturn(true);
-        $this->configManager
-            ->readGroup('my_group')
-            ->willReturn([]);
+        $group = new Group();
+        $group->setName('my_group');
+
+        $this->groupConfiguration
+            ->getGroup('my_group')
+            ->willReturn($group);
 
         $output = $this->prophesize(BufferedOutputInterface::class);
         $this->bufferedOutputAdapterFactory
@@ -152,12 +161,16 @@ class ExecuteCommandTest extends TestCase
             ->getOutputAdapter(Argument::type(OutputInterface::class))
             ->willReturn($output->reveal());
 
-        $this->configManager
-            ->hasGroup('my_group')
-            ->willReturn(true);
-        $this->configManager
-            ->readGroup('my_group')
-            ->willReturn(['my_project' => []]);
+        $group = $this->prophesize(GroupInterface::class);
+        $group
+            ->getProjects()
+            ->willReturn([
+                'my_project' => new Project('my_project', ''),
+            ]);
+
+        $this->groupConfiguration
+            ->getGroup('my_group')
+            ->willReturn($group->reveal());
 
         $this->logger
             ->debug('User excludes project from execution.', Argument::type('array'))

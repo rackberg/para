@@ -1,13 +1,9 @@
 <?php
-/**
- * @file
- * Contains Para\Command\DeleteGroupCommand.php.
- */
 
 namespace Para\Command;
 
+use Para\Configuration\GroupConfigurationInterface;
 use Para\Exception\GroupNotFoundException;
-use Para\Service\ConfigurationManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,26 +25,36 @@ class DeleteGroupCommand extends Command
     private $logger;
 
     /**
-     * The configuration manager.
+     * The group configuration.
      *
-     * @var ConfigurationManagerInterface
+     * @var GroupConfigurationInterface
      */
-    private $configManager;
+    private $groupConfiguration;
+
+    /**
+     * The full path to the config file.
+     *
+     * @var string
+     */
+    private $configFile;
 
     /**
      * EditGroupCommand constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger The logger.
-     * @param \Para\Service\ConfigurationManagerInterface $configManager The configuration manager.
+     * @param GroupConfigurationInterface $groupConfiguration The group configuration.
+     * @param string $configFile The full path to the config file.
      */
     public function __construct(
         LoggerInterface $logger,
-        ConfigurationManagerInterface $configManager
+        GroupConfigurationInterface $groupConfiguration,
+        string $configFile
     ) {
         parent::__construct();
 
         $this->logger = $logger;
-        $this->configManager = $configManager;
+        $this->groupConfiguration = $groupConfiguration;
+        $this->configFile = $configFile;
     }
 
     /**
@@ -72,23 +78,24 @@ class DeleteGroupCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $group = $input->getArgument('group_name');
+        $groupName = $input->getArgument('group_name');
 
-        $ret = false;
         try {
-            $ret = $this->configManager->deleteGroup($group);
+            $this->groupConfiguration->load($this->configFile);
+            $this->groupConfiguration->deleteGroup($groupName);
+            $this->groupConfiguration->save($this->configFile);
         } catch (GroupNotFoundException $e) {
             $output->writeln('<error>The group you are trying to delete is ' .
                 'not stored in the configuration.</error>', 1);
+
+            $this->logger->error('Failed to delete the group.', [
+                'groupName' => $groupName,
+            ]);
+            $output->writeln('<error>Failed to delete the group "' . $groupName . '".', 1);
+
+            return;
         }
 
-        if (!$ret) {
-            $this->logger->error('Failed to delete the group.', [
-                'groupName' => $group,
-            ]);
-            $output->writeln('<error>Failed to delete the group "' . $group . '".', 1);
-        } else {
-            $output->writeln('<info>Successfully deleted the group from the configuration.</info>');
-        }
+        $output->writeln('<info>Successfully deleted the group from the configuration.</info>');
     }
 }
