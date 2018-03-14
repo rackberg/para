@@ -36,6 +36,9 @@ services:
     filesystem:
         class: Symfony\Component\Filesystem\Filesystem
 
+    composer_factory:
+        class: Composer\Factory
+
     para.yaml.dumper:
         class: Para\Dumper\YamlDumper
         arguments: ['@yaml.dumper']
@@ -54,6 +57,13 @@ services:
             - '%para.config%'
         calls:
             - [load]
+
+    para.plugin.plugin_manager:
+        class: Para\Plugin\PluginManager
+        arguments:
+            - '@para.factory.composite_repository_factory'
+            - '@composer_factory'
+            - '@para.factory.plugin_factory'
 
     para.process_factory:
         public: true
@@ -97,3 +107,11 @@ services:
     para.factory.group_factory:
         class: Para\Factory\GroupFactory
 
+    para.factory.table_output_factory:
+        class: Para\Factory\TableOutputFactory
+
+    para.factory.composite_repository_factory:
+        class: Para\Factory\CompositeRepositoryFactory
+
+    para.factory.plugin_factory:
+        class: Para\Factory\PluginFactory

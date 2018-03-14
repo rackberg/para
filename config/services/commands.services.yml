@@ -81,4 +81,10 @@ services:
         tags:
             - { name: console.command, command: 'self-update' }
 
+    para.command.list_available_plugins:
+        class: Para\Command\ListAvailablePluginsCommand
+        arguments: ['@para.plugin.plugin_manager', '@para.factory.table_output_factory']
+        tags:
+            - { name: console.command, command: 'plugins:available' }
+
 

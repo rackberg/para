@@ -10,7 +10,8 @@
         "symfony/monolog-bundle": ">=2.9 ^3.0",
         "symfony/yaml": ">=2.9 ^3.4",
         "monolog/monolog": "^1.22",
-        "symfony/finder": "^4.0"
+        "symfony/finder": "^4.0",
+        "composer/composer": "^1.6"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",

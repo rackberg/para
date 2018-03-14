@@ -5,3 +5,4 @@ vendor/
 /config/.para_history
 /tests/build/
 src/Plugin/*
+!src/Plugin/*.php
