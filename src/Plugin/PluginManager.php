@@ -71,7 +71,7 @@ class PluginManager implements PluginManagerInterface
         $plugins = [];
         $composer = $this->composerFactory->createComposer(
             new NullIO(),
-            null,
+            $this->rootDirectory . 'composer.json',
             false,
             $this->rootDirectory,
             true

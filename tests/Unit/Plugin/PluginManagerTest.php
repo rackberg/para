@@ -74,10 +74,10 @@ class PluginManagerTest extends TestCase
         $composer = $this->prophesize(Composer::class);
 
         $this->composerFactory
-            ->createComposer(Argument::any(), null, false, Argument::type('string'), true)
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
             ->shouldBeCalled();
         $this->composerFactory
-            ->createComposer(Argument::any(), null, false, Argument::type('string'), true)
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
             ->willReturn($composer->reveal());
 
         $repositoryManager = $this->prophesize(RepositoryManager::class);
