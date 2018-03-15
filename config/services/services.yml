@@ -1,13 +1,14 @@
 parameters:
-    para.config: '%root_dir%config/para.yml'
-    para.log_path: '%root_dir%logs/'
-    para.tools_path: '%root_dir%tools/'
-    para.history: '%root_dir%config/.para_history'
+    para.root: '%bin_dir%/../'
+    para.config: '%para.root%config/para.yml'
+    para.log_path: '%para.root%logs/'
+    para.tools_path: '%para.root%tools/'
+    para.history: '%para.root%config/.para_history'
 
 services:
     logger.streamhandler:
         class: Monolog\Handler\RotatingFileHandler
-        arguments: ['%root_dir%logs/para.log', 8]
+        arguments: ['%para.root%logs/para.log', 8]
         calls:
             - [setFormatter, ['@monolog.formatter.application_formatter']]
 
@@ -64,6 +65,7 @@ services:
             - '@para.factory.composite_repository_factory'
             - '@composer_factory'
             - '@para.factory.plugin_factory'
+            - '%para.root%'
 
     para.process_factory:
         public: true

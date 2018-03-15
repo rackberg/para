@@ -37,20 +37,30 @@ class PluginManager implements PluginManagerInterface
     private $pluginFactory;
 
     /**
+     * The para root directory.
+     *
+     * @var string
+     */
+    private $rootDirectory;
+
+    /**
      * PluginManager constructor.
      *
      * @param \Para\Factory\CompositeRepositoryFactoryInterface $repositoryFactory The repository factory.
      * @param \Composer\Factory $composerFactory The composer factory.
      * @param \Para\Factory\PluginFactoryInterface $pluginFactory The plugin factory.
+     * @param string $rootDirectory The para root directory.
      */
     public function __construct(
         CompositeRepositoryFactoryInterface $repositoryFactory,
         Factory $composerFactory,
-        PluginFactoryInterface $pluginFactory
+        PluginFactoryInterface $pluginFactory,
+        string $rootDirectory
     ) {
         $this->repositoryFactory = $repositoryFactory;
         $this->composerFactory = $composerFactory;
         $this->pluginFactory = $pluginFactory;
+        $this->rootDirectory = $rootDirectory;
     }
 
     /**
@@ -59,7 +69,13 @@ class PluginManager implements PluginManagerInterface
     public function fetchPluginsAvailable(): array
     {
         $plugins = [];
-        $composer = $this->composerFactory->createComposer(new NullIO());
+        $composer = $this->composerFactory->createComposer(
+            new NullIO(),
+            null,
+            false,
+            $this->rootDirectory,
+            true
+        );
         $repositories = $composer->getRepositoryManager()->getRepositories();
         $compositeRepository = $this->repositoryFactory->getRepository($repositories);
 

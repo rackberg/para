@@ -21,8 +21,8 @@ $container = new ContainerBuilder();
 $container->addCompilerPass(new AddConsoleCommandPass());
 $container->addCompilerPass(new AddSubscriberPass());
 
-// Set the root directory.
-$container->setParameter('root_dir', __DIR__ . '/../');
+// Set the bin directory directory.
+$container->setParameter('bin_dir', __DIR__);
 
 $loader = new ServicesLoader(
     new YmlFileLoaderFactory($container, new FileLocator()),

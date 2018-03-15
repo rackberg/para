@@ -80,5 +80,4 @@ class ListAvailablePluginsCommand extends Command
         $table->setRows($rows);
         $table->render();
     }
-
 }
