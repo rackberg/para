@@ -2,7 +2,6 @@
 
 namespace Para\Plugin;
 
-use Composer\Composer;
 use Composer\Factory;
 use Composer\IO\NullIO;
 use Composer\Repository\CompositeRepository;
@@ -67,7 +66,7 @@ class PluginManager implements PluginManagerInterface
         $packages = $compositeRepository->search('', CompositeRepository::SEARCH_FULLTEXT, 'para-plugin');
         foreach ($packages as $package) {
             $plugin = $this->pluginFactory->getPlugin($package['name']);
-            $plugin->setDescription($package['description']);
+            $plugin->setDescription($package['description'] ?: '');
 
             $plugins[$package['name']] = $plugin;
         }
