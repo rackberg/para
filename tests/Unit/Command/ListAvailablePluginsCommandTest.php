@@ -14,11 +14,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * Class ListAvailablePluginsTest
+ * Class ListAvailablePluginsCommandTest
  *
  * @package Para\Tests\Unit\Command
  */
-class ListAvailablePluginsTest extends TestCase
+class ListAvailablePluginsCommandTest extends TestCase
 {
     /**
      * The application.
@@ -88,7 +88,7 @@ class ListAvailablePluginsTest extends TestCase
 
         $table = $this->prophesize(Table::class);
         $table
-            ->setHeaders(['Plugin', 'Description', 'Enabled'])
+            ->setHeaders(['Plugin', 'Description'])
             ->shouldBeCalled();
         $table->setRows(Argument::type('array'))->shouldBeCalled();
         $table->render()->shouldBeCalled();

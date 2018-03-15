@@ -76,7 +76,7 @@ class ListAvailablePluginsCommand extends Command
         }
 
         $table = $this->tableOutputFactory->getTable($output);
-        $table->setHeaders(['Plugin', 'Description', 'Enabled']);
+        $table->setHeaders(['Plugin', 'Description']);
         $table->setRows($rows);
         $table->render();
     }
