@@ -101,3 +101,10 @@ services:
             - { name: console.command, command: 'plugin:uninstall' }
             - { name: console.command, command: 'uninstall' }
 
+    para.command.list_installed_plugins:
+        class: Para\Command\ListInstalledPluginsCommand
+        arguments: ['@para.plugin.plugin_manager', '@para.factory.table_output_factory']
+        tags:
+            - { name: console.command, command: 'plugins:installed' }
+            - { name: console.command, command: 'installed' }
+

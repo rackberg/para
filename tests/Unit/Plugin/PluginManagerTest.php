@@ -4,7 +4,6 @@ namespace Para\Tests\Unit\Plugin;
 
 use Composer\Composer;
 use Composer\Factory;
-use Composer\IO\NullIO;
 use Composer\Package\Locker;
 use Composer\Repository\ComposerRepository;
 use Composer\Repository\CompositeRepository;
@@ -12,12 +11,10 @@ use Composer\Repository\RepositoryManager;
 use Para\Factory\CompositeRepositoryFactoryInterface;
 use Para\Factory\PluginFactoryInterface;
 use Para\Factory\ProcessFactoryInterface;
-use Para\Para;
 use Para\Plugin\PluginInterface;
 use Para\Plugin\PluginManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -380,5 +377,48 @@ class PluginManagerTest extends TestCase
         $this->processFactory->getProcess($commandline, $cwd)->willReturn($process->reveal());
 
         $this->pluginManager->uninstallPlugin($pluginName);
+    }
+
+    /**
+     * Tests that the getInstalledPlugins() method returns an array of plugins.
+     */
+    public function testTheGetInstalledPluginsMethodReturnsAnArrayOfPlugins()
+    {
+        $locker = $this->prophesize(Locker::class);
+        $locker->getLockData()->shouldBeCalled();
+        $locker->getLockData()->willReturn([
+            'packages' => [
+                [
+                    'name' => 'lrackwitz/para-alias',
+                    'type' => 'para-plugin',
+                ],
+            ],
+        ]);
+
+        $composer = $this->prophesize(Composer::class);
+        $composer->getLocker()->shouldBeCalled();
+        $composer->getLocker()->willReturn($locker->reveal());
+
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->shouldBeCalled();
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->willReturn($composer->reveal());
+
+        $plugin = $this->prophesize(PluginInterface::class);
+        $plugin->setDescription(Argument::type('string'))->shouldBeCalled();
+        $plugin->setVersion(Argument::type('string'))->shouldBeCalled();
+
+        $this->pluginFactory
+            ->getPlugin('lrackwitz/para-alias')
+            ->shouldBeCalled();
+        $this->pluginFactory
+            ->getPlugin('lrackwitz/para-alias')
+            ->willReturn($plugin->reveal());
+
+        $result = $this->pluginManager->getInstalledPlugins();
+
+        $this->assertTrue(is_array($result));
     }
 }

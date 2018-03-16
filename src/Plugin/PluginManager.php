@@ -166,6 +166,28 @@ class PluginManager implements PluginManagerInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getInstalledPlugins(): array
+    {
+        $composer = $this->initComposer();
+        $lockData = $this->getLockData($composer);
+
+        $plugins = [];
+        foreach ($lockData['packages'] as $data) {
+            if ($data['type'] === 'para-plugin') {
+                $plugin = $this->pluginFactory->getPlugin($data['name']);
+                $plugin->setDescription(isset($data['description']) ? $data['description'] : '');
+                $plugin->setVersion(isset($data['version']) ? $data['version'] : '');
+
+                $plugins[$data['name']] = $plugin;
+            }
+        }
+
+        return $plugins;
+    }
+
+    /**
      * Initializes a new composer instance.
      *
      * @return \Composer\Composer The initalized composer instance.

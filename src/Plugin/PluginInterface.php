@@ -29,4 +29,18 @@ interface PluginInterface
      * @param string $description The description.
      */
     public function setDescription(string $description): void;
+
+    /**
+     * Returns the version.
+     *
+     * @return string The version.
+     */
+    public function getVersion(): string;
+
+    /**
+     * Sets the version.
+     *
+     * @param string $version The version.
+     */
+    public function setVersion(string $version): void;
 }

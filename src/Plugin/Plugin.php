@@ -24,6 +24,13 @@ class Plugin implements PluginInterface
     private $description;
 
     /**
+     * The version.
+     *
+     * @var string
+     */
+    private $version;
+
+    /**
      * Plugin constructor.
      *
      * @param string $name The plugin name.
@@ -61,5 +68,21 @@ class Plugin implements PluginInterface
     public function setDescription(string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setVersion(string $version): void
+    {
+        $this->version = $version;
     }
 }

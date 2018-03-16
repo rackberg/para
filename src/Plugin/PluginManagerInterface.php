@@ -46,4 +46,11 @@ interface PluginManagerInterface
      * @return bool True if the plugin is already installed, otherwise false.
      */
     public function isInstalled(string $pluginName): bool;
+
+    /**
+     * Returns the installed plugins.
+     *
+     * @return \Para\Plugin\PluginInterface[] The installed plugins.
+     */
+    public function getInstalledPlugins(): array;
 }
