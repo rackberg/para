@@ -65,9 +65,10 @@ services:
             - '@para.factory.composite_repository_factory'
             - '@composer_factory'
             - '@para.factory.plugin_factory'
+            - '@para.factory.process_factory'
             - '%para.root%'
 
-    para.process_factory:
+    para.factory.process_factory:
         public: true
         class: Para\Factory\ProcessFactory
 
@@ -76,7 +77,7 @@ services:
         arguments:
             - '@logger'
             - '@para.application'
-            - '@para.process_factory'
+            - '@para.factory.process_factory'
             - '@event_dispatcher'
             - '@para.history_shell_manager'
 
@@ -98,7 +99,7 @@ services:
 
     para.display_strategy_factory:
         class: Para\Service\Strategy\DisplayStrategyFactory
-        arguments: ['@para.process_factory', '@event_dispatcher']
+        arguments: ['@para.factory.process_factory', '@event_dispatcher']
 
     para.buffered_output_adapter_factory:
         class: Para\Factory\BufferedOutputAdapterFactory

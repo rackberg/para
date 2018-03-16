@@ -6,6 +6,7 @@ use Para\Factory\ProcessFactoryInterface;
 use Para\Para;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Process\Process;
 
@@ -44,8 +45,8 @@ class ParaTest extends TestCase
         $processFactory = $this->prophesize(ProcessFactoryInterface::class);
         $processFactory->getProcess(Argument::any(), Argument::any())->willReturn($process->reveal());
 
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->get('para.process_factory')->willReturn($processFactory->reveal());
+        $container = $this->prophesize(ContainerBuilder::class);
+        $container->get('para.factory.process_factory')->willReturn($processFactory->reveal());
 
         $this->para->setContainer($container->reveal());
 
@@ -66,8 +67,8 @@ class ParaTest extends TestCase
         $processFactory = $this->prophesize(ProcessFactoryInterface::class);
         $processFactory->getProcess(Argument::any(), Argument::any())->willReturn($process->reveal());
 
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->get('para.process_factory')->willReturn($processFactory->reveal());
+        $container = $this->prophesize(ContainerBuilder::class);
+        $container->get('para.factory.process_factory')->willReturn($processFactory->reveal());
 
         $this->para->setContainer($container->reveal());
 

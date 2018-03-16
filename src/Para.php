@@ -2,11 +2,8 @@
 
 namespace Para;
 
-use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Class ParaApplication.
@@ -18,14 +15,14 @@ class Para extends Application
     /**
      * The dependency injection container.
      *
-     * @var ContainerInterface
+     * @var ContainerBuilder
      */
     private $container;
 
     /**
-     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container The dependency injection container.
      */
-    public function setContainer($container)
+    public function setContainer(ContainerBuilder $container)
     {
         $this->container = $container;
     }
@@ -46,7 +43,7 @@ class Para extends Application
         $version = 'unknown';
 
         /** @var \Para\Factory\ProcessFactoryInterface $processFactory */
-        $processFactory = $this->container->get('para.process_factory');
+        $processFactory = $this->container->get('para.factory.process_factory');
         $process = $processFactory->getProcess(
             'git describe --tags --always',
             __DIR__ . '/../'

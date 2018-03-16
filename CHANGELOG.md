@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Automatic registering of kernel.event_subscriber tagged services as event subscribers.
 - New command `plugins:available` to get a list of available para plugins.
+- New command `plugin:install` to install a para plugin.
 
 ## [2.1.1] - 2018-03-08
 ### Added

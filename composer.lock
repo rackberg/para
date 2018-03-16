@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "077e0c68e51c4bb2dadf11500bfc3a86",
+    "content-hash": "60b99d19734c451691d0f470553e9b44",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -447,6 +447,46 @@
                 "schema"
             ],
             "time": "2018-02-14T22:26:30+00:00"
+        },
+        {
+            "name": "lrackwitz/para-alias",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rackberg/para-alias.git",
+                "reference": "7e9bff9498e2c090ee2a628af489dce6ea75d044"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rackberg/para-alias/zipball/7e9bff9498e2c090ee2a628af489dce6ea75d044",
+                "reference": "7e9bff9498e2c090ee2a628af489dce6ea75d044",
+                "shasum": ""
+            },
+            "require-dev": {
+                "lrackwitz/para": "dev-master",
+                "mikey179/vfsstream": "^1.6",
+                "php-mock/php-mock-prophecy": "^0.0.2",
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "para-plugin",
+            "autoload": {
+                "psr-4": {
+                    "ParaAlias\\": "src/",
+                    "ParaAlias\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Lars Rosenberg",
+                    "email": "larsrosenberg88@gmail.com"
+                }
+            ],
+            "description": "A plugin for the para console application to be able to configure aliases and to use them in the shell.",
+            "time": "2018-03-13T21:01:41+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -3333,7 +3373,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "lrackwitz/para-alias": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

@@ -43,7 +43,7 @@ services:
         class: Para\Command\ShowLogCommand
         arguments:
             - '@logger'
-            - '@para.process_factory'
+            - '@para.factory.process_factory'
             - '@para.configuration.group_configuration'
             - '%para.log_path%'
         tags:
@@ -54,7 +54,7 @@ services:
         class: Para\Command\ShowConfigCommand
         arguments:
             - '@logger'
-            - '@para.process_factory'
+            - '@para.factory.process_factory'
             - '%para.config%'
         tags:
             - { name: console.command, command: 'show:config' }
@@ -76,7 +76,7 @@ services:
         arguments:
             - '@logger'
             - '@para.application'
-            - '@para.process_factory'
+            - '@para.factory.process_factory'
             - '%para.tools_path%'
         tags:
             - { name: console.command, command: 'self-update' }
@@ -86,5 +86,12 @@ services:
         arguments: ['@para.plugin.plugin_manager', '@para.factory.table_output_factory']
         tags:
             - { name: console.command, command: 'plugins:available' }
+
+    para.command.install_plugin:
+        class: Para\Command\InstallPluginCommand
+        arguments: ['@para.plugin.plugin_manager']
+        tags:
+            - { name: console.command, command: 'plugin:install' }
+            - { name: console.command, command: 'install' }
 
 

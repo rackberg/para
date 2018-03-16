@@ -11,7 +11,8 @@
         "symfony/yaml": ">=2.9 ^3.4",
         "monolog/monolog": "^1.22",
         "symfony/finder": "^4.0",
-        "composer/composer": "^1.6"
+        "composer/composer": "^1.6",
+        "lrackwitz/para-alias": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
