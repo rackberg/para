@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rackberg/para.svg?branch=master)](https://travis-ci.org/rackberg/para)
 [![Dependency Status](https://dependencyci.com/github/rackberg/para/badge)](https://dependencyci.com/github/rackberg/para)
-[![Current Version](https://img.shields.io/badge/release-2.1.1-0e5487.svg)](https://github.com/rackberg/para/releases)
+[![Current Version](https://img.shields.io/badge/release-2.2.0-0e5487.svg)](https://github.com/rackberg/para/releases)
 
 A command-line tool for parallel execution of shell commands in multiple directories.
 
@@ -137,7 +137,7 @@ para show:log project2
 
 ### Extending the functionality with your own code
 To extend the functionality of `para` with your own code, you simply need to create a new composer
-package. The `type` in the `composer.json` needs to be `para-project`.
+package. The `type` in the `composer.json` needs to be `para-plugin`.
 
 See the example composer.json file:
 ```
@@ -145,20 +145,30 @@ See the example composer.json file:
     "name": "vendor/para-plugin-name",
     "description": "An example para plugin",
     "type": "para-plugin",
-    "require": {
+    "require-dev": {
         "lrackwitz/para": "^2.0"
     }
 }
 ```
- 
-### Installing a custom `para` plugin
-Execute the following commands:
-```
-# Change into the directory where you installed para.
-cd <para-install-path>
 
-# Use composer to install the custom para plugin
-composer require vendor/para-plugin-name
+### Get a list of available `para plugins`
+```
+para plugins:available
+```
+
+### Installing a custom `para` plugin
+```
+para install vendor/para-plugin-name
+```
+
+### Uninstalling a plugin
+```
+para uninstall vendor/para-plugin-name
+```
+
+### Get a list of installed plugins
+```
+para installed
 ```
 
 If everything worked, you can now use the extended functionality of your custom `para` plugin
@@ -167,7 +177,7 @@ when executing `para` as usual.
 ### Synchronization of files within `para` projects
 In order to be able to synchronize files within `para` projects you need to install the `para-sync` plugin.
 ```
-composer require lrackwitz/para-sync
+para install lrackwitz/para-sync
 ```
 
 The code of the para plugin is here: https://github.com/rackberg/para-sync 
