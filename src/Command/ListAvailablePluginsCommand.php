@@ -72,11 +72,12 @@ class ListAvailablePluginsCommand extends Command
             $rows[] = [
                 $plugin->getName(),
                 $plugin->getDescription(),
+                $plugin->getVersion(),
             ];
         }
 
         $table = $this->tableOutputFactory->getTable($output);
-        $table->setHeaders(['Plugin', 'Description']);
+        $table->setHeaders(['Plugin', 'Description', 'Version']);
         $table->setRows($rows);
         $table->render();
     }

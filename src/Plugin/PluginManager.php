@@ -88,8 +88,11 @@ class PluginManager implements PluginManagerInterface
         $compositeRepository = $this->repositoryFactory->getRepository($repositories);
         $packages = $compositeRepository->search('', CompositeRepository::SEARCH_FULLTEXT, 'para-plugin');
         foreach ($packages as $package) {
+            $completePackage = $compositeRepository->findPackage($package['name'], '*');
+
             $plugin = $this->pluginFactory->getPlugin($package['name']);
-            $plugin->setDescription($package['description'] ?: '');
+            $plugin->setDescription(isset($package['description']) ? $package['description'] : '');
+            $plugin->setVersion($completePackage->getPrettyVersion());
 
             $plugins[$package['name']] = $plugin;
         }

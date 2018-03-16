@@ -69,15 +69,18 @@ class ListAvailablePluginsCommandTest extends TestCase
         $plugin1 = $this->prophesize(PluginInterface::class);
         $plugin1->getName()->shouldBeCalled();
         $plugin1->getName()->willReturn('My awesome plugin');
-
         $plugin1->getDescription()->shouldBeCalled();
         $plugin1->getDescription()->willReturn('The description');
+        $plugin1->getVersion()->shouldBeCalled();
+        $plugin1->getVersion()->willReturn('dev-master');
 
         $plugin2 = $this->prophesize(PluginInterface::class);
         $plugin2->getName()->shouldBeCalled();
         $plugin2->getName()->willReturn('My awesome plugin');
         $plugin2->getDescription()->shouldBeCalled();
         $plugin2->getDescription()->willReturn('The description');
+        $plugin2->getVersion()->shouldBeCalled();
+        $plugin2->getVersion()->willReturn('dev-master');
 
         $this->pluginManager
             ->fetchPluginsAvailable()
@@ -88,7 +91,7 @@ class ListAvailablePluginsCommandTest extends TestCase
 
         $table = $this->prophesize(Table::class);
         $table
-            ->setHeaders(['Plugin', 'Description'])
+            ->setHeaders(['Plugin', 'Description', 'Version'])
             ->shouldBeCalled();
         $table->setRows(Argument::type('array'))->shouldBeCalled();
         $table->render()->shouldBeCalled();

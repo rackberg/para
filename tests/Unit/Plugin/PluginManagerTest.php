@@ -4,6 +4,7 @@ namespace Para\Tests\Unit\Plugin;
 
 use Composer\Composer;
 use Composer\Factory;
+use Composer\Package\CompletePackageInterface;
 use Composer\Package\Locker;
 use Composer\Repository\ComposerRepository;
 use Composer\Repository\CompositeRepository;
@@ -101,6 +102,10 @@ class PluginManagerTest extends TestCase
         $composer->getRepositoryManager()->shouldBeCalled();
         $composer->getRepositoryManager()->willReturn($repositoryManager->reveal());
 
+        $completePackage = $this->prophesize(CompletePackageInterface::class);
+        $completePackage->getPrettyVersion()->shouldBeCalled();
+        $completePackage->getPrettyVersion()->willReturn('1.0.0');
+
         $compositeRepository = $this->prophesize(CompositeRepository::class);
         $compositeRepository
             ->search(Argument::type('string'), ComposerRepository::SEARCH_FULLTEXT, 'para-plugin')
@@ -111,6 +116,12 @@ class PluginManagerTest extends TestCase
                 ['name' => 'para-alias', 'description' => 'the description'],
                 ['name' => 'para-sync', 'description' => 'the description'],
             ]);
+        $compositeRepository
+            ->findPackage(Argument::type('string'), '*')
+            ->shouldBeCalled();
+        $compositeRepository
+            ->findPackage(Argument::type('string'), '*')
+            ->willReturn($completePackage->reveal());
 
         $this->repositoryFactory->getRepository(Argument::type('array'))->shouldBeCalled();
         $this->repositoryFactory
