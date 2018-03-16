@@ -94,4 +94,10 @@ services:
             - { name: console.command, command: 'plugin:install' }
             - { name: console.command, command: 'install' }
 
+    para.command.uninstall_plugin:
+        class: Para\Command\UninstallPluginCommand
+        arguments: ['@para.plugin.plugin_manager']
+        tags:
+            - { name: console.command, command: 'plugin:uninstall' }
+            - { name: console.command, command: 'uninstall' }
 

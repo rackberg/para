@@ -149,6 +149,6 @@ EOF;
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('The plugin "not-existing-plugin" to install could not be found.', $output);
+        $this->assertContains('The plugin "not-existing-plugin" could not be found.', $output);
     }
 }

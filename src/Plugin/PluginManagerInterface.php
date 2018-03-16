@@ -30,6 +30,15 @@ interface PluginManagerInterface
     public function installPlugin(string $name, string $version): string;
 
     /**
+     * Uninstalls a plugin.
+     *
+     * @param string $pluginName The name of the plugin to uninstall.
+     *
+     * @throws \Para\Exception\PluginNotFoundException When the plugin to uninstall is not installed.
+     */
+    public function uninstallPlugin(string $pluginName): void;
+
+    /**
      * Returns if a plugin is already installed.
      *
      * @param string $pluginName The name of the plugin.

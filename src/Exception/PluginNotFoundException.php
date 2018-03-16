@@ -12,7 +12,7 @@ class PluginNotFoundException extends \Exception
     public function __construct(string $pluginName)
     {
         parent::__construct(sprintf(
-            'The plugin "%s" to install could not be found.',
+            'The plugin "%s" could not be found.',
             $pluginName
         ));
     }

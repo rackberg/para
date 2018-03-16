@@ -243,6 +243,7 @@ class PluginManagerTest extends TestCase
             'packages' => [
                 [
                     'name' => 'lrackwitz/para-alias',
+                    'type' => 'para-plugin',
                 ],
             ],
         ]);
@@ -261,5 +262,123 @@ class PluginManagerTest extends TestCase
         $result = $this->pluginManager->isInstalled($pluginName);
 
         $this->assertTrue($result);
+    }
+
+    /**
+     * Tests that the uninstallPlugin() method throws an exception when the plugin is not installed.
+     *
+     * @expectedException \Para\Exception\PluginNotFoundException
+     */
+    public function testTheUninstallThrowsAnExceptionWhenThePluginIsNotInstalled()
+    {
+        $pluginName = 'lrackwitz/para-alias';
+
+        $locker = $this->prophesize(Locker::class);
+        $locker->getLockData()->shouldBeCalled();
+        $locker->getLockData()->willReturn([
+            'packages' => [],
+        ]);
+
+        $composer = $this->prophesize(Composer::class);
+        $composer->getLocker()->shouldBeCalled();
+        $composer->getLocker()->willReturn($locker->reveal());
+
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->shouldBeCalled();
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->willReturn($composer->reveal());
+
+        $this->pluginManager->uninstallPlugin($pluginName);
+    }
+
+    /**
+     * The that the uninstallPlugin() method is successful.
+     */
+    public function testThePluginUninstallIsSuccessful()
+    {
+        $pluginName = 'lrackwitz/para-alias';
+
+        $commandline = 'composer remove lrackwitz/para-alias';
+        $cwd = 'the/path/to/the/root/directory/of/para';
+
+        $locker = $this->prophesize(Locker::class);
+        $locker->getLockData()->shouldBeCalled();
+        $locker->getLockData()->willReturn([
+            'packages' => [
+                [
+                    'name' => 'lrackwitz/para-alias',
+                    'type' => 'para-plugin',
+                ],
+            ],
+        ]);
+
+        $composer = $this->prophesize(Composer::class);
+        $composer->getLocker()->shouldBeCalled();
+        $composer->getLocker()->willReturn($locker->reveal());
+
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->shouldBeCalled();
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->willReturn($composer->reveal());
+
+        $process = $this->prophesize(Process::class);
+        $process->run()->shouldBeCalled();
+        $process->isSuccessful()->shouldBeCalled();
+        $process->isSuccessful()->willReturn(true);
+
+        $this->processFactory->getProcess($commandline, $cwd)->shouldBeCalled();
+        $this->processFactory->getProcess($commandline, $cwd)->willReturn($process->reveal());
+
+        $this->pluginManager->uninstallPlugin($pluginName);
+    }
+
+    /**
+     * Tests that the uninstallPlugin() method throws an exception when it fails unexpectedly.
+     *
+     * @expectedException \Exception
+     * @expectedExceptionMessage Failed to uninstall the plugin.
+     */
+    public function testThePluginUninstallThrowsAnExceptionWhenItFailsUnexpectedly()
+    {
+        $pluginName = 'lrackwitz/para-alias';
+
+        $commandline = 'composer remove lrackwitz/para-alias';
+        $cwd = 'the/path/to/the/root/directory/of/para';
+
+        $locker = $this->prophesize(Locker::class);
+        $locker->getLockData()->shouldBeCalled();
+        $locker->getLockData()->willReturn([
+            'packages' => [
+                [
+                    'name' => 'lrackwitz/para-alias',
+                    'type' => 'para-plugin',
+                ],
+            ],
+        ]);
+
+        $composer = $this->prophesize(Composer::class);
+        $composer->getLocker()->shouldBeCalled();
+        $composer->getLocker()->willReturn($locker->reveal());
+
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->shouldBeCalled();
+        $this->composerFactory
+            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
+            ->willReturn($composer->reveal());
+
+        $process = $this->prophesize(Process::class);
+        $process->run()->shouldBeCalled();
+        $process->isSuccessful()->shouldBeCalled();
+        $process->isSuccessful()->willReturn(false);
+
+        $this->processFactory->getProcess($commandline, $cwd)->shouldBeCalled();
+        $this->processFactory->getProcess($commandline, $cwd)->willReturn($process->reveal());
+
+        $this->pluginManager->uninstallPlugin($pluginName);
     }
 }

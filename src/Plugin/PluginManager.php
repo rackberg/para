@@ -131,13 +131,33 @@ class PluginManager implements PluginManagerInterface
     /**
      * {@inheritdoc}
      */
+    public function uninstallPlugin(string $pluginName): void
+    {
+        if (!$this->isInstalled($pluginName)) {
+            throw new PluginNotFoundException($pluginName);
+        }
+
+        $process = $this->processFactory->getProcess(sprintf(
+            'composer remove %s',
+            $pluginName
+        ), $this->rootDirectory);
+
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new \Exception('Failed to uninstall the plugin.', 1);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isInstalled(string $pluginName): bool
     {
         $composer = $this->initComposer();
-        $lockData = $composer->getLocker()->getLockData();
+        $lockData = $this->getLockData($composer);
 
         foreach ($lockData['packages'] as $data) {
-            if ($data['name'] === $pluginName) {
+            if ($data['name'] === $pluginName && $data['type'] === 'para-plugin') {
                 return true;
             }
         }
@@ -161,5 +181,17 @@ class PluginManager implements PluginManagerInterface
         );
 
         return $composer;
+    }
+
+    /**
+     * Returns the composer lock data.
+     *
+     * @param \Composer\Composer $composer The composer.
+     *
+     * @return array The lock data.
+     */
+    private function getLockData(Composer $composer): array
+    {
+        return $composer->getLocker()->getLockData();
     }
 }
