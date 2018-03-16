@@ -81,5 +81,4 @@ class InstallPluginCommand extends Command
             $output->writeln('<error>' . $e->getMessage() . '</error>');
         }
     }
-
 }
