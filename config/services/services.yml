@@ -66,6 +66,7 @@ services:
             - '@composer_factory'
             - '@para.factory.plugin_factory'
             - '@para.factory.process_factory'
+            - '@para.package.stable_package_finder'
             - '%para.root%'
 
     para.factory.process_factory:
@@ -96,6 +97,9 @@ services:
         arguments:
             - '@logger'
             - '@para.shell_history'
+
+    para.package.stable_package_finder:
+        class: Para\Package\StablePackageFinder
 
     para.display_strategy_factory:
         class: Para\Service\Strategy\DisplayStrategyFactory

@@ -12,6 +12,7 @@ use Composer\Repository\RepositoryManager;
 use Para\Factory\CompositeRepositoryFactoryInterface;
 use Para\Factory\PluginFactoryInterface;
 use Para\Factory\ProcessFactoryInterface;
+use Para\Package\PackageFinderInterface;
 use Para\Plugin\PluginInterface;
 use Para\Plugin\PluginManager;
 use PHPUnit\Framework\TestCase;
@@ -61,6 +62,13 @@ class PluginManagerTest extends TestCase
     private $processFactory;
 
     /**
+     * The package finder mock object.
+     *
+     * @var \Para\Package\PackageFinderInterface
+     */
+    private $packageFinder;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -69,12 +77,14 @@ class PluginManagerTest extends TestCase
         $this->composerFactory = $this->prophesize(Factory::class);
         $this->pluginFactory = $this->prophesize(PluginFactoryInterface::class);
         $this->processFactory = $this->prophesize(ProcessFactoryInterface::class);
+        $this->packageFinder = $this->prophesize(PackageFinderInterface::class);
 
         $this->pluginManager = new PluginManager(
             $this->repositoryFactory->reveal(),
             $this->composerFactory->reveal(),
             $this->pluginFactory->reveal(),
             $this->processFactory->reveal(),
+            $this->packageFinder->reveal(),
             'the/path/to/the/root/directory/of/para'
         );
     }
@@ -102,9 +112,10 @@ class PluginManagerTest extends TestCase
         $composer->getRepositoryManager()->shouldBeCalled();
         $composer->getRepositoryManager()->willReturn($repositoryManager->reveal());
 
-        $completePackage = $this->prophesize(CompletePackageInterface::class);
-        $completePackage->getPrettyVersion()->shouldBeCalled();
-        $completePackage->getPrettyVersion()->willReturn('1.0.0');
+        $completePackage1 = $this->prophesize(CompletePackageInterface::class);
+        $completePackage2 = $this->prophesize(CompletePackageInterface::class);
+        $completePackage2->getPrettyVersion()->shouldBeCalled();
+        $completePackage2->getPrettyVersion()->willReturn('1.1.0');
 
         $compositeRepository = $this->prophesize(CompositeRepository::class);
         $compositeRepository
@@ -117,11 +128,21 @@ class PluginManagerTest extends TestCase
                 ['name' => 'para-sync', 'description' => 'the description'],
             ]);
         $compositeRepository
-            ->findPackage(Argument::type('string'), '*')
+            ->findPackages(Argument::type('string'))
             ->shouldBeCalled();
         $compositeRepository
-            ->findPackage(Argument::type('string'), '*')
-            ->willReturn($completePackage->reveal());
+            ->findPackages(Argument::type('string'))
+            ->willReturn([
+                $completePackage1->reveal(),
+                $completePackage2->reveal()
+            ]);
+
+        $this->packageFinder
+            ->findByNewestReleaseDate(Argument::type('array'))
+            ->shouldBeCalled();
+        $this->packageFinder
+            ->findByNewestReleaseDate(Argument::type('array'))
+            ->willReturn($completePackage2->reveal());
 
         $this->repositoryFactory->getRepository(Argument::type('array'))->shouldBeCalled();
         $this->repositoryFactory

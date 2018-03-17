@@ -11,6 +11,7 @@ use Para\Exception\PluginNotFoundException;
 use Para\Factory\CompositeRepositoryFactoryInterface;
 use Para\Factory\PluginFactoryInterface;
 use Para\Factory\ProcessFactoryInterface;
+use Para\Package\PackageFinderInterface;
 
 /**
  * Class PluginManager
@@ -48,6 +49,13 @@ class PluginManager implements PluginManagerInterface
     private $processFactory;
 
     /**
+     * The package finder.
+     *
+     * @var \Para\Package\PackageFinderInterface
+     */
+    private $packageFinder;
+
+    /**
      * The para root directory.
      *
      * @var string
@@ -61,6 +69,7 @@ class PluginManager implements PluginManagerInterface
      * @param \Composer\Factory $composerFactory The composer factory.
      * @param \Para\Factory\PluginFactoryInterface $pluginFactory The plugin factory.
      * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
+     * @param \Para\Package\PackageFinderInterface $packageFinder The package finder.
      * @param string $rootDirectory The para root directory.
      */
     public function __construct(
@@ -68,12 +77,14 @@ class PluginManager implements PluginManagerInterface
         Factory $composerFactory,
         PluginFactoryInterface $pluginFactory,
         ProcessFactoryInterface $processFactory,
+        PackageFinderInterface $packageFinder,
         string $rootDirectory
     ) {
         $this->repositoryFactory = $repositoryFactory;
         $this->composerFactory = $composerFactory;
         $this->pluginFactory = $pluginFactory;
         $this->processFactory = $processFactory;
+        $this->packageFinder = $packageFinder;
         $this->rootDirectory = $rootDirectory;
     }
 
@@ -86,15 +97,16 @@ class PluginManager implements PluginManagerInterface
         $composer = $this->initComposer();
         $repositories = $composer->getRepositoryManager()->getRepositories();
         $compositeRepository = $this->repositoryFactory->getRepository($repositories);
-        $packages = $compositeRepository->search('', CompositeRepository::SEARCH_FULLTEXT, 'para-plugin');
-        foreach ($packages as $package) {
-            $completePackage = $compositeRepository->findPackage($package['name'], '*');
+        $searchResults = $compositeRepository->search('', CompositeRepository::SEARCH_FULLTEXT, 'para-plugin');
+        foreach ($searchResults as $searchResult) {
+            $packages = $compositeRepository->findPackages($searchResult['name']);
+            $package = $this->packageFinder->findByNewestReleaseDate($packages);
 
-            $plugin = $this->pluginFactory->getPlugin($package['name']);
-            $plugin->setDescription(isset($package['description']) ? $package['description'] : '');
-            $plugin->setVersion($completePackage->getPrettyVersion());
+            $plugin = $this->pluginFactory->getPlugin($searchResult['name']);
+            $plugin->setDescription(isset($searchResult['description']) ? $searchResult['description'] : '');
+            $plugin->setVersion($package->getPrettyVersion());
 
-            $plugins[$package['name']] = $plugin;
+            $plugins[$searchResult['name']] = $plugin;
         }
 
         return $plugins;
