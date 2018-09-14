@@ -65,9 +65,11 @@ abstract class AbstractConfiguration implements ConfigurationInterface
         if (!$fileName) {
             $fileName = $this->configFile;
         }
-        $content = file_get_contents($fileName);
-        if (false !== $content) {
-            $this->configuration = $this->parser->parse($content);
+        if (file_exists($fileName)) {
+            $content = file_get_contents($fileName);
+            if (false !== $content) {
+                $this->configuration = $this->parser->parse($content);
+            }
         }
     }
 

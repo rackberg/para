@@ -3,7 +3,9 @@
 namespace Para\Command;
 
 use Para\Configuration\GroupConfigurationInterface;
+use Para\Entity\Group;
 use Para\Factory\DecoratorFactoryInterface;
+use Para\Factory\GroupFactoryInterface;
 use Para\Factory\ProjectFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -34,6 +36,13 @@ class AddProjectCommand extends Command
     private $groupConfiguration;
 
     /**
+     * The group factory.
+     *
+     * @var GroupFactoryInterface
+     */
+    private $groupFactory;
+
+    /**
      * The project factory.
      *
      * @var ProjectFactoryInterface
@@ -53,12 +62,14 @@ class AddProjectCommand extends Command
      * @param \Psr\Log\LoggerInterface $logger The logger.
      * @param GroupConfigurationInterface $groupConfiguration The group configuration.
      * @param ProjectFactoryInterface $projectFactory The project factory.
+     * @param GroupFactoryInterface $groupFactory The group factory.
      * @param DecoratorFactoryInterface $decoratorFactory The decorator factory.
      */
     public function __construct(
         LoggerInterface $logger,
         GroupConfigurationInterface $groupConfiguration,
         ProjectFactoryInterface $projectFactory,
+        GroupFactoryInterface $groupFactory,
         DecoratorFactoryInterface $decoratorFactory
     ) {
         parent::__construct();
@@ -66,6 +77,7 @@ class AddProjectCommand extends Command
         $this->logger = $logger;
         $this->groupConfiguration = $groupConfiguration;
         $this->projectFactory = $projectFactory;
+        $this->groupFactory = $groupFactory;
         $this->decoratorFactory = $decoratorFactory;
     }
 
@@ -120,6 +132,13 @@ class AddProjectCommand extends Command
 
         $foregroundColor = $input->getOption('foreground_color');
         $backgroundColor = $input->getOption('background_color');
+
+        $group = $this->groupConfiguration->getGroup($groupName);
+        if (!$group) {
+            // Create the group.
+            $newGroup = $this->groupFactory->getGroup($groupName);
+            $this->groupConfiguration->addGroup($newGroup);
+        }
 
         $group = $this->groupConfiguration->getGroup($groupName);
         if (!$group) {

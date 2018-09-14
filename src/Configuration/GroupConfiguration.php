@@ -110,10 +110,12 @@ class GroupConfiguration extends AbstractConfiguration implements GroupConfigura
     {
         parent::load($fileName);
 
-        foreach ($this->configuration['groups'] as $name => $value) {
-            $group = $this->groupFactory->getGroup($name);
-            $group->setProjects($value);
-            $this->groups[$name] = $group;
+        if (isset($this->configuration['groups'])) {
+            foreach ($this->configuration['groups'] as $name => $value) {
+                $group = $this->groupFactory->getGroup($name);
+                $group->setProjects($value);
+                $this->groups[$name] = $group;
+            }
         }
     }
 

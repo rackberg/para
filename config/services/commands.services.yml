@@ -19,6 +19,7 @@ services:
             - '@logger'
             - '@para.configuration.group_configuration'
             - '@para.factory.project_factory'
+            - '@para.factory.group_factory'
             - '@para.factory.project_array_decorator_factory'
         tags:
             - { name: console.command, command: 'add:project' }

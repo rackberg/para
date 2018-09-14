@@ -8,6 +8,7 @@ use Para\Decorator\EntityArrayDecoratorInterface;
 use Para\Entity\GroupInterface;
 use Para\Entity\ProjectInterface;
 use Para\Factory\DecoratorFactoryInterface;
+use Para\Factory\GroupFactoryInterface;
 use Para\Factory\ProjectFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -51,6 +52,13 @@ class AddProjectCommandTest extends TestCase
     private $projectFactory;
 
     /**
+     * The group factory mock object.
+     *
+     * @var GroupFactoryInterface
+     */
+    private $groupFactory;
+
+    /**
      * The project array decorator factory mock object.
      *
      * @var DecoratorFactoryInterface
@@ -65,6 +73,7 @@ class AddProjectCommandTest extends TestCase
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->groupConfiguration = $this->prophesize(GroupConfigurationInterface::class);
         $this->projectFactory = $this->prophesize(ProjectFactoryInterface::class);
+        $this->groupFactory = $this->prophesize(GroupFactoryInterface::class);
         $this->projectArrayDecoratorFactory = $this->prophesize(DecoratorFactoryInterface::class);
 
         $this->application = new Application();
@@ -72,6 +81,7 @@ class AddProjectCommandTest extends TestCase
             $this->logger->reveal(),
             $this->groupConfiguration->reveal(),
             $this->projectFactory->reveal(),
+            $this->groupFactory->reveal(),
             $this->projectArrayDecoratorFactory->reveal()
         ));
     }
@@ -129,6 +139,9 @@ class AddProjectCommandTest extends TestCase
     {
         $command = $this->application->find('add:project');
         $parameters = $this->getCommandParameters();
+
+        $group = $this->prophesize(GroupInterface::class);
+        $this->groupFactory->getGroup(Argument::type('string'))->willReturn($group->reveal());
 
         $this->logger
             ->error(Argument::type('string'), Argument::type('array'))
