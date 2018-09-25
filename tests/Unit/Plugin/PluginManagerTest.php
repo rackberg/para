@@ -4,17 +4,14 @@ namespace Para\Tests\Unit\Plugin;
 
 use Composer\Composer;
 use Composer\Factory;
-use Composer\Package\CompletePackageInterface;
 use Composer\Package\Locker;
-use Composer\Repository\ComposerRepository;
-use Composer\Repository\CompositeRepository;
-use Composer\Repository\RepositoryManager;
-use Para\Factory\CompositeRepositoryFactoryInterface;
 use Para\Factory\PluginFactoryInterface;
 use Para\Factory\ProcessFactoryInterface;
+use Para\Package\ComposerPackageInterface;
 use Para\Package\PackageFinderInterface;
 use Para\Plugin\PluginInterface;
 use Para\Plugin\PluginManager;
+use Para\Service\Packagist\PackagistInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Process\Process;
@@ -32,13 +29,6 @@ class PluginManagerTest extends TestCase
      * @var \Para\Plugin\PluginManagerInterface
      */
     private $pluginManager;
-
-    /**
-     * The composite repository factory mock object.
-     *
-     * @var \Para\Factory\CompositeRepositoryFactoryInterface
-     */
-    private $repositoryFactory;
 
     /**
      * The composer factory mock object.
@@ -69,22 +59,29 @@ class PluginManagerTest extends TestCase
     private $packageFinder;
 
     /**
+     * The packagist service.
+     *
+     * @var PackagistInterface
+     */
+    private $packagist;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->repositoryFactory = $this->prophesize(CompositeRepositoryFactoryInterface::class);
         $this->composerFactory = $this->prophesize(Factory::class);
         $this->pluginFactory = $this->prophesize(PluginFactoryInterface::class);
         $this->processFactory = $this->prophesize(ProcessFactoryInterface::class);
         $this->packageFinder = $this->prophesize(PackageFinderInterface::class);
+        $this->packagist = $this->prophesize(PackagistInterface::class);
 
         $this->pluginManager = new PluginManager(
-            $this->repositoryFactory->reveal(),
             $this->composerFactory->reveal(),
             $this->pluginFactory->reveal(),
             $this->processFactory->reveal(),
             $this->packageFinder->reveal(),
+            $this->packagist->reveal(),
             'the/path/to/the/root/directory/of/para'
         );
     }
@@ -94,79 +91,42 @@ class PluginManagerTest extends TestCase
      */
     public function testTheMethodFetchPluginsAvailableReturnsAnArrayOfAvailablePlugins()
     {
-        $composer = $this->prophesize(Composer::class);
+        /** @var ComposerPackageInterface $package1 */
+        $package1 = $this->prophesize(ComposerPackageInterface::class);
+        $package1->getName()->willReturn('lrackwitz/para-alias');
+        $package1->getVersion()->willReturn('1.0.0');
+        $package1->getDescription()->willReturn('Some description');
 
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
+        /** @var ComposerPackageInterface $package2 */
+        $package2 = $this->prophesize(ComposerPackageInterface::class);
+        $package2->getName()->willReturn('lrackwitz/para-sync');
+        $package2->getVersion()->willReturn('dev-master');
+        $package2->getDescription()->willReturn('Some description');
 
-        $repositoryManager = $this->prophesize(RepositoryManager::class);
-        $repositoryManager->getRepositories()->shouldBeCalled();
-        $repositoryManager
-            ->getRepositories()
-            ->willReturn([]);
+        $this->packagist
+            ->findPackagesByType('para-plugin')
+            ->willReturn([$package1->reveal(), $package2->reveal()]);
 
-        $composer->getRepositoryManager()->shouldBeCalled();
-        $composer->getRepositoryManager()->willReturn($repositoryManager->reveal());
+        /** @var PluginInterface $plugin1 */
+        $plugin1 = $this->prophesize(PluginInterface::class);
+        $plugin1->getName()->willReturn('lrackwitz/para-alias');
+        $plugin1->setVersion('1.0.0')->shouldBeCalled();
+        $plugin1->setDescription('Some description')->shouldBeCalled();
 
-        $completePackage1 = $this->prophesize(CompletePackageInterface::class);
-        $completePackage2 = $this->prophesize(CompletePackageInterface::class);
-        $completePackage2->getPrettyVersion()->shouldBeCalled();
-        $completePackage2->getPrettyVersion()->willReturn('1.1.0');
+        /** @var PluginInterface $plugin2 */
+        $plugin2 = $this->prophesize(PluginInterface::class);
+        $plugin2->getName()->willReturn('lrackwitz/para-sync');
+        $plugin2->setVersion('dev-master')->shouldBeCalled();
+        $plugin2->setDescription('Some description')->shouldBeCalled();
 
-        $compositeRepository = $this->prophesize(CompositeRepository::class);
-        $compositeRepository
-            ->search(Argument::type('string'), ComposerRepository::SEARCH_FULLTEXT, 'para-plugin')
-            ->shouldBeCalled();
-        $compositeRepository
-            ->search(Argument::type('string'), ComposerRepository::SEARCH_FULLTEXT, 'para-plugin')
-            ->willReturn([
-                ['name' => 'para-alias', 'description' => 'the description'],
-                ['name' => 'para-sync', 'description' => 'the description'],
-            ]);
-        $compositeRepository
-            ->findPackages(Argument::type('string'))
-            ->shouldBeCalled();
-        $compositeRepository
-            ->findPackages(Argument::type('string'))
-            ->willReturn([
-                $completePackage1->reveal(),
-                $completePackage2->reveal()
-            ]);
-
-        $this->packageFinder
-            ->findByNewestReleaseDate(Argument::type('array'))
-            ->shouldBeCalled();
-        $this->packageFinder
-            ->findByNewestReleaseDate(Argument::type('array'))
-            ->willReturn($completePackage2->reveal());
-
-        $this->repositoryFactory->getRepository(Argument::type('array'))->shouldBeCalled();
-        $this->repositoryFactory
-            ->getRepository(Argument::type('array'))
-            ->willReturn($compositeRepository->reveal());
-
-        $aliasPlugin = $this->prophesize(PluginInterface::class);
-
-        $this->pluginFactory->getPlugin(Argument::type('string'))->shouldBeCalledTimes(2);
-        $this->pluginFactory
-            ->getPlugin('para-alias')
-            ->willReturn($aliasPlugin->reveal());
-
-        $syncPlugin = $this->prophesize(PluginInterface::class);
-
-        $this->pluginFactory
-            ->getPlugin('para-sync')
-            ->willReturn($syncPlugin->reveal());
+        $this->pluginFactory->getPlugin('lrackwitz/para-alias')->willReturn($plugin1->reveal());
+        $this->pluginFactory->getPlugin('lrackwitz/para-sync')->willReturn($plugin2->reveal());
 
         $plugins = $this->pluginManager->fetchPluginsAvailable();
 
-        $this->assertTrue(is_array($plugins), $plugins);
-        $this->assertTrue($plugins['para-alias'] instanceof PluginInterface);
-        $this->assertTrue($plugins['para-sync'] instanceof PluginInterface);
+        $this->assertTrue(is_array($plugins), 'Expected that an array has been returned');
+        $this->assertEquals($plugins[0]->getName(), 'lrackwitz/para-alias', 'Expected that the first plugin is correct.');
+        $this->assertEquals($plugins[1]->getName(), 'lrackwitz/para-sync', 'Expected that the second plugin is correct.');
     }
 
     /**

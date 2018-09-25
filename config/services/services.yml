@@ -40,6 +40,9 @@ services:
     composer_factory:
         class: Composer\Factory
 
+    guzzle.http_client:
+        class: GuzzleHttp\Client
+
     para.yaml.dumper:
         class: Para\Dumper\YamlDumper
         arguments: ['@yaml.dumper']
@@ -62,11 +65,11 @@ services:
     para.plugin.plugin_manager:
         class: Para\Plugin\PluginManager
         arguments:
-            - '@para.factory.composite_repository_factory'
             - '@composer_factory'
             - '@para.factory.plugin_factory'
             - '@para.factory.process_factory'
             - '@para.package.stable_package_finder'
+            - '@para.service.packagist.packagist'
             - '%para.root%'
 
     para.factory.process_factory:
@@ -122,3 +125,10 @@ services:
 
     para.factory.plugin_factory:
         class: Para\Factory\PluginFactory
+
+    para.factory.package_factory:
+        class: Para\Factory\PackageFactory
+
+    para.service.packagist.packagist:
+        class: Para\Service\Packagist\Packagist
+        arguments: ['@guzzle.http_client', '@para.factory.package_factory']

@@ -5,13 +5,12 @@ namespace Para\Plugin;
 use Composer\Composer;
 use Composer\Factory;
 use Composer\IO\NullIO;
-use Composer\Repository\CompositeRepository;
 use Para\Exception\PluginAlreadyInstalledException;
 use Para\Exception\PluginNotFoundException;
-use Para\Factory\CompositeRepositoryFactoryInterface;
 use Para\Factory\PluginFactoryInterface;
 use Para\Factory\ProcessFactoryInterface;
 use Para\Package\PackageFinderInterface;
+use Para\Service\Packagist\PackagistInterface;
 
 /**
  * Class PluginManager
@@ -20,13 +19,6 @@ use Para\Package\PackageFinderInterface;
  */
 class PluginManager implements PluginManagerInterface
 {
-    /**
-     * The repository factory.
-     *
-     * @var \Para\Factory\CompositeRepositoryFactoryInterface
-     */
-    private $repositoryFactory;
-
     /**
      * The composer factory.
      *
@@ -56,6 +48,13 @@ class PluginManager implements PluginManagerInterface
     private $packageFinder;
 
     /**
+     * The packagist service.
+     *
+     * @var \Para\Service\Packagist\PackagistInterface
+     */
+    private $packagist;
+
+    /**
      * The para root directory.
      *
      * @var string
@@ -65,26 +64,26 @@ class PluginManager implements PluginManagerInterface
     /**
      * PluginManager constructor.
      *
-     * @param \Para\Factory\CompositeRepositoryFactoryInterface $repositoryFactory The repository factory.
      * @param \Composer\Factory $composerFactory The composer factory.
      * @param \Para\Factory\PluginFactoryInterface $pluginFactory The plugin factory.
      * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
      * @param \Para\Package\PackageFinderInterface $packageFinder The package finder.
+     * @param \Para\Service\Packagist\PackagistInterface $packagist The packagist service.
      * @param string $rootDirectory The para root directory.
      */
     public function __construct(
-        CompositeRepositoryFactoryInterface $repositoryFactory,
         Factory $composerFactory,
         PluginFactoryInterface $pluginFactory,
         ProcessFactoryInterface $processFactory,
         PackageFinderInterface $packageFinder,
+        PackagistInterface $packagist,
         string $rootDirectory
     ) {
-        $this->repositoryFactory = $repositoryFactory;
         $this->composerFactory = $composerFactory;
         $this->pluginFactory = $pluginFactory;
         $this->processFactory = $processFactory;
         $this->packageFinder = $packageFinder;
+        $this->packagist = $packagist;
         $this->rootDirectory = $rootDirectory;
     }
 
@@ -94,19 +93,14 @@ class PluginManager implements PluginManagerInterface
     public function fetchPluginsAvailable(): array
     {
         $plugins = [];
-        $composer = $this->initComposer();
-        $repositories = $composer->getRepositoryManager()->getRepositories();
-        $compositeRepository = $this->repositoryFactory->getRepository($repositories);
-        $searchResults = $compositeRepository->search('', CompositeRepository::SEARCH_FULLTEXT, 'para-plugin');
-        foreach ($searchResults as $searchResult) {
-            $packages = $compositeRepository->findPackages($searchResult['name']);
-            $package = $this->packageFinder->findByNewestReleaseDate($packages);
 
-            $plugin = $this->pluginFactory->getPlugin($searchResult['name']);
-            $plugin->setDescription(isset($searchResult['description']) ? $searchResult['description'] : '');
-            $plugin->setVersion($package->getPrettyVersion());
+        $packages = $this->packagist->findPackagesByType('para-plugin');
+        foreach ($packages as $package) {
+            $plugin = $this->pluginFactory->getPlugin($package->getName());
+            $plugin->setVersion($package->getVersion());
+            $plugin->setDescription($package->getDescription());
 
-            $plugins[$searchResult['name']] = $plugin;
+            $plugins[] = $plugin;
         }
 
         return $plugins;
