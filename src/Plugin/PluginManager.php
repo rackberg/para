@@ -2,15 +2,14 @@
 
 namespace Para\Plugin;
 
-use Composer\Composer;
-use Composer\Factory;
-use Composer\IO\NullIO;
 use Para\Exception\PluginAlreadyInstalledException;
 use Para\Exception\PluginNotFoundException;
+use Para\Factory\Encoder\JsonEncoderFactoryInterface;
 use Para\Factory\PluginFactoryInterface;
 use Para\Factory\ProcessFactoryInterface;
 use Para\Package\PackageFinderInterface;
 use Para\Service\Packagist\PackagistInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 /**
  * Class PluginManager
@@ -19,13 +18,6 @@ use Para\Service\Packagist\PackagistInterface;
  */
 class PluginManager implements PluginManagerInterface
 {
-    /**
-     * The composer factory.
-     *
-     * @var \Composer\Factory
-     */
-    private $composerFactory;
-
     /**
      * The plugin factory.
      *
@@ -39,6 +31,13 @@ class PluginManager implements PluginManagerInterface
      * @var \Para\Factory\ProcessFactoryInterface
      */
     private $processFactory;
+
+    /**
+     * The serializer factory.
+     *
+     * @var JsonEncoderFactoryInterface
+     */
+    private $jsonEncoderFactory;
 
     /**
      * The package finder.
@@ -64,24 +63,24 @@ class PluginManager implements PluginManagerInterface
     /**
      * PluginManager constructor.
      *
-     * @param \Composer\Factory $composerFactory The composer factory.
      * @param \Para\Factory\PluginFactoryInterface $pluginFactory The plugin factory.
      * @param \Para\Factory\ProcessFactoryInterface $processFactory The process factory.
+     * @param \Para\Factory\Encoder\JsonEncoderFactoryInterface $jsonEncoderFactory The json encoder factory.
      * @param \Para\Package\PackageFinderInterface $packageFinder The package finder.
      * @param \Para\Service\Packagist\PackagistInterface $packagist The packagist service.
      * @param string $rootDirectory The para root directory.
      */
     public function __construct(
-        Factory $composerFactory,
         PluginFactoryInterface $pluginFactory,
         ProcessFactoryInterface $processFactory,
+        JsonEncoderFactoryInterface $jsonEncoderFactory,
         PackageFinderInterface $packageFinder,
         PackagistInterface $packagist,
         string $rootDirectory
     ) {
-        $this->composerFactory = $composerFactory;
         $this->pluginFactory = $pluginFactory;
         $this->processFactory = $processFactory;
+        $this->jsonEncoderFactory = $jsonEncoderFactory;
         $this->packageFinder = $packageFinder;
         $this->packagist = $packagist;
         $this->rootDirectory = $rootDirectory;
@@ -109,15 +108,17 @@ class PluginManager implements PluginManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function installPlugin(string $name, string $version): string
+    public function installPlugin(string $name, string &$version = ''): string
     {
         if ($this->isInstalled($name)) {
             throw new PluginAlreadyInstalledException($name);
         }
 
-        if ($version === 'dev') {
-            $version = 'dev-master';
+        if (empty($version)) {
+            $versions = $this->packagist->getPackageVersions($name);
+            $version = $this->packagist->getHighestVersion($versions);
         }
+
         $process = $this->processFactory->getProcess(sprintf(
             'composer require %s %s',
             $name,
@@ -162,15 +163,15 @@ class PluginManager implements PluginManagerInterface
      */
     public function isInstalled(string $pluginName): bool
     {
-        $composer = $this->initComposer();
-        $lockData = $this->getLockData($composer);
+        $data = $this->decodeLockFile();
 
-        foreach ($lockData['packages'] as $data) {
-            if ($data['name'] === $pluginName && $data['type'] === 'para-plugin') {
-                return true;
+        if (!empty($data['packages'])) {
+            foreach ($data['packages'] as $package) {
+                if ($this->isParaPlugin($package) && $package['name'] === $pluginName) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
@@ -179,17 +180,18 @@ class PluginManager implements PluginManagerInterface
      */
     public function getInstalledPlugins(): array
     {
-        $composer = $this->initComposer();
-        $lockData = $this->getLockData($composer);
-
         $plugins = [];
-        foreach ($lockData['packages'] as $data) {
-            if ($data['type'] === 'para-plugin') {
-                $plugin = $this->pluginFactory->getPlugin($data['name']);
-                $plugin->setDescription(isset($data['description']) ? $data['description'] : '');
-                $plugin->setVersion(isset($data['version']) ? $data['version'] : '');
 
-                $plugins[$data['name']] = $plugin;
+        $data = $this->decodeLockFile();
+
+        if (!empty($data['packages'])) {
+            foreach ($data['packages'] as $package) {
+                if ($this->isParaPlugin($package)) {
+                    $plugin = $this->pluginFactory->getPlugin($package['name']);
+                    $plugin->setDescription(isset($package['description']) ? $package['description'] : '');
+                    $plugin->setVersion(isset($package['version']) ? $package['version'] : '');
+                    $plugins[] = $plugin;
+                }
             }
         }
 
@@ -197,32 +199,38 @@ class PluginManager implements PluginManagerInterface
     }
 
     /**
-     * Initializes a new composer instance.
+     * Returns the decoded lock file data.
      *
-     * @return \Composer\Composer The initalized composer instance.
+     * @return array
      */
-    private function initComposer(): Composer
+    private function decodeLockFile(): array
     {
-        $composer = $this->composerFactory->createComposer(
-            new NullIO(),
-            $this->rootDirectory.'composer.json',
-            false,
-            $this->rootDirectory,
-            true
-        );
+        $data = [];
 
-        return $composer;
+        $encoder = $this->jsonEncoderFactory->getEncoder();
+        if (file_exists($this->rootDirectory . 'composer.lock')) {
+            $data = $encoder->decode(
+                file_get_contents($this->rootDirectory.'composer.lock'),
+                JsonEncoder::FORMAT
+            );
+        }
+
+        return $data;
     }
 
     /**
-     * Returns the composer lock data.
+     * Returns true when the package is of type para-plugin.
      *
-     * @param \Composer\Composer $composer The composer.
+     * @param \stdClass $package The package stdClass object.
      *
-     * @return array The lock data.
+     * @return bool
      */
-    private function getLockData(Composer $composer): array
+    private function isParaPlugin($package): bool
     {
-        return $composer->getLocker()->getLockData();
+        if (isset($package['type']) && $package['type'] === 'para-plugin') {
+            return true;
+        }
+
+        return false;
     }
 }

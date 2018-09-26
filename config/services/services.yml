@@ -37,9 +37,6 @@ services:
     filesystem:
         class: Symfony\Component\Filesystem\Filesystem
 
-    composer_factory:
-        class: Composer\Factory
-
     guzzle.http_client:
         class: GuzzleHttp\Client
 
@@ -65,9 +62,9 @@ services:
     para.plugin.plugin_manager:
         class: Para\Plugin\PluginManager
         arguments:
-            - '@composer_factory'
             - '@para.factory.plugin_factory'
             - '@para.factory.process_factory'
+            - '@para.factory.encoder.json_encoder_factory'
             - '@para.package.stable_package_finder'
             - '@para.service.packagist.packagist'
             - '%para.root%'
@@ -120,8 +117,8 @@ services:
     para.factory.table_output_factory:
         class: Para\Factory\TableOutputFactory
 
-    para.factory.composite_repository_factory:
-        class: Para\Factory\CompositeRepositoryFactory
+    para.factory.encoder.json_encoder_factory:
+        class: Para\Factory\Encoder\JsonEncoderFactory
 
     para.factory.plugin_factory:
         class: Para\Factory\PluginFactory

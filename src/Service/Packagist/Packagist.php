@@ -108,10 +108,13 @@ class Packagist implements PackagistInterface
      *
      * @return string The highest version string.
      */
-    private function getHighestVersion(array $versions = []) {
+    public function getHighestVersion(array $versions = []): string
+    {
         $highest_version = 0;
         foreach ($versions as $version_number) {
-            if ($version_number === 'dev-master') continue;
+            if ($version_number === 'dev-master') {
+                continue;
+            }
             if (str_replace('.', '', $version_number)+0 > $highest_version) {
                 $highest_version = $version_number;
             }

@@ -2,9 +2,8 @@
 
 namespace Para\Tests\Unit\Plugin;
 
-use Composer\Composer;
-use Composer\Factory;
-use Composer\Package\Locker;
+use org\bovigo\vfs\vfsStream;
+use Para\Factory\Encoder\JsonEncoderFactoryInterface;
 use Para\Factory\PluginFactoryInterface;
 use Para\Factory\ProcessFactoryInterface;
 use Para\Package\ComposerPackageInterface;
@@ -15,6 +14,7 @@ use Para\Service\Packagist\PackagistInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 /**
  * Class PluginManagerTest
@@ -31,13 +31,6 @@ class PluginManagerTest extends TestCase
     private $pluginManager;
 
     /**
-     * The composer factory mock object.
-     *
-     * @var \Composer\Factory
-     */
-    private $composerFactory;
-
-    /**
      * The plugin factory mock object.
      *
      * @var \Para\Factory\PluginFactoryInterface
@@ -50,6 +43,13 @@ class PluginManagerTest extends TestCase
      * @var \Para\Factory\ProcessFactoryInterface
      */
     private $processFactory;
+
+    /**
+     * The json encoder factory mock object.
+     *
+     * @var \Para\Factory\Encoder\JsonEncoderFactoryInterface
+     */
+    private $jsonEncoderFactory;
 
     /**
      * The package finder mock object.
@@ -66,23 +66,37 @@ class PluginManagerTest extends TestCase
     private $packagist;
 
     /**
+     * A virtual file system.
+     *
+     * @var \org\bovigo\vfs\vfsStream
+     */
+    private $fileSystem;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->composerFactory = $this->prophesize(Factory::class);
+        // Create a virtual file system with an empty composer.lock file.
+        $directory = [
+            'composer.lock' => '',
+        ];
+        $this->fileSystem = vfsStream::setup('root', 444, $directory);
+
         $this->pluginFactory = $this->prophesize(PluginFactoryInterface::class);
         $this->processFactory = $this->prophesize(ProcessFactoryInterface::class);
+        $this->jsonEncoderFactory = $this->prophesize(JsonEncoderFactoryInterface::class);
+
         $this->packageFinder = $this->prophesize(PackageFinderInterface::class);
         $this->packagist = $this->prophesize(PackagistInterface::class);
 
         $this->pluginManager = new PluginManager(
-            $this->composerFactory->reveal(),
             $this->pluginFactory->reveal(),
             $this->processFactory->reveal(),
+            $this->jsonEncoderFactory->reveal(),
             $this->packageFinder->reveal(),
             $this->packagist->reveal(),
-            'the/path/to/the/root/directory/of/para'
+            $this->fileSystem->url() . '/'
         );
     }
 
@@ -130,32 +144,24 @@ class PluginManagerTest extends TestCase
     }
 
     /**
-     * Tests that a plugin installs a plugin successfully
+     * Tests that a plugin installs a plugin successfully.
      */
-    public function testInstallsAPluginSuccessfully()
+    public function testInstallsAPluginWithVersionDiscoverySuccessfully()
     {
         $pluginName = 'lrackwitz/para-alias';
-        $pluginVersion = 'dev-master';
 
-        $commandline = 'composer require lrackwitz/para-alias dev-master';
-        $cwd = 'the/path/to/the/root/directory/of/para';
+        $versions = [
+            '1.0.0',
+            '1.1.0',
+            '2.0.0',
+            'dev-master',
+        ];
+        $this->packagist->getPackageVersions($pluginName)->willReturn($versions);
+        $this->packagist->getHighestVersion($versions)->willReturn('2.0.0');
 
-        $locker = $this->prophesize(Locker::class);
-        $locker->getLockData()->shouldBeCalled();
-        $locker->getLockData()->willReturn([
-            'packages' => [],
-        ]);
+        $commandline = 'composer require lrackwitz/para-alias 2.0.0';
 
-        $composer = $this->prophesize(Composer::class);
-        $composer->getLocker()->shouldBeCalled();
-        $composer->getLocker()->willReturn($locker->reveal());
-
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
+        $this->getIsInstalledJsonDecoder('something');
 
         $process = $this->prophesize(Process::class);
         $process->run()->shouldBeCalled();
@@ -165,13 +171,13 @@ class PluginManagerTest extends TestCase
         $process->getOutput()->willReturn('something');
 
         $this->processFactory
-            ->getProcess($commandline, $cwd)
+            ->getProcess($commandline, $this->fileSystem->url() . '/')
             ->shouldBeCalled();
         $this->processFactory
-            ->getProcess($commandline, $cwd)
+            ->getProcess($commandline, $this->fileSystem->url() . '/')
             ->willReturn($process->reveal());
 
-        $this->pluginManager->installPlugin($pluginName, $pluginVersion);
+        $this->pluginManager->installPlugin($pluginName);
     }
 
     /**
@@ -185,24 +191,8 @@ class PluginManagerTest extends TestCase
         $pluginVersion = 'dev-master';
 
         $commandline = 'composer require lrackwitz/para-alias dev-master';
-        $cwd = 'the/path/to/the/root/directory/of/para';
 
-        $locker = $this->prophesize(Locker::class);
-        $locker->getLockData()->shouldBeCalled();
-        $locker->getLockData()->willReturn([
-            'packages' => [],
-        ]);
-
-        $composer = $this->prophesize(Composer::class);
-        $composer->getLocker()->shouldBeCalled();
-        $composer->getLocker()->willReturn($locker->reveal());
-
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
+        $this->getIsInstalledJsonDecoder('something');
 
         $process = $this->prophesize(Process::class);
         $process->run()->shouldBeCalled();
@@ -210,10 +200,10 @@ class PluginManagerTest extends TestCase
         $process->isSuccessful()->willReturn(false);
 
         $this->processFactory
-            ->getProcess($commandline, $cwd)
+            ->getProcess($commandline, $this->fileSystem->url() . '/')
             ->shouldBeCalled();
         $this->processFactory
-            ->getProcess($commandline, $cwd)
+            ->getProcess($commandline, $this->fileSystem->url() . '/')
             ->willReturn($process->reveal());
 
         $this->pluginManager->installPlugin($pluginName, $pluginVersion);
@@ -226,31 +216,15 @@ class PluginManagerTest extends TestCase
     {
         $pluginName = 'lrackwitz/para-alias';
 
-        $locker = $this->prophesize(Locker::class);
-        $locker->getLockData()->shouldBeCalled();
-        $locker->getLockData()->willReturn([
-            'packages' => [
-                [
-                    'name' => 'lrackwitz/para-alias',
-                    'type' => 'para-plugin',
-                ],
-            ],
-        ]);
-
-        $composer = $this->prophesize(Composer::class);
-        $composer->getLocker()->shouldBeCalled();
-        $composer->getLocker()->willReturn($locker->reveal());
-
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
+        $jsonEncoder = $this->getIsInstalledJsonDecoder($pluginName);
 
         $result = $this->pluginManager->isInstalled($pluginName);
 
-        $this->assertTrue($result);
+        $jsonEncoder->decode(Argument::type('string'), JsonEncoder::FORMAT)->shouldHaveBeenCalled();
+
+        $this->jsonEncoderFactory->getEncoder()->shouldHaveBeenCalled();
+
+        $this->assertTrue($result, 'Expected that the plugin has been found.');
     }
 
     /**
@@ -262,22 +236,7 @@ class PluginManagerTest extends TestCase
     {
         $pluginName = 'lrackwitz/para-alias';
 
-        $locker = $this->prophesize(Locker::class);
-        $locker->getLockData()->shouldBeCalled();
-        $locker->getLockData()->willReturn([
-            'packages' => [],
-        ]);
-
-        $composer = $this->prophesize(Composer::class);
-        $composer->getLocker()->shouldBeCalled();
-        $composer->getLocker()->willReturn($locker->reveal());
-
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
+        $this->getIsInstalledJsonDecoder('something');
 
         $this->pluginManager->uninstallPlugin($pluginName);
     }
@@ -290,37 +249,16 @@ class PluginManagerTest extends TestCase
         $pluginName = 'lrackwitz/para-alias';
 
         $commandline = 'composer remove lrackwitz/para-alias';
-        $cwd = 'the/path/to/the/root/directory/of/para';
 
-        $locker = $this->prophesize(Locker::class);
-        $locker->getLockData()->shouldBeCalled();
-        $locker->getLockData()->willReturn([
-            'packages' => [
-                [
-                    'name' => 'lrackwitz/para-alias',
-                    'type' => 'para-plugin',
-                ],
-            ],
-        ]);
-
-        $composer = $this->prophesize(Composer::class);
-        $composer->getLocker()->shouldBeCalled();
-        $composer->getLocker()->willReturn($locker->reveal());
-
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
+        $this->getIsInstalledJsonDecoder($pluginName);
 
         $process = $this->prophesize(Process::class);
         $process->run()->shouldBeCalled();
         $process->isSuccessful()->shouldBeCalled();
         $process->isSuccessful()->willReturn(true);
 
-        $this->processFactory->getProcess($commandline, $cwd)->shouldBeCalled();
-        $this->processFactory->getProcess($commandline, $cwd)->willReturn($process->reveal());
+        $this->processFactory->getProcess($commandline, $this->fileSystem->url() . '/')->shouldBeCalled();
+        $this->processFactory->getProcess($commandline, $this->fileSystem->url() . '/')->willReturn($process->reveal());
 
         $this->pluginManager->uninstallPlugin($pluginName);
     }
@@ -336,37 +274,16 @@ class PluginManagerTest extends TestCase
         $pluginName = 'lrackwitz/para-alias';
 
         $commandline = 'composer remove lrackwitz/para-alias';
-        $cwd = 'the/path/to/the/root/directory/of/para';
 
-        $locker = $this->prophesize(Locker::class);
-        $locker->getLockData()->shouldBeCalled();
-        $locker->getLockData()->willReturn([
-            'packages' => [
-                [
-                    'name' => 'lrackwitz/para-alias',
-                    'type' => 'para-plugin',
-                ],
-            ],
-        ]);
-
-        $composer = $this->prophesize(Composer::class);
-        $composer->getLocker()->shouldBeCalled();
-        $composer->getLocker()->willReturn($locker->reveal());
-
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
+        $this->getIsInstalledJsonDecoder($pluginName);
 
         $process = $this->prophesize(Process::class);
         $process->run()->shouldBeCalled();
         $process->isSuccessful()->shouldBeCalled();
         $process->isSuccessful()->willReturn(false);
 
-        $this->processFactory->getProcess($commandline, $cwd)->shouldBeCalled();
-        $this->processFactory->getProcess($commandline, $cwd)->willReturn($process->reveal());
+        $this->processFactory->getProcess($commandline, $this->fileSystem->url() . '/')->shouldBeCalled();
+        $this->processFactory->getProcess($commandline, $this->fileSystem->url() . '/')->willReturn($process->reveal());
 
         $this->pluginManager->uninstallPlugin($pluginName);
     }
@@ -376,41 +293,76 @@ class PluginManagerTest extends TestCase
      */
     public function testTheGetInstalledPluginsMethodReturnsAnArrayOfPlugins()
     {
-        $locker = $this->prophesize(Locker::class);
-        $locker->getLockData()->shouldBeCalled();
-        $locker->getLockData()->willReturn([
+        $plugin = $this->prophesize(PluginInterface::class);
+        $plugin->getName()->willReturn('lrackwitz/para-alias', 'lrackwitz/para-sync');
+        $plugin->getDescription()->willReturn('the alias description', '');
+        $plugin->getVersion()->willReturn('1.1.0', '');
+        $plugin->setDescription(Argument::type('string'))->shouldBeCalled();
+        $plugin->setVersion(Argument::type('string'))->shouldBeCalled();
+
+        $this->pluginFactory
+            ->getPlugin(Argument::type('string'))
+            ->willReturn($plugin->reveal());
+
+        /** @var JsonEncoder $jsonEncoder */
+        $jsonEncoder = $this->prophesize(JsonEncoder::class);
+        $jsonEncoder->decode(Argument::any(), Argument::any())->willReturn([
             'packages' => [
                 [
                     'name' => 'lrackwitz/para-alias',
+                    'type' => 'para-plugin',
+                    'description' => 'the alias plugin',
+                    'version' => '1.1.0',
+                ],
+                [
+                    'name' => 'composer/composer',
+                ],
+                [
+                    'name' => 'lrackwitz/para-sync',
                     'type' => 'para-plugin',
                 ],
             ],
         ]);
 
-        $composer = $this->prophesize(Composer::class);
-        $composer->getLocker()->shouldBeCalled();
-        $composer->getLocker()->willReturn($locker->reveal());
-
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->shouldBeCalled();
-        $this->composerFactory
-            ->createComposer(Argument::any(), Argument::type('string'), false, Argument::type('string'), true)
-            ->willReturn($composer->reveal());
-
-        $plugin = $this->prophesize(PluginInterface::class);
-        $plugin->setDescription(Argument::type('string'))->shouldBeCalled();
-        $plugin->setVersion(Argument::type('string'))->shouldBeCalled();
-
-        $this->pluginFactory
-            ->getPlugin('lrackwitz/para-alias')
-            ->shouldBeCalled();
-        $this->pluginFactory
-            ->getPlugin('lrackwitz/para-alias')
-            ->willReturn($plugin->reveal());
+        $this->jsonEncoderFactory->getEncoder()->willReturn($jsonEncoder->reveal());
 
         $result = $this->pluginManager->getInstalledPlugins();
 
-        $this->assertTrue(is_array($result));
+        $this->jsonEncoderFactory->getEncoder()->shouldHaveBeenCalled();
+
+        $jsonEncoder->decode(Argument::type('string'), JsonEncoder::FORMAT)->shouldHaveBeenCalled();
+
+        $this->pluginFactory->getPlugin('lrackwitz/para-alias')->shouldHaveBeenCalled();
+        $this->pluginFactory->getPlugin('lrackwitz/para-sync')->shouldHaveBeenCalled();
+
+        $this->assertEquals('lrackwitz/para-alias', $result[0]->getName(), 'Expected that the name of the first plugin has been returned correctly.');
+        $this->assertEquals('the alias description', $result[0]->getDescription(), 'Expected that the correct description has been returned.');
+        $this->assertEquals('1.1.0', $result[0]->getVersion(), 'Expected that the correct version has been returned.');
+        $this->assertEquals('lrackwitz/para-sync', $result[1]->getName(), 'Expected that the name of the second plugin has been returned correctly.');
+    }
+
+    /**
+     * @return \Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\Serializer\Encoder\JsonEncoder
+     */
+    private function getIsInstalledJsonDecoder($packageName)
+    {
+        /** @var JsonEncoder $jsonEncoder */
+        $jsonEncoder = $this->prophesize(JsonEncoder::class);
+        $jsonEncoder->decode(Argument::any(), Argument::any())->willReturn(
+            [
+                'packages' => [
+                    0 => [
+                        'name' => $packageName,
+                        'type' => 'para-plugin',
+                    ],
+                ],
+            ]
+        );
+
+        $this->jsonEncoderFactory->getEncoder()->willReturn(
+            $jsonEncoder->reveal()
+        );
+
+        return $jsonEncoder;
     }
 }

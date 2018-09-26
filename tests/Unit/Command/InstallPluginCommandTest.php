@@ -55,7 +55,7 @@ class InstallPluginCommandTest extends TestCase
         $parameters = [
             'command' => $command->getName(),
             'name' => 'lrackwitz/alias-plugin',
-            'version' => 'dev',
+            'version' => 'dev-master',
         ];
 
         $this->pluginManager
@@ -67,7 +67,7 @@ class InstallPluginCommandTest extends TestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('The plugin "lrackwitz/alias-plugin" has been installed successfully.', $output);
+        $this->assertContains('The plugin "lrackwitz/alias-plugin" version "dev-master" has been installed successfully.', $output);
     }
 
     public function testTheExecuteMethodReturnsDebugOutputWhenVerboseModeIsActive()

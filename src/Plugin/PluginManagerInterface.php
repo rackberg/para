@@ -20,14 +20,14 @@ interface PluginManagerInterface
      * Installs a plugin.
      *
      * @param string $name The name of the plugin.
-     * @param string $version The version of the plugin.
+     * @param string $version (Optional) The version of the plugin.
      *
      * @return string The output of the process that installs the plugin.
      *
      * @throws \Para\Exception\PluginAlreadyInstalledException When the plugin is already installed.
      * @throws \Para\Exception\PluginNotFoundException When the plugin to install could not be found.
      */
-    public function installPlugin(string $name, string $version): string;
+    public function installPlugin(string $name, string &$version = ''): string;
 
     /**
      * Uninstalls a plugin.

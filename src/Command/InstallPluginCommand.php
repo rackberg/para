@@ -51,7 +51,7 @@ class InstallPluginCommand extends Command
                 'version',
                 InputArgument::OPTIONAL,
                 'The version of the plugin.',
-                'dev'
+                ''
             );
     }
 
@@ -71,8 +71,9 @@ class InstallPluginCommand extends Command
 
             $output->writeln(
                 sprintf(
-                    '<info>The plugin "%s" has been installed successfully.</info>',
-                    $pluginName
+                    '<info>The plugin "%s" version "%s" has been installed successfully.</info>',
+                    $pluginName,
+                    $version
                 )
             );
         } catch (PluginAlreadyInstalledException $e) {

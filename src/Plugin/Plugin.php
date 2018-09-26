@@ -57,7 +57,7 @@ class Plugin implements PluginInterface
      */
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?: '';
     }
 
     /**
@@ -75,7 +75,7 @@ class Plugin implements PluginInterface
      */
     public function getVersion(): string
     {
-        return $this->version;
+        return $this->version ?: '';
     }
 
     /**

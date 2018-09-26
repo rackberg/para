@@ -1,6 +1,7 @@
 <?php
 
 namespace Para\Service\Packagist;
+
 use Para\Package\ComposerPackageInterface;
 
 /**
@@ -27,4 +28,13 @@ interface PackagistInterface
      * @return ComposerPackageInterface[]
      */
     public function findPackagesByType($type): array;
+
+    /**
+     * Returns the highest version of an array of versions.
+     *
+     * @param array $versions The array with versions available.
+     *
+     * @return string The highest version string.
+     */
+    public function getHighestVersion(array $versions = []): string;
 }
